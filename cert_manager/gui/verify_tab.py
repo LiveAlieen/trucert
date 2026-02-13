@@ -54,15 +54,15 @@ class VerifyTab(QWidget):
         cert_layout.addWidget(cert_btn)
         verify_layout.addLayout(cert_layout)
         
-        # CA证书
-        ca_layout = QHBoxLayout()
-        ca_layout.addWidget(QLabel("CA证书 (可选):"))
-        self.ca_path_edit = QLineEdit()
-        ca_layout.addWidget(self.ca_path_edit)
-        ca_btn = QPushButton("浏览")
-        ca_btn.clicked.connect(self.browse_ca_cert)
-        ca_layout.addWidget(ca_btn)
-        verify_layout.addLayout(ca_layout)
+        # 上级证书
+        parent_layout = QHBoxLayout()
+        parent_layout.addWidget(QLabel("上级证书 (可选):"))
+        self.parent_path_edit = QLineEdit()
+        parent_layout.addWidget(self.parent_path_edit)
+        parent_btn = QPushButton("浏览")
+        parent_btn.clicked.connect(self.browse_parent_cert)
+        parent_layout.addWidget(parent_btn)
+        verify_layout.addLayout(parent_layout)
         
         # 验证按钮
         verify_btn = QPushButton("验证证书")
@@ -154,10 +154,10 @@ class VerifyTab(QWidget):
         if file_path:
             self.cert_path_edit.setText(file_path)
     
-    def browse_ca_cert(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "选择CA证书文件", "", "JSON Files (*.json)")
+    def browse_parent_cert(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "选择上级证书文件", "", "JSON Files (*.json)")
         if file_path:
-            self.ca_path_edit.setText(file_path)
+            self.parent_path_edit.setText(file_path)
     
     def browse_verify_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "选择文件", "", "All Files (*)")
@@ -185,14 +185,14 @@ class VerifyTab(QWidget):
             # 加载证书
             cert = self.cert_manager.load_cert(cert_path)
             
-            # 加载CA证书（如果提供）
-            ca_cert = None
-            ca_path = self.ca_path_edit.text()
-            if ca_path:
-                ca_cert = self.cert_manager.load_cert(ca_path)
+            # 加载上级证书（如果提供）
+            parent_cert = None
+            parent_path = self.parent_path_edit.text()
+            if parent_path:
+                parent_cert = self.cert_manager.load_cert(parent_path)
             
             # 验证证书
-            result = self.verifier.verify_json_cert(cert, ca_cert)
+            result = self.verifier.verify_json_cert(cert, parent_cert)
             
             # 显示验证结果
             result_text = "验证结果:\n"

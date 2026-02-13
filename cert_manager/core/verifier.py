@@ -223,7 +223,7 @@ class Verifier:
             }
     
     def verify_json_cert(self, cert_data: Dict[str, Any], 
-                        ca_cert_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+                        parent_cert_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """验证自定义JSON格式证书"""
         try:
             # 检查证书数据结构
@@ -308,12 +308,12 @@ class Verifier:
                     )
                 else:
                     # 二级证书：使用上级证书公钥验证
-                    if not ca_cert_data:
+                    if not parent_cert_data:
                         # 尝试从parent_public_key字段获取上级公钥
                         if not parent_public_key:
                             return {
                                 "valid": False,
-                                "reason": "Secondary certificate requires CA certificate or parent_public_key field"
+                                "reason": "Secondary certificate requires parent certificate or parent_public_key field"
                             }
                         try:
                             parent_public_key_data = bytes.fromhex(parent_public_key)
@@ -327,16 +327,16 @@ class Verifier:
                                 "reason": f"Failed to load parent public key: {str(e)}"
                             }
                     else:
-                        # 使用提供的CA证书公钥验证
-                        ca_public_key_hex = ca_cert_data.get("public_key", "")
-                        if not ca_public_key_hex:
+                        # 使用提供的上级证书公钥验证
+                        parent_public_key_hex = parent_cert_data.get("public_key", "")
+                        if not parent_public_key_hex:
                             return {
                                 "valid": False,
-                                "reason": "CA certificate missing public key"
+                                "reason": "Parent certificate missing public key"
                             }
-                        ca_public_key_data = bytes.fromhex(ca_public_key_hex)
+                        parent_public_key_data = bytes.fromhex(parent_public_key_hex)
                         verifying_key = serialization.load_der_public_key(
-                            ca_public_key_data,
+                            parent_public_key_data,
                             backend=self.backend
                         )
             except Exception as e:

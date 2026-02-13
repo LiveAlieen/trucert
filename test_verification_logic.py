@@ -83,13 +83,13 @@ def test_verification_logic():
         assert secondary_verification_result['valid'], "二级证书验证失败"
         print("✓ 二级证书验证成功")
         
-        # 验证二级证书（使用CA证书）
-        print("10. 验证二级证书（使用CA证书）...")
-        secondary_verification_with_ca_result = verifier.verify_json_cert(secondary_cert_data, root_cert_data)
-        print(f"  二级证书验证结果: {'有效' if secondary_verification_with_ca_result['valid'] else '无效'}")
-        print(f"  验证原因: {secondary_verification_with_ca_result['reason']}")
-        assert secondary_verification_with_ca_result['valid'], "二级证书验证失败（使用CA证书）"
-        print("✓ 二级证书验证成功（使用CA证书）")
+        # 验证二级证书（使用上级证书）
+        print("10. 验证二级证书（使用上级证书）...")
+        secondary_verification_with_parent_result = verifier.verify_json_cert(secondary_cert_data, root_cert_data)
+        print(f"  二级证书验证结果: {'有效' if secondary_verification_with_parent_result['valid'] else '无效'}")
+        print(f"  验证原因: {secondary_verification_with_parent_result['reason']}")
+        assert secondary_verification_with_parent_result['valid'], "二级证书验证失败（使用上级证书）"
+        print("✓ 二级证书验证成功（使用上级证书）")
         
         print("\n=== 测试完成 ===")
         print("✓ 验证逻辑测试成功")
