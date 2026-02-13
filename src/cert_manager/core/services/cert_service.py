@@ -1,5 +1,5 @@
 from typing import Optional, Dict, Any, List
-from src.cert_manager.core.cert_manager import CertManager
+from ..cert_manager import CertManager
 
 class CertService:
     """证书服务类，封装证书管理功能，作为GUI和核心业务逻辑之间的桥梁"""

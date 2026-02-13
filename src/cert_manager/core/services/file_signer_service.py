@@ -1,5 +1,5 @@
 from typing import Optional, Dict, Any, List, Tuple
-from src.cert_manager.core.file_signer import FileSigner
+from ..file_signer import FileSigner
 
 class FileSignerService:
     """文件签名服务类，封装文件签名功能，作为GUI和核心业务逻辑之间的桥梁"""

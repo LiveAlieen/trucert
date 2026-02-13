@@ -1,7 +1,11 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox, QTabWidget
 from PyQt5.QtCore import Qt
-from src.cert_manager.core.services import VerifierService, KeyService, CertService, FileSignerService, ConfigService
-from src.cert_manager.core.utils import file_utils
+import sys
+import os
+# 添加src目录到Python路径
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from core.services import VerifierService, KeyService, CertService, FileSignerService, ConfigService
+from core.utils import file_utils
 
 class VerifyTab(QWidget):
     def __init__(self):

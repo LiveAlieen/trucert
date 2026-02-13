@@ -1,5 +1,5 @@
 from typing import Optional, Tuple, Union, List, Dict, Any
-from src.cert_manager.core.key_manager import KeyManager
+from ..key_manager import KeyManager
 
 class KeyService:
     """密钥服务类，封装密钥管理功能，作为GUI和核心业务逻辑之间的桥梁"""

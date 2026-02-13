@@ -1,10 +1,15 @@
-from PyQt5.QtWidgets import QMainWindow, QTabWidget, QWidget, QVBoxLayout, QMenuBar, QMenu, QAction, QStatusBar
+from PyQt5.QtWidgets import QMainWindow, QTabWidget, QWidget, QVBoxLayout, QMenuBar, QMenu, QAction, QStatusBar, QApplication
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
-from src.cert_manager.gui.key_tab import KeyTab
-from src.cert_manager.gui.cert_tab import CertTab
-from src.cert_manager.gui.file_tab import FileTab
-from src.cert_manager.gui.verify_tab import VerifyTab
+import sys
+import os
+# 添加src目录到Python路径
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+# 使用绝对导入
+from cert_manager.gui.key_tab import KeyTab
+from cert_manager.gui.cert_tab import CertTab
+from cert_manager.gui.file_tab import FileTab
+from cert_manager.gui.verify_tab import VerifyTab
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -69,3 +74,9 @@ class MainWindow(QMainWindow):
     def update_status(self, message):
         """更新状态栏消息"""
         self.status_bar.showMessage(message)
+
+if __name__ == "__main__":
+    app = QApplication([])
+    window = MainWindow()
+    window.show()
+    app.exec_()

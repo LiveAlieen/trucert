@@ -1,7 +1,12 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox, QListWidget, QListWidgetItem
 from PyQt5.QtCore import Qt
-from src.cert_manager.core.services import KeyService, ConfigService
-from src.cert_manager.core.utils import file_utils
+# 使用正确的绝对导入路径
+import sys
+import os
+# 添加src目录到Python路径
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from core.services import KeyService, ConfigService
+from core.utils import file_utils
 
 class KeyTab(QWidget):
     def __init__(self):
@@ -141,17 +146,9 @@ class KeyTab(QWidget):
             if key_type == "RSA":
                 key_size = int(self.rsa_key_size_combo.currentText())
                 private_info, public_info = self.key_service.generate_rsa_key(key_size)
-                # 注意：服务层返回的是密钥信息，不是密钥对象，所以需要重新加载密钥
-                # 这里简化处理，直接使用服务层返回的信息
-                self.current_private_key = None  # 实际应用中应该从存储加载
-                self.current_public_key = None  # 实际应用中应该从存储加载
             else:
                 curve = self.ecc_curve_combo.currentText()
                 private_info, public_info = self.key_service.generate_ecc_key(curve)
-                # 注意：服务层返回的是密钥信息，不是密钥对象，所以需要重新加载密钥
-                # 这里简化处理，直接使用服务层返回的信息
-                self.current_private_key = None  # 实际应用中应该从存储加载
-                self.current_public_key = None  # 实际应用中应该从存储加载
             
             # 显示密钥信息
             info_text = f"私钥信息:\n"
@@ -163,12 +160,6 @@ class KeyTab(QWidget):
             info_text += f"\n已自动存储到配置文件中（使用根密钥加密）"
             
             self.info_text.setText(info_text)
-            
-            # 启用保存按钮
-            # 注意：由于我们没有实际的密钥对象，这里暂时禁用保存按钮
-            # 实际应用中应该从存储加载密钥对象后再启用
-            self.save_private_btn.setEnabled(False)
-            self.save_public_btn.setEnabled(False)
             
             # 刷新密钥列表
             self.refresh_key_list()

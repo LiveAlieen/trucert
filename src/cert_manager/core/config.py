@@ -1,6 +1,6 @@
 import os
 from typing import Dict, Any, Optional
-from src.cert_manager.core.storage import ConfigStorage
+from .storage import ConfigStorage
 
 class ConfigManager:
     def __init__(self, config_dir: str = "configs"):

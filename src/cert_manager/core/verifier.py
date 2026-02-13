@@ -7,8 +7,8 @@ from typing import Optional, Union, Dict, Any, Tuple
 import os
 import json
 import datetime
-from src.cert_manager.core.storage import StorageManager
-from src.cert_manager.core.file_signer import FileSigner
+from .storage import StorageManager
+from .file_signer import FileSigner
 
 class Verifier:
     def __init__(self):

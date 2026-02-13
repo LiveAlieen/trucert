@@ -7,7 +7,7 @@ import os
 import json
 import hashlib
 from typing import Optional, Tuple, Union
-from src.cert_manager.core.storage import KeyStorage, StorageManager
+from .storage import KeyStorage, StorageManager
 
 class KeyManager:
     def __init__(self, config_dir: str = "configs", root_key_dir: str = "root_key"):

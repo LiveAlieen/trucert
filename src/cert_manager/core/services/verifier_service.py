@@ -1,5 +1,5 @@
 from typing import Optional, Dict, Any, List, Union
-from src.cert_manager.core.verifier import Verifier
+from ..verifier import Verifier
 
 class VerifierService:
     """验证服务类，封装验证功能，作为GUI和核心业务逻辑之间的桥梁"""

@@ -6,7 +6,7 @@ from typing import Optional, Union, Dict, Any
 import json
 import os
 import hashlib
-from src.cert_manager.core.storage import CertStorage, StorageManager
+from .storage import CertStorage, StorageManager
 
 class CertManager:
     def __init__(self):
