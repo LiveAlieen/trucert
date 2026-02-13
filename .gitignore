@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Certificates and keys
+cert_manager/configs/key/
+cert_manager/configs/trust/
+cert_manager/root_key/
+
+# Logs
+logs/
+*.log
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Misc
+*.sig
+*.zip
