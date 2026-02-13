@@ -1,5 +1,5 @@
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import rsa, ec
+from cryptography.hazmat.primitives.asymmetric import rsa, ec, padding
 from cryptography.hazmat.backends import default_backend
 import os
 import json

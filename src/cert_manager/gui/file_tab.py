@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox, QTabWidget
 from PyQt5.QtCore import Qt
 # 使用正确的绝对导入路径
 import sys
@@ -18,6 +18,30 @@ class FileTab(QWidget):
         self.init_ui()
     
     def init_ui(self):
+        layout = QVBoxLayout()
+        
+        # 创建标签页
+        self.tab_widget = QTabWidget()
+        
+        # 单个文件签名标签页
+        self.single_file_tab = QWidget()
+        self.init_single_file_tab()
+        
+        # 批量签名标签页
+        self.batch_file_tab = QWidget()
+        self.init_batch_file_tab()
+        
+        # 添加标签页
+        self.tab_widget.addTab(self.single_file_tab, "单个文件签名")
+        self.tab_widget.addTab(self.batch_file_tab, "批量签名")
+        
+        layout.addWidget(self.tab_widget)
+        self.setLayout(layout)
+        self.current_signature = None
+        self.batch_files = []
+    
+    def init_single_file_tab(self):
+        """初始化单个文件签名标签页"""
         layout = QVBoxLayout()
         
         # 文件签名组
@@ -43,8 +67,6 @@ class FileTab(QWidget):
         key_btn.clicked.connect(self.browse_key)
         key_layout.addWidget(key_btn)
         sign_layout.addLayout(key_layout)
-        
-
         
         # 哈希算法
         hash_layout = QHBoxLayout()
@@ -89,6 +111,12 @@ class FileTab(QWidget):
         button_group.addStretch()
         layout.addLayout(button_group)
         
+        self.single_file_tab.setLayout(layout)
+    
+    def init_batch_file_tab(self):
+        """初始化批量签名标签页"""
+        layout = QVBoxLayout()
+        
         # 批量签名组
         batch_group = QGroupBox("批量签名")
         batch_layout = QVBoxLayout()
@@ -104,6 +132,26 @@ class FileTab(QWidget):
         batch_file_btn.clicked.connect(self.browse_batch_files)
         batch_file_layout.addWidget(batch_file_btn)
         batch_layout.addLayout(batch_file_layout)
+        
+        # 私钥选择
+        batch_key_layout = QHBoxLayout()
+        batch_key_layout.addWidget(QLabel("私钥文件:"))
+        self.batch_key_path_edit = QLineEdit()
+        batch_key_layout.addWidget(self.batch_key_path_edit)
+        batch_key_btn = QPushButton("浏览")
+        batch_key_btn.clicked.connect(self.browse_batch_key)
+        batch_key_layout.addWidget(batch_key_btn)
+        batch_layout.addLayout(batch_key_layout)
+        
+        # 哈希算法
+        batch_hash_layout = QHBoxLayout()
+        batch_hash_layout.addWidget(QLabel("哈希算法:"))
+        self.batch_hash_combo = QComboBox()
+        for algo in self.algorithms.get("hash_algorithms", ["sha256", "sha384", "sha512"]):
+            self.batch_hash_combo.addItem(algo)
+        batch_hash_layout.addWidget(self.batch_hash_combo)
+        batch_hash_layout.addStretch()
+        batch_layout.addLayout(batch_hash_layout)
         
         # 输出目录选择
         batch_output_layout = QHBoxLayout()
@@ -129,9 +177,7 @@ class FileTab(QWidget):
         batch_group.setLayout(batch_layout)
         layout.addWidget(batch_group)
         
-        self.setLayout(layout)
-        self.current_signature = None
-        self.batch_files = []
+        self.batch_file_tab.setLayout(layout)
     
     def browse_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "选择文件", "", "All Files (*)")
@@ -240,6 +286,11 @@ class FileTab(QWidget):
         if output_dir:
             self.batch_output_edit.setText(output_dir)
     
+    def browse_batch_key(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "选择私钥文件", "", "PEM Files (*.pem);;DER Files (*.der)")
+        if file_path:
+            self.batch_key_path_edit.setText(file_path)
+    
     def batch_sign_files(self):
         """执行批量签名"""
         try:
@@ -255,7 +306,7 @@ class FileTab(QWidget):
                 return
             
             # 检查私钥路径
-            key_path = self.key_path_edit.text()
+            key_path = self.batch_key_path_edit.text()
             if not key_path:
                 QMessageBox.warning(self, "警告", "请选择私钥文件")
                 return
@@ -264,7 +315,7 @@ class FileTab(QWidget):
             private_key = self.key_service.load_private_key(key_path, None)
             
             # 获取哈希算法
-            hash_algorithm = self.hash_combo.currentText()
+            hash_algorithm = self.batch_hash_combo.currentText()
             
             # 执行批量签名
             results = self.file_signer_service.batch_sign(
