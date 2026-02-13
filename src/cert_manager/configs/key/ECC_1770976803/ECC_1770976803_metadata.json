@@ -1,0 +1,15 @@
+{
+  "id": "ECC_1770976803",
+  "type": "ECC",
+  "created_at": "2026-02-13T18:00:03.133867",
+  "timestamp": "20260213_180003_133867",
+  "private_info": {
+    "type": "ECC Private Key",
+    "curve": "secp256r1"
+  },
+  "public_info": {
+    "type": "ECC Public Key",
+    "curve": "secp256r1"
+  },
+  "encrypted": true
+}

@@ -1,0 +1,15 @@
+{
+  "id": "RSA_1770976852",
+  "type": "RSA",
+  "created_at": "2026-02-13T18:00:52.908864",
+  "timestamp": "20260213_180052_908864",
+  "private_info": {
+    "type": "RSA Private Key",
+    "key_size": 2048
+  },
+  "public_info": {
+    "type": "RSA Public Key",
+    "key_size": 2048
+  },
+  "encrypted": true
+}

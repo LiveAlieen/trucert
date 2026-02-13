@@ -1,5 +1,5 @@
 from typing import Optional, Dict, Any, List, Union
-from ..verifier import Verifier
+from ..business.verifier import Verifier
 
 class VerifierService:
     """验证服务类，封装验证功能，作为GUI和核心业务逻辑之间的桥梁"""
@@ -7,19 +7,19 @@ class VerifierService:
     def __init__(self):
         self.verifier = Verifier()
     
-    def verify_cert_signature(self, cert: Any, parent_cert: Optional[Any] = None) -> Dict[str, Any]:
-        """验证X.509证书签名
+    def verify_cert_signature(self, cert_data: Dict[str, Any], public_key: Any) -> bool:
+        """验证证书签名
         
         Args:
-            cert: X.509证书
-            parent_cert: 上级X.509证书
+            cert_data: 证书数据
+            public_key: 公钥对象
         
         Returns:
-            Dict[str, Any]: 验证结果
+            bool: 是否验证成功
         """
-        return self.verifier.verify_cert_signature(cert, parent_cert)
+        return self.verifier.verify_cert_signature(cert_data, public_key)
     
-    def verify_file_signature(self, file_path: str, signature: bytes, public_key: Any, hash_algorithm: str = "sha256") -> Dict[str, Any]:
+    def verify_file_signature(self, file_path: str, signature: bytes, public_key: Any, hash_algorithm: str = "sha256") -> bool:
         """验证文件签名
         
         Args:
@@ -29,11 +29,11 @@ class VerifierService:
             hash_algorithm: 哈希算法
         
         Returns:
-            Dict[str, Any]: 验证结果
+            bool: 是否验证成功
         """
         return self.verifier.verify_file_signature(file_path, signature, public_key, hash_algorithm)
     
-    def verify_signed_file(self, signed_file: str, public_key: Any, hash_algorithm: str = "sha256") -> Dict[str, Any]:
+    def verify_signed_file(self, signed_file: str, public_key: Any, hash_algorithm: str = "sha256") -> bool:
         """验证带签名的文件
         
         Args:
@@ -42,43 +42,74 @@ class VerifierService:
             hash_algorithm: 哈希算法
         
         Returns:
-            Dict[str, Any]: 验证结果
+            bool: 是否验证成功
         """
         return self.verifier.verify_signed_file(signed_file, public_key, hash_algorithm)
     
-    def verify_cert_chain(self, cert: Any, parent_certs: List[Any]) -> Dict[str, Any]:
+    def verify_cert_chain(self, cert_data: Dict[str, Any], parent_public_key: Any) -> bool:
         """验证证书链
         
         Args:
-            cert: X.509证书
-            parent_certs: 上级X.509证书列表
+            cert_data: 证书数据
+            parent_public_key: 父证书公钥
         
         Returns:
-            Dict[str, Any]: 验证结果
+            bool: 是否验证成功
         """
-        return self.verifier.verify_cert_chain(cert, parent_certs)
+        return self.verifier.verify_cert_chain(cert_data, parent_public_key)
     
-    def verify_json_cert(self, cert_data: Dict[str, Any], parent_cert_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """验证自定义JSON格式证书
+    def verify_json_cert(self, cert_json_path: str, public_key: Any) -> bool:
+        """验证JSON格式的证书
+        
+        Args:
+            cert_json_path: 证书JSON文件路径
+            public_key: 公钥对象
+        
+        Returns:
+            bool: 是否验证成功
+        """
+        return self.verifier.verify_json_cert(cert_json_path, public_key)
+    
+    def verify_cert_data(self, cert_data: Dict[str, Any], public_key: Any) -> Dict[str, Any]:
+        """验证内存中的证书数据
         
         Args:
             cert_data: 证书数据
-            parent_cert_data: 上级证书数据
+            public_key: 公钥对象
         
         Returns:
-            Dict[str, Any]: 验证结果
+            Dict[str, Any]: 验证结果，包含valid字段
         """
-        return self.verifier.verify_json_cert(cert_data, parent_cert_data)
+        try:
+            # 验证证书签名
+            signature_valid = self.verifier.verify_cert_signature(cert_data, public_key)
+            
+            # 构建验证结果
+            result = {
+                "valid": signature_valid,
+                "details": {
+                    "signature_valid": signature_valid
+                }
+            }
+            
+            return result
+        except Exception as e:
+            return {
+                "valid": False,
+                "details": {
+                    "error": str(e)
+                }
+            }
     
-    def verify_signed_file_from_json(self, signed_file: str, signature_file: str, public_key: Any) -> Dict[str, Any]:
-        """从JSON签名文件验证带签名的文件
+    def verify_signature_from_json(self, signature_json_path: str, file_path: str, public_key: Any) -> bool:
+        """从JSON文件验证签名
         
         Args:
-            signed_file: 带签名的文件路径
-            signature_file: 签名文件路径
-            public_key: 公钥
+            signature_json_path: 签名JSON文件路径
+            file_path: 文件路径
+            public_key: 公钥对象
         
         Returns:
-            Dict[str, Any]: 验证结果
+            bool: 是否验证成功
         """
-        return self.verifier.verify_signed_file_from_json(signed_file, signature_file, public_key)
+        return self.verifier.verify_signature_from_json(signature_json_path, file_path, public_key)

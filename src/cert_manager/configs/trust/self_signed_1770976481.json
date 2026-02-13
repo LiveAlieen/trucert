@@ -1,0 +1,12 @@
+{
+  "cert_info": {
+    "algorithm": "RSA",
+    "hash_algorithm": "SHA256",
+    "validity_days": 365,
+    "forward_offset": 0,
+    "timestamp": "2026-02-11T00:00:00"
+  },
+  "signature": "test_signature",
+  "public_key": "test_public_key",
+  "type": "self_signed"
+}

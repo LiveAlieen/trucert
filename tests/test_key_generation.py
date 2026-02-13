@@ -15,10 +15,10 @@ private_key_ecc, public_key_ecc = key_manager.generate_ecc_key(curve="SECP256R1"
 print("\n所有存储的密钥:")
 keys = key_manager.list_keys()
 for key in keys:
-    print(f"ID: {key['id']}")
-    print(f"Type: {key['type']}")
-    print(f"Created At: {key['created_at']}")
-    print(f"Encrypted: {key['encrypted']}")
+    print(f"ID: {key.get('id', 'N/A')}")
+    print(f"Type: {key.get('type', 'N/A')}")
+    print(f"Created At: {key.get('created_at', 'N/A')}")
+    print(f"Encrypted: {key.get('encrypted', 'N/A')}")
     print("---")
 
 print("测试完成")

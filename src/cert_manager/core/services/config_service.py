@@ -1,5 +1,5 @@
 from typing import Optional, Dict, Any, List
-from ..config import ConfigManager
+from ..business.config import ConfigManager
 
 class ConfigService:
     """配置服务类，封装配置管理功能，作为GUI和核心业务逻辑之间的桥梁"""
