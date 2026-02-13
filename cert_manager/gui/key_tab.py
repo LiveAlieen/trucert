@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox, QListWidget, QListWidgetItem
 from PyQt5.QtCore import Qt
-from core.key_manager import KeyManager
-from core.config import ConfigManager
+from cert_manager.core.key_manager import KeyManager
+from cert_manager.core.config import ConfigManager
+from cert_manager.utils import file_utils
 
 class KeyTab(QWidget):
     def __init__(self):

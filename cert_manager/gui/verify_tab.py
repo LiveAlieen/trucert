@@ -1,10 +1,11 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox, QTabWidget
 from PyQt5.QtCore import Qt
-from core.verifier import Verifier
-from core.key_manager import KeyManager
-from core.cert_manager import CertManager
-from core.file_signer import FileSigner
-from core.config import ConfigManager
+from cert_manager.core.verifier import Verifier
+from cert_manager.core.key_manager import KeyManager
+from cert_manager.core.cert_manager import CertManager
+from cert_manager.core.file_signer import FileSigner
+from cert_manager.core.config import ConfigManager
+from cert_manager.utils import file_utils
 
 class VerifyTab(QWidget):
     def __init__(self):

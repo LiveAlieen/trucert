@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QMainWindow, QTabWidget, QWidget, QVBoxLayout, QMenuBar, QMenu, QAction, QStatusBar
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
-from gui.key_tab import KeyTab
-from gui.cert_tab import CertTab
-from gui.file_tab import FileTab
-from gui.verify_tab import VerifyTab
+from cert_manager.gui.key_tab import KeyTab
+from cert_manager.gui.cert_tab import CertTab
+from cert_manager.gui.file_tab import FileTab
+from cert_manager.gui.verify_tab import VerifyTab
 
 class MainWindow(QMainWindow):
     def __init__(self):

@@ -7,16 +7,21 @@ from typing import Optional, Union, Dict, Any, Tuple
 import os
 import json
 import datetime
+from .storage import StorageManager
+from .file_signer import FileSigner
 
 class Verifier:
     def __init__(self):
         self.backend = default_backend()
+        self.storage_manager = StorageManager()
+        self.file_signer = FileSigner()
     
     def verify_cert_signature(self, cert: x509.Certificate, 
-                            ca_cert: Optional[x509.Certificate] = None) -> Dict[str, Any]:
+                            parent_cert: Optional[x509.Certificate] = None) -> Dict[str, Any]:
+        """验证X.509证书签名"""
         try:
-            # 如果没有提供CA证书，则验证自签名
-            if not ca_cert:
+            # 如果没有提供上级证书，则验证自签名
+            if not parent_cert:
                 public_key = cert.public_key()
                 issuer_name = cert.issuer
                 subject_name = cert.subject
@@ -25,10 +30,10 @@ class Verifier:
                 if issuer_name != subject_name:
                     return {
                         "valid": False,
-                        "reason": "Certificate is not self-signed and no CA certificate provided"
+                        "reason": "Certificate is not self-signed and no parent certificate provided"
                     }
             else:
-                public_key = ca_cert.public_key()
+                public_key = parent_cert.public_key()
             
             # 验证签名
             signature = cert.signature
@@ -55,7 +60,6 @@ class Verifier:
                 }
             
             # 检查证书有效期
-            import datetime
             now = datetime.datetime.utcnow()
             if now < cert.not_valid_before:
                 return {
@@ -89,45 +93,24 @@ class Verifier:
     def verify_file_signature(self, filepath: str, signature: bytes, 
                              public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey],
                              hash_algorithm: str = "sha256") -> Dict[str, Any]:
+        """验证文件签名"""
         try:
-            # 计算文件哈希
-            hash_obj = getattr(hashes, hash_algorithm.upper())()
-            digest = hashes.Hash(hash_obj, self.backend)
-            
-            with open(filepath, "rb") as f:
-                while chunk := f.read(8192):
-                    digest.update(chunk)
-            file_hash = digest.finalize()
-            
-            # 验证签名
-            if isinstance(public_key, rsa.RSAPublicKey):
-                public_key.verify(
-                    signature,
-                    file_hash,
-                    padding.PKCS1v15(),
-                    getattr(hashes, hash_algorithm.upper())()
-                )
-            elif isinstance(public_key, ec.EllipticCurvePublicKey):
-                public_key.verify(
-                    signature,
-                    file_hash,
-                    ec.ECDSA(getattr(hashes, hash_algorithm.upper())())
-                )
+            # 使用FileSigner来计算文件哈希和验证签名
+            if self.file_signer.verify_file_signature(filepath, signature, public_key, hash_algorithm):
+                return {
+                    "valid": True,
+                    "reason": "File signature is valid",
+                    "file_info": {
+                        "file_path": filepath,
+                        "file_size": os.path.getsize(filepath),
+                        "hash_algorithm": hash_algorithm
+                    }
+                }
             else:
                 return {
                     "valid": False,
-                    "reason": "Unsupported public key type"
+                    "reason": "File signature verification failed"
                 }
-            
-            return {
-                "valid": True,
-                "reason": "File signature is valid",
-                "file_info": {
-                    "file_path": filepath,
-                    "file_size": os.path.getsize(filepath),
-                    "hash_algorithm": hash_algorithm
-                }
-            }
             
         except Exception as e:
             return {
@@ -138,11 +121,10 @@ class Verifier:
     def verify_signed_file(self, signed_file: str, 
                           public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey],
                           hash_algorithm: str = "sha256") -> Dict[str, Any]:
+        """验证带签名的文件"""
         try:
             # 从文件中提取签名
-            from .file_signer import FileSigner
-            file_signer = FileSigner()
-            file_content, signature = file_signer.extract_signature_from_file(signed_file)
+            file_content, signature = self.file_signer.extract_signature_from_file(signed_file)
             
             # 创建临时文件来验证
             import tempfile
@@ -164,7 +146,7 @@ class Verifier:
             }
     
     def verify_cert_chain(self, cert: x509.Certificate, 
-                         ca_certs: list) -> Dict[str, Any]:
+                         parent_certs: list) -> Dict[str, Any]:
         """验证证书链"""
         try:
             # 构建证书链
@@ -182,10 +164,10 @@ class Verifier:
                 
                 # 查找颁发者证书
                 found = False
-                for ca_cert in ca_certs:
-                    if ca_cert.subject == issuer_name:
-                        cert_chain.append(ca_cert)
-                        current_cert = ca_cert
+                for parent_cert in parent_certs:
+                    if parent_cert.subject == issuer_name:
+                        cert_chain.append(parent_cert)
+                        current_cert = parent_cert
                         found = True
                         break
                 
@@ -198,9 +180,9 @@ class Verifier:
             # 验证链中的每个证书
             for i in range(len(cert_chain) - 1):
                 cert_to_verify = cert_chain[i]
-                ca_cert = cert_chain[i + 1]
+                parent_cert = cert_chain[i + 1]
                 
-                result = self.verify_cert_signature(cert_to_verify, ca_cert)
+                result = self.verify_cert_signature(cert_to_verify, parent_cert)
                 if not result["valid"]:
                     return result
             
@@ -385,4 +367,20 @@ class Verifier:
             return {
                 "valid": False,
                 "reason": f"Verification failed with unexpected error: {str(e)}"
+            }
+    
+    def verify_signed_file_from_json(self, signed_file: str, signature_file: str, 
+                                   public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey]) -> Dict[str, Any]:
+        """从JSON签名文件验证带签名的文件"""
+        try:
+            # 加载签名数据
+            signature, hash_algorithm, file_info = self.file_signer.load_signature(signature_file)
+            
+            # 验证文件签名
+            return self.verify_file_signature(signed_file, signature, public_key, hash_algorithm)
+            
+        except Exception as e:
+            return {
+                "valid": False,
+                "reason": f"Verification failed: {str(e)}"
             }

@@ -5,12 +5,15 @@ import os
 import json
 from datetime import datetime
 from typing import Optional, Union, Tuple
+from .storage import StorageManager
 
 class FileSigner:
     def __init__(self):
         self.backend = default_backend()
+        self.storage_manager = StorageManager()
     
     def calculate_file_hash(self, filepath: str, hash_algorithm: str = "sha256") -> bytes:
+        """计算文件哈希值"""
         hash_obj = getattr(hashes, hash_algorithm.upper())()
         digest = hashes.Hash(hash_obj, self.backend)
         
@@ -22,6 +25,7 @@ class FileSigner:
     
     def sign_file(self, filepath: str, private_key: Union[rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey],
                  hash_algorithm: str = "sha256") -> bytes:
+        """签名文件"""
         file_hash = self.calculate_file_hash(filepath, hash_algorithm)
         
         if isinstance(private_key, rsa.RSAPrivateKey):
@@ -63,14 +67,12 @@ class FileSigner:
             "file_info": file_info
         }
         
-        # Save as JSON
-        with open(filepath, "w", encoding="utf-8") as f:
-            json.dump(signature_data, f, indent=2, ensure_ascii=False)
+        # Save as JSON using storage manager
+        self.storage_manager.save(signature_data, filepath, "json")
     
     def load_signature(self, filepath: str) -> tuple[bytes, str, dict]:
         """Load signature from JSON format"""
-        with open(filepath, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        data = self.storage_manager.load(filepath, "json")
         
         signature = bytes.fromhex(data["signature"])
         hash_algorithm = data.get("hash_algorithm", "sha256")
@@ -80,6 +82,7 @@ class FileSigner:
     
     def attach_signature_to_file(self, original_file: str, signature: bytes, 
                                 output_file: Optional[str] = None) -> str:
+        """将签名附加到文件"""
         if not output_file:
             output_file = original_file + ".signed"
         
@@ -101,6 +104,7 @@ class FileSigner:
         return output_file
     
     def extract_signature_from_file(self, signed_file: str) -> Tuple[bytes, bytes]:
+        """从文件中提取签名"""
         with open(signed_file, "rb") as f:
             content = f.read()
         
@@ -118,6 +122,7 @@ class FileSigner:
         return file_content, signature
     
     def get_file_info(self, filepath: str) -> dict:
+        """获取文件信息"""
         return {
             "file_path": filepath,
             "file_size": os.path.getsize(filepath),
@@ -129,6 +134,9 @@ class FileSigner:
                   output_dir: str, hash_algorithm: str = "sha256") -> list:
         """批量签名多个文件"""
         results = []
+        
+        # 确保输出目录存在
+        os.makedirs(output_dir, exist_ok=True)
         
         for filepath in filepaths:
             try:
@@ -166,3 +174,29 @@ class FileSigner:
                 })
         
         return results
+    
+    def verify_file_signature(self, filepath: str, signature: bytes, 
+                             public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey],
+                             hash_algorithm: str = "sha256") -> bool:
+        """验证文件签名"""
+        file_hash = self.calculate_file_hash(filepath, hash_algorithm)
+        
+        try:
+            if isinstance(public_key, rsa.RSAPublicKey):
+                public_key.verify(
+                    signature,
+                    file_hash,
+                    padding.PKCS1v15(),
+                    getattr(hashes, hash_algorithm.upper())()
+                )
+            elif isinstance(public_key, ec.EllipticCurvePublicKey):
+                public_key.verify(
+                    signature,
+                    file_hash,
+                    ec.ECDSA(getattr(hashes, hash_algorithm.upper())())
+                )
+            else:
+                raise TypeError("Unsupported public key type")
+            return True
+        except Exception:
+            return False

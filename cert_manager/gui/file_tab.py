@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox
 from PyQt5.QtCore import Qt
-from core.file_signer import FileSigner
-from core.key_manager import KeyManager
-from core.config import ConfigManager
+from cert_manager.core.file_signer import FileSigner
+from cert_manager.core.key_manager import KeyManager
+from cert_manager.core.config import ConfigManager
+from cert_manager.utils import file_utils
 
 class FileTab(QWidget):
     def __init__(self):

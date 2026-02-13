@@ -1,22 +1,18 @@
-from cryptography import x509
-from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa, ec, padding
 from cryptography.hazmat.backends import default_backend
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional, Union, Dict, Any
 import json
 import os
 import hashlib
+from .storage import CertStorage, StorageManager
 
 class CertManager:
     def __init__(self):
         self.backend = default_backend()
-        # 初始化trust文件夹路径
-        self.config_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "configs")
-        self.trust_dir = os.path.join(self.config_dir, "trust")
-        # 创建trust文件夹
-        os.makedirs(self.trust_dir, exist_ok=True)
+        self.storage_manager = StorageManager()
+        self.cert_storage = CertStorage(self.storage_manager)
     
     def _calculate_hash(self, data: bytes) -> bytes:
         """计算数据的哈希值"""
@@ -99,10 +95,7 @@ class CertManager:
         }
         
         # 自动保存到trust文件夹
-        timestamp = int(now.timestamp())
-        cert_filename = f"self_signed_{timestamp}.json"
-        cert_path = os.path.join(self.trust_dir, cert_filename)
-        self.save_cert(cert_data, cert_path)
+        self.cert_storage.save_cert(cert_data)
         
         return cert_data
     
@@ -166,22 +159,17 @@ class CertManager:
         }
         
         # 自动保存到trust文件夹
-        timestamp = int(now.timestamp())
-        cert_filename = f"secondary_{timestamp}.json"
-        cert_path = os.path.join(self.trust_dir, cert_filename)
-        self.save_cert(cert_data, cert_path)
+        self.cert_storage.save_cert(cert_data)
         
         return cert_data
     
-    def save_cert(self, cert_data: Dict[str, Any], filepath: str) -> None:
+    def save_cert(self, cert_data: Dict[str, Any], filepath: str = None) -> str:
         """保存证书"""
-        with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump(cert_data, f, indent=2, ensure_ascii=False)
+        return self.cert_storage.save_cert(cert_data, filepath)
     
     def load_cert(self, filepath: str) -> Dict[str, Any]:
         """加载证书"""
-        with open(filepath, 'r', encoding='utf-8') as f:
-            return json.load(f)
+        return self.cert_storage.load_cert(filepath)
     
     def get_cert_info(self, cert_data: Dict[str, Any]) -> Dict[str, Any]:
         """获取证书信息"""
@@ -189,65 +177,16 @@ class CertManager:
     
     def list_certs(self) -> list:
         """列出所有存储的证书"""
-        certs = []
-        if not os.path.exists(self.trust_dir):
-            return certs
-        
-        for filename in os.listdir(self.trust_dir):
-            if filename.endswith('.json'):
-                filepath = os.path.join(self.trust_dir, filename)
-                try:
-                    cert_data = self.load_cert(filepath)
-                    # 添加文件名和路径信息
-                    # 根据文件名判断证书类型和是否为根证书
-                    if "self_signed" in filename:
-                        cert_type = "self_signed"
-                        is_root_cert = True
-                    elif "secondary" in filename:
-                        cert_type = "secondary"
-                        is_root_cert = False
-                    else:
-                        cert_type = "unknown"
-                        is_root_cert = False
-                    
-                    cert_info = {
-                        "filename": filename,
-                        "path": filepath,
-                        "type": cert_type,
-                        "is_root_cert": is_root_cert,
-                        "cert_info": cert_data.get("cert_info", {})
-                    }
-                    certs.append(cert_info)
-                except Exception as e:
-                    print(f"加载证书文件 {filename} 失败: {str(e)}")
-        
-        # 按时间戳排序（最新的在前）
-        certs.sort(key=lambda x: x["cert_info"].get("timestamp", ""), reverse=True)
-        return certs
+        return self.cert_storage.list_certs()
     
     def delete_cert(self, filepath: str) -> bool:
         """删除证书"""
-        if os.path.exists(filepath):
-            try:
-                os.remove(filepath)
-                return True
-            except Exception as e:
-                print(f"删除证书文件 {filepath} 失败: {str(e)}")
-                return False
-        return False
+        return self.cert_storage.delete_cert(filepath)
     
     def import_cert(self, filepath: str) -> Dict[str, Any]:
         """导入证书"""
-        # 加载证书数据
-        cert_data = self.load_cert(filepath)
-        
-        # 生成新的文件名（基于时间戳）
-        timestamp = int(datetime.utcnow().timestamp())
-        cert_type = cert_data.get("type", "unknown")
-        new_filename = f"{cert_type}_{timestamp}.json"
-        new_filepath = os.path.join(self.trust_dir, new_filename)
-        
-        # 保存到trust文件夹
-        self.save_cert(cert_data, new_filepath)
-        
-        return cert_data
+        return self.cert_storage.import_cert(filepath)
+    
+    def get_cert_by_filename(self, filename: str) -> Dict[str, Any]:
+        """根据文件名获取证书"""
+        return self.cert_storage.get_cert_by_filename(filename)

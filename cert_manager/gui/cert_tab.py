@@ -1,9 +1,9 @@
-import os
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox, QSpinBox, QTabWidget, QListWidget, QListWidgetItem
 from PyQt5.QtCore import Qt
-from core.cert_manager import CertManager
-from core.key_manager import KeyManager
-from core.config import ConfigManager
+from cert_manager.core.cert_manager import CertManager
+from cert_manager.core.key_manager import KeyManager
+from cert_manager.core.config import ConfigManager
+from cert_manager.utils import file_utils
 
 class CertTab(QWidget):
     def __init__(self):
@@ -164,12 +164,12 @@ class CertTab(QWidget):
             return
         
         # 构建密钥文件路径
-        key_folder = os.path.join(self.key_manager.keys_dir, key_id)
-        private_key_path = os.path.join(key_folder, f"{key_id}_private.pem")
-        public_key_path = os.path.join(key_folder, f"{key_id}_public.pem")
+        key_folder = file_utils.get_directory_path(f"{self.key_manager.keys_dir}/{key_id}")
+        private_key_path = f"{key_folder}/{key_id}_private.pem"
+        public_key_path = f"{key_folder}/{key_id}_public.pem"
         
         # 检查文件是否存在
-        if os.path.exists(private_key_path) and os.path.exists(public_key_path):
+        if file_utils.file_exists(private_key_path) and file_utils.file_exists(public_key_path):
             self.key_path_edit.setText(private_key_path)
             self.pub_key_path_edit.setText(public_key_path)
         else:
