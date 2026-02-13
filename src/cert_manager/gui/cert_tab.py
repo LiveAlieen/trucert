@@ -1,12 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox, QSpinBox, QTabWidget, QListWidget, QListWidgetItem
 from PyQt5.QtCore import Qt
-# 使用正确的绝对导入路径
 import sys
 import os
-# 添加src目录到Python路径
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from core.services import CertService, KeyService, ConfigService
-from core.utils import file_utils
+# 使用相对导入
+from ..core.services import CertService, KeyService, ConfigService
+from ..core.utils import file_utils
 
 class CertTab(QWidget):
     def __init__(self):

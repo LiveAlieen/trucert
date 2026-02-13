@@ -3,13 +3,11 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 import sys
 import os
-# 添加src目录到Python路径
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-# 使用绝对导入
-from cert_manager.gui.key_tab import KeyTab
-from cert_manager.gui.cert_tab import CertTab
-from cert_manager.gui.file_tab import FileTab
-from cert_manager.gui.verify_tab import VerifyTab
+# 使用相对导入
+from .key_tab import KeyTab
+from .cert_tab import CertTab
+from .file_tab import FileTab
+from .verify_tab import VerifyTab
 
 class MainWindow(QMainWindow):
     def __init__(self):
