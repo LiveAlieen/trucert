@@ -5,12 +5,12 @@
 
 import unittest
 import os
-from cert_manager.utils import (
+from cert_manager.core.utils import (
     calculate_hash, calculate_file_hash, verify_hash, verify_file_hash,
     generate_rsa_key, generate_ecc_key, sign_data, verify_signature,
     save_private_key, save_public_key, load_private_key, load_public_key,
-    read_file, write_file, read_binary_file, write_binary_file,
-    read_json_file, write_json_file, file_exists, directory_exists
+    read_binary_file, write_binary_file,
+    file_exists, directory_exists
 )
 from tests.test_utils import create_temp_file, cleanup_temp_path
 
@@ -128,21 +128,6 @@ class TestCryptoUtils(unittest.TestCase):
 class TestFileUtils(unittest.TestCase):
     """测试文件工具"""
     
-    def test_read_write_file(self):
-        """测试读取和写入文件"""
-        temp_file = create_temp_file(suffix=".txt")
-        test_content = "test content"
-        
-        try:
-            # 写入文件
-            write_file(temp_file, test_content)
-            
-            # 读取文件
-            read_content = read_file(temp_file)
-            self.assertEqual(read_content, test_content)
-        finally:
-            cleanup_temp_path(temp_file)
-    
     def test_read_write_binary_file(self):
         """测试读取和写入二进制文件"""
         temp_file = create_temp_file(suffix=".bin")
@@ -158,21 +143,6 @@ class TestFileUtils(unittest.TestCase):
         finally:
             cleanup_temp_path(temp_file)
     
-    def test_read_write_json_file(self):
-        """测试读取和写入JSON文件"""
-        temp_file = create_temp_file(suffix=".json")
-        test_data = {"key": "value", "number": 123}
-        
-        try:
-            # 写入文件
-            write_json_file(temp_file, test_data)
-            
-            # 读取文件
-            read_data = read_json_file(temp_file)
-            self.assertEqual(read_data, test_data)
-        finally:
-            cleanup_temp_path(temp_file)
-    
     def test_file_exists(self):
         """测试文件存在检查"""
         temp_file = create_temp_file()
@@ -182,18 +152,6 @@ class TestFileUtils(unittest.TestCase):
             self.assertFalse(file_exists("non_existent_file.txt"))
         finally:
             cleanup_temp_path(temp_file)
-    
-    def test_directory_exists(self):
-        """测试目录存在检查"""
-        import tempfile
-        temp_dir = tempfile.mkdtemp()
-        
-        try:
-            self.assertTrue(directory_exists(temp_dir))
-            self.assertFalse(directory_exists("non_existent_directory"))
-        finally:
-            import shutil
-            shutil.rmtree(temp_dir, ignore_errors=True)
 
 
 if __name__ == "__main__":

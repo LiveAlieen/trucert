@@ -235,7 +235,7 @@ def save_certificate(cert: Any, filepath: str) -> None:
         cert: 证书对象
         filepath: 文件路径
     """
-    from src.cert_manager.utils.file_utils import write_binary_file
+    from src.cert_manager.core.utils.file_utils import write_binary_file
     
     cert_data = cert.public_bytes(encoding=serialization.Encoding.PEM)
     write_binary_file(filepath, cert_data)
