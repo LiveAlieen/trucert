@@ -34,15 +34,13 @@ class VerifyCommands:
             public_key = key_service.load_public_key(args.public_key)
             
             # 验证证书
-            is_valid, errors = verifier_service.verify_cert(args.cert_path, public_key)
+            is_valid = verifier_service.verify_json_cert(args.cert_path, public_key)
             
             if is_valid:
                 print("证书验证成功!")
                 return 0
             else:
                 print("证书验证失败!")
-                for error in errors:
-                    print(f"  - {error}")
                 return 1
         except Exception as e:
             print(f"验证证书失败: {str(e)}")
@@ -57,20 +55,19 @@ class VerifyCommands:
             # 加载父证书公钥
             parent_public_key = key_service.load_public_key(args.parent_public_key)
             
-            # 加载证书
-            with open(args.cert_path, 'rb') as f:
-                cert_data = f.read()
-            
             # 验证证书链
-            is_valid, errors = verifier_service.verify_cert_chain(args.cert_path, parent_public_key)
+            # 首先需要加载证书数据
+            import json
+            with open(args.cert_path, 'r') as f:
+                cert_data = json.load(f)
+            
+            is_valid = verifier_service.verify_cert_chain(cert_data, parent_public_key)
             
             if is_valid:
                 print("证书链验证成功!")
                 return 0
             else:
                 print("证书链验证失败!")
-                for error in errors:
-                    print(f"  - {error}")
                 return 1
         except Exception as e:
             print(f"验证证书链失败: {str(e)}")

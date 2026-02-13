@@ -72,7 +72,7 @@ class FileCommands:
                 signature = f.read()
             
             # 验证签名
-            is_valid = file_signer_service.verify_file(args.file_path, signature, public_key, hash_algorithm=args.hash)
+            is_valid = file_signer_service.verify_file_signature(args.file_path, signature, public_key, hash_algorithm=args.hash)
             
             if is_valid:
                 print("文件签名验证成功!")

@@ -102,3 +102,17 @@ class FileSignerService:
             bytes: 哈希值
         """
         return self.file_signer.calculate_file_hash(file_path, hash_algorithm)
+    
+    def verify_file_signature(self, file_path: str, signature: bytes, public_key: Any, hash_algorithm: str = "sha256") -> bool:
+        """验证文件签名
+        
+        Args:
+            file_path: 文件路径
+            signature: 签名
+            public_key: 公钥
+            hash_algorithm: 哈希算法
+        
+        Returns:
+            bool: 验证是否成功
+        """
+        return self.file_signer.verify_file_signature(file_path, signature, public_key, hash_algorithm)

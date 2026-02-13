@@ -43,17 +43,19 @@ class CertCommands:
             public_key = key_service.load_public_key(args.public_key)
             
             # 生成证书
-            cert_data = cert_service.create_cert(private_key, public_key, validity_days=args.validity, time_offset=args.offset)
+            cert_data = cert_service.generate_self_signed_cert(public_key, private_key, validity_days=args.validity, forward_offset=args.offset)
             
             print("自签名证书生成成功!")
-            print(f"证书ID: {cert_data['id']}")
-            print(f"颁发者: {cert_data['issuer']}")
-            print(f"主体: {cert_data['subject']}")
-            print(f"有效期: {cert_data['valid_from']} 至 {cert_data['valid_to']}")
-            print(f"签名算法: {cert_data['signature_algorithm']}")
+            print(f"证书时间戳: {cert_data['timestamp']}")
+            print(f"算法: {cert_data['cert_info']['algorithm']}")
+            print(f"签名算法: {cert_data['cert_info']['signature_algorithm']}")
+            print(f"存储格式: {cert_data['cert_info']['storage_formats']}")
             
             if args.output:
-                cert_service.export_cert(cert_data, args.output)
+                # 保存证书到文件
+                with open(args.output, 'w') as f:
+                    import json
+                    json.dump(cert_data, f, ensure_ascii=False, indent=2)
                 print(f"证书已保存到: {args.output}")
             
             return 0
@@ -73,20 +75,23 @@ class CertCommands:
             secondary_public_key = key_service.load_public_key(args.secondary_public_key)
             
             # 生成证书
-            cert_data = cert_service.create_secondary_cert(
-                parent_private_key, parent_public_key, secondary_public_key,
-                validity_days=args.validity, time_offset=args.offset
+            cert_data = cert_service.generate_secondary_cert(
+                secondary_public_key, parent_private_key, parent_public_key,
+                validity_days=args.validity, forward_offset=args.offset
             )
             
             print("二级证书生成成功!")
-            print(f"证书ID: {cert_data['id']}")
-            print(f"颁发者: {cert_data['issuer']}")
-            print(f"主体: {cert_data['subject']}")
-            print(f"有效期: {cert_data['valid_from']} 至 {cert_data['valid_to']}")
-            print(f"签名算法: {cert_data['signature_algorithm']}")
+            print(f"证书时间戳: {cert_data['timestamp']}")
+            print(f"算法: {cert_data['cert_info']['algorithm']}")
+            print(f"签名算法: {cert_data['cert_info']['signature_algorithm']}")
+            print(f"存储格式: {cert_data['cert_info']['storage_formats']}")
+            print(f"是否有父证书: {'是' if cert_data['cert_info']['parent_public_key'] else '否'}")
             
             if args.output:
-                cert_service.export_cert(cert_data, args.output)
+                # 保存证书到文件
+                with open(args.output, 'w') as f:
+                    import json
+                    json.dump(cert_data, f, ensure_ascii=False, indent=2)
                 print(f"证书已保存到: {args.output}")
             
             return 0

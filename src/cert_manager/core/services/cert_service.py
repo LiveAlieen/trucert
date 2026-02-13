@@ -20,6 +20,10 @@ class CertService:
         Returns:
             Dict[str, Any]: 证书数据
         """
+        # 验证参数
+        if validity_days <= 0:
+            raise ValueError("有效期必须为正数")
+        
         return self.cert_manager.generate_self_signed_cert(
             public_key=public_key,
             private_key=private_key,
@@ -40,6 +44,10 @@ class CertService:
         Returns:
             Dict[str, Any]: 证书数据
         """
+        # 验证参数
+        if validity_days <= 0:
+            raise ValueError("有效期必须为正数")
+        
         return self.cert_manager.generate_secondary_cert(
             public_key=public_key,
             parent_private_key=parent_private_key,

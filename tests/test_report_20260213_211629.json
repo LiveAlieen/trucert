@@ -1,0 +1,172 @@
+{
+  "generated_at": "2026-02-13T21:16:29.966326",
+  "suites": {
+    "cli": {
+      "total_tests": 30,
+      "success": 29,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "test_results": [
+        {
+          "test": "test_batch_sign_empty_directory (test_cli_boundary.TestCLIBoundary.test_batch_sign_empty_directory)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed_invalid_validity (test_cli_boundary.TestCLIBoundary.test_cert_self_signed_invalid_validity)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed_nonexistent_keys (test_cli_boundary.TestCLIBoundary.test_cert_self_signed_nonexistent_keys)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_sign_nonexistent_file (test_cli_boundary.TestCLIBoundary.test_file_sign_nonexistent_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_verify_nonexistent_files (test_cli_boundary.TestCLIBoundary.test_file_verify_nonexistent_files)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_invalid_subcommand (test_cli_boundary.TestCLIBoundary.test_invalid_subcommand)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_invalid_curve (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_curve)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_invalid_size (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_size)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_invalid_type (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_type)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_missing_required_args (test_cli_boundary.TestCLIBoundary.test_missing_required_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert_nonexistent_files (test_cli_boundary.TestCLIBoundary.test_verify_cert_nonexistent_files)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_batch_sign (test_cli_commands.TestCLICommands.test_batch_sign)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed (test_cli_commands.TestCLICommands.test_cert_self_signed)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_sign (test_cli_commands.TestCLICommands.test_file_sign)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_verify (test_cli_commands.TestCLICommands.test_file_verify)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate (test_cli_commands.TestCLICommands.test_key_generate)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_list (test_cli_commands.TestCLICommands.test_key_list)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert (test_cli_commands.TestCLICommands.test_verify_cert)",
+          "status": "failure",
+          "message": "(<class 'AssertionError'>, AssertionError('1 != 0'), <traceback object at 0x0000017834284540>)"
+        },
+        {
+          "test": "test_cert_command_help (test_cli_parser.TestCLIParser.test_cert_command_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed_args (test_cli_parser.TestCLIParser.test_cert_self_signed_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_command_help (test_cli_parser.TestCLIParser.test_file_command_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_sign_args (test_cli_parser.TestCLIParser.test_file_sign_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_invalid_command (test_cli_parser.TestCLIParser.test_invalid_command)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_command_help (test_cli_parser.TestCLIParser.test_key_command_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_args (test_cli_parser.TestCLIParser.test_key_generate_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_ecc_args (test_cli_parser.TestCLIParser.test_key_generate_ecc_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_main_help (test_cli_parser.TestCLIParser.test_main_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_missing_subcommand (test_cli_parser.TestCLIParser.test_missing_subcommand)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert_args (test_cli_parser.TestCLIParser.test_verify_cert_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_command_help (test_cli_parser.TestCLIParser.test_verify_command_help)",
+          "status": "success",
+          "message": null
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_tests": 30,
+    "success": 29,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "success_rate": "96.67%"
+  }
+}
