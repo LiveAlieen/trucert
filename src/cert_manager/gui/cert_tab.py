@@ -171,7 +171,7 @@ class CertTab(QWidget):
         import os
         # 构建相对于当前文件的路径
         current_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        key_folder = os.path.join(current_dir, "configs", "key", key_id)
+        key_folder = os.path.join(current_dir, "cert_manager", "configs", "key", key_id)
         private_key_path = os.path.join(key_folder, f"{key_id}_private.pem")
         public_key_path = os.path.join(key_folder, f"{key_id}_public.pem")
         
