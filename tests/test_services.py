@@ -153,10 +153,7 @@ class TestServices(unittest.TestCase):
         self.assertIn("ecc_curves", algorithms)
         
         # 测试获取证书版本配置
-        cert_versions = self.config_service.get_cert_versions()
-        self.assertIsInstance(cert_versions, dict)
-        self.assertIn("v1", cert_versions)
-        self.assertIn("v3", cert_versions)
+
 
 if __name__ == "__main__":
     unittest.main()

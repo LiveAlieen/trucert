@@ -33,13 +33,7 @@ class TestConfigExceptions(unittest.TestCase):
         self.assertIn("rsa_key_sizes", algorithms)
         self.assertIn("ecc_curves", algorithms)
     
-    def test_get_cert_versions(self):
-        """测试获取证书版本配置"""
-        # 测试获取证书版本配置
-        cert_versions = self.config_manager.get_cert_versions()
-        self.assertIsInstance(cert_versions, dict)
-        self.assertIn("v1", cert_versions)
-        self.assertIn("v3", cert_versions)
+
     
     def test_invalid_config_file(self):
         """测试无效配置文件"""

@@ -152,8 +152,7 @@ configs/key/{key_id}/
 **存储结构**：
 ```
 configs/
-├── algorithms.json      # 算法配置
-└── cert_versions.json   # 证书版本配置
+└── algorithms.json      # 算法配置
 ```
 
 ### 5.2 配置类型

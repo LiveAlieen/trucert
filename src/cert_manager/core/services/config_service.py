@@ -54,13 +54,7 @@ class ConfigService:
         """
         return self.config_manager.update_config(config_name, updates, file_format)
     
-    def get_cert_versions(self) -> Dict[str, Any]:
-        """获取证书版本配置
-        
-        Returns:
-            Dict[str, Any]: 证书版本配置
-        """
-        return self.config_manager.get_cert_versions()
+
     
     def get_algorithms(self) -> Dict[str, Any]:
         """获取算法配置

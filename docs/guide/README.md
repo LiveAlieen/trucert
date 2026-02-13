@@ -314,9 +314,7 @@ print("支持的哈希算法:", algorithms['hash_algorithms'])
 print("支持的RSA密钥大小:", algorithms['rsa_key_sizes'])
 print("支持的ECC曲线:", algorithms['ecc_curves'])
 
-# 获取证书版本配置
-cert_versions = config_service.get_cert_versions()
-print("证书版本配置:", cert_versions)
+
 ```
 
 ### 6.2 更新配置

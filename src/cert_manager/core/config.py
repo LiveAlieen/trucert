@@ -51,9 +51,7 @@ class ConfigManager:
         self.save_config(config_name, config, file_format)
         return config
     
-    def get_cert_versions(self) -> Dict[str, Any]:
-        """获取证书版本配置"""
-        return self.config_storage.get_cert_versions()
+
     
     def get_algorithms(self) -> Dict[str, Any]:
         """获取算法配置"""

@@ -136,11 +136,7 @@ class TestStorage(unittest.TestCase):
         self.assertIn("rsa_key_sizes", algorithms)
         self.assertIn("ecc_curves", algorithms)
         
-        # 测试获取证书版本配置
-        cert_versions = self.config_storage.get_cert_versions()
-        self.assertIsInstance(cert_versions, dict)
-        self.assertIn("v1", cert_versions)
-        self.assertIn("v3", cert_versions)
+
         
         # 测试配置文件不存在的情况
         # 这里我们可以测试配置文件不存在时是否会使用默认配置

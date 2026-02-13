@@ -120,24 +120,7 @@ class ConfigStorage:
         
         return configs
     
-    def get_cert_versions(self) -> Dict[str, Any]:
-        """获取证书版本配置
-        
-        Returns:
-            证书版本配置
-        """
-        default_config = {
-            "v1": {
-                "version": 0,  # x509.Version.v1
-                "fields": ["subject", "issuer", "public_key", "serial_number", "not_valid_before", "not_valid_after", "signature_algorithm"]
-            },
-            "v3": {
-                "version": 2,  # x509.Version.v3
-                "fields": ["subject", "issuer", "public_key", "serial_number", "not_valid_before", "not_valid_after", "signature_algorithm", "extensions"]
-            }
-        }
-        
-        return self.get_config("cert_versions", default_config)
+
     
     def get_algorithms(self) -> Dict[str, Any]:
         """获取算法配置
