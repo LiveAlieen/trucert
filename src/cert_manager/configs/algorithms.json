@@ -1,5 +1,17 @@
 {
-  "hash_algorithms": ["sha256", "sha384", "sha512"],
-  "rsa_key_sizes": [2048, 3072, 4096],
-  "ecc_curves": ["secp256r1", "secp384r1", "secp521r1"]
+  "hash_algorithms": [
+    "sha256",
+    "sha384",
+    "sha512"
+  ],
+  "rsa_key_sizes": [
+    2048,
+    3072,
+    4096
+  ],
+  "ecc_curves": [
+    "secp256r1",
+    "secp384r1",
+    "secp521r1"
+  ]
 }
