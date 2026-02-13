@@ -116,11 +116,11 @@ class TestVerifierService(unittest.TestCase):
         
         # 生成二级证书
         secondary_cert = self.cert_service.generate_secondary_cert(
-            secondary_private_key,
             secondary_public_key,
-            {"common_name": "Secondary Cert"},
-            {"common_name": "Root Cert"},
-            validity_days=365
+            root_private_key,
+            root_public_key,
+            validity_days=365,
+            forward_offset=0
         )
         
         # 测试验证证书链
