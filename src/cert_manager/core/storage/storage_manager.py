@@ -17,7 +17,7 @@ class StorageManager:
             base_dir: 基础目录路径，如果为None则使用默认路径
         """
         if base_dir is None:
-            self.base_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "configs")
+            self.base_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "config", "configs")
         else:
             self.base_dir = base_dir
         

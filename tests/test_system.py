@@ -5,11 +5,11 @@
 
 import unittest
 import os
-from cert_manager.core.key_manager import KeyManager
-from cert_manager.core.cert_manager import CertManager
-from cert_manager.core.file_signer import FileSigner
-from cert_manager.core.verifier import Verifier
-from cert_manager.core.config import ConfigManager
+from src.cert_manager.core.key_manager import KeyManager
+from src.cert_manager.core.cert_manager import CertManager
+from src.cert_manager.core.file_signer import FileSigner
+from src.cert_manager.core.verifier import Verifier
+from src.cert_manager.core.config import ConfigManager
 from tests.test_utils import create_temp_file, create_temp_directory, cleanup_temp_path
 
 
