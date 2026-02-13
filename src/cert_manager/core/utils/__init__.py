@@ -1,6 +1,6 @@
 """工具模块
 
-提供加密、文件操作、哈希计算和验证等工具函数
+提供加密、文件操作、哈希计算、验证和日志等工具函数
 """
 
 from .crypto_utils import (
@@ -53,6 +53,12 @@ from .verify_utils import (
     save_certificate
 )
 
+from .log_utils import (
+    setup_logger,
+    get_logger,
+    default_logger
+)
+
 __all__ = [
     # crypto_utils
     "generate_rsa_key",
@@ -95,5 +101,9 @@ __all__ = [
     "get_certificate_subject",
     "get_certificate_issuer",
     "extract_public_key_from_certificate",
-    "save_certificate"
+    "save_certificate",
+    # log_utils
+    "setup_logger",
+    "get_logger",
+    "default_logger"
 ]

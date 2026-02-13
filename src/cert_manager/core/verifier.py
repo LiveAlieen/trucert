@@ -9,17 +9,23 @@ import json
 import datetime
 from .storage import StorageManager
 from .file_signer import FileSigner
+from .utils import get_logger
 
 class Verifier:
     def __init__(self):
+        # 初始化日志记录器
+        self.logger = get_logger("verifier")
+        
         self.backend = default_backend()
         self.storage_manager = StorageManager()
         self.file_signer = FileSigner()
+        self.logger.info("Verifier initialized successfully")
     
     def verify_cert_signature(self, cert: x509.Certificate, 
                             parent_cert: Optional[x509.Certificate] = None) -> Dict[str, Any]:
         """验证X.509证书签名"""
         try:
+            self.logger.info("Verifying X.509 certificate signature")
             # 如果没有提供上级证书，则验证自签名
             if not parent_cert:
                 public_key = cert.public_key()
@@ -28,12 +34,15 @@ class Verifier:
                 
                 # 检查是否是自签名证书
                 if issuer_name != subject_name:
+                    self.logger.warning("Certificate is not self-signed and no parent certificate provided")
                     return {
                         "valid": False,
                         "reason": "Certificate is not self-signed and no parent certificate provided"
                     }
+                self.logger.debug("Verifying self-signed certificate")
             else:
                 public_key = parent_cert.public_key()
+                self.logger.debug("Verifying certificate with parent certificate")
             
             # 验证签名
             signature = cert.signature
@@ -47,13 +56,16 @@ class Verifier:
                     padding.PKCS1v15(),
                     cert.signature_hash_algorithm
                 )
+                self.logger.debug("Verified RSA certificate signature")
             elif isinstance(public_key, ec.EllipticCurvePublicKey):
                 public_key.verify(
                     signature,
                     tbs_certificate,
                     ec.ECDSA(cert.signature_hash_algorithm)
                 )
+                self.logger.debug("Verified ECC certificate signature")
             else:
+                self.logger.warning("Unsupported public key type")
                 return {
                     "valid": False,
                     "reason": "Unsupported public key type"
@@ -62,16 +74,19 @@ class Verifier:
             # 检查证书有效期
             now = datetime.datetime.utcnow()
             if now < cert.not_valid_before:
+                self.logger.warning("Certificate is not yet valid")
                 return {
                     "valid": False,
                     "reason": "Certificate is not yet valid"
                 }
             if now > cert.not_valid_after:
+                self.logger.warning("Certificate has expired")
                 return {
                     "valid": False,
                     "reason": "Certificate has expired"
                 }
             
+            self.logger.info("Certificate signature is valid")
             return {
                 "valid": True,
                 "reason": "Certificate signature is valid",
@@ -85,6 +100,7 @@ class Verifier:
             }
             
         except Exception as e:
+            self.logger.error(f"Certificate verification failed: {str(e)}")
             return {
                 "valid": False,
                 "reason": f"Verification failed: {str(e)}"
@@ -95,8 +111,10 @@ class Verifier:
                              hash_algorithm: str = "sha256") -> Dict[str, Any]:
         """验证文件签名"""
         try:
+            self.logger.info(f"Verifying file signature for: {filepath}")
             # 使用FileSigner来计算文件哈希和验证签名
             if self.file_signer.verify_file_signature(filepath, signature, public_key, hash_algorithm):
+                self.logger.info("File signature is valid")
                 return {
                     "valid": True,
                     "reason": "File signature is valid",
@@ -107,12 +125,14 @@ class Verifier:
                     }
                 }
             else:
+                self.logger.warning("File signature verification failed")
                 return {
                     "valid": False,
                     "reason": "File signature verification failed"
                 }
             
         except Exception as e:
+            self.logger.error(f"File signature verification failed: {str(e)}")
             return {
                 "valid": False,
                 "reason": f"Verification failed: {str(e)}"
@@ -123,6 +143,7 @@ class Verifier:
                           hash_algorithm: str = "sha256") -> Dict[str, Any]:
         """验证带签名的文件"""
         try:
+            self.logger.info(f"Verifying signed file: {signed_file}")
             # 从文件中提取签名
             file_content, signature = self.file_signer.extract_signature_from_file(signed_file)
             
@@ -135,11 +156,13 @@ class Verifier:
             try:
                 # 验证签名
                 result = self.verify_file_signature(temp_filepath, signature, public_key, hash_algorithm)
+                self.logger.info("Signed file verification completed")
                 return result
             finally:
                 os.unlink(temp_filepath)
                 
         except Exception as e:
+            self.logger.error(f"Signed file verification failed: {str(e)}")
             return {
                 "valid": False,
                 "reason": f"Verification failed: {str(e)}"
@@ -149,6 +172,7 @@ class Verifier:
                          parent_certs: list) -> Dict[str, Any]:
         """验证证书链"""
         try:
+            self.logger.info("Verifying certificate chain")
             # 构建证书链
             cert_chain = [cert]
             current_cert = cert
@@ -160,6 +184,7 @@ class Verifier:
                 
                 # 如果是自签名证书，链结束
                 if issuer_name == subject_name:
+                    self.logger.debug("Reached self-signed root certificate")
                     break
                 
                 # 查找颁发者证书
@@ -169,9 +194,11 @@ class Verifier:
                         cert_chain.append(parent_cert)
                         current_cert = parent_cert
                         found = True
+                        self.logger.debug(f"Found issuer certificate: {issuer_name}")
                         break
                 
                 if not found:
+                    self.logger.warning("Certificate chain incomplete - issuer certificate not found")
                     return {
                         "valid": False,
                         "reason": "Certificate chain incomplete - issuer certificate not found"
@@ -184,14 +211,17 @@ class Verifier:
                 
                 result = self.verify_cert_signature(cert_to_verify, parent_cert)
                 if not result["valid"]:
+                    self.logger.warning(f"Certificate chain verification failed at certificate {i}")
                     return result
             
             # 验证根证书
             root_cert = cert_chain[-1]
             result = self.verify_cert_signature(root_cert)
             if not result["valid"]:
+                self.logger.warning("Root certificate verification failed")
                 return result
             
+            self.logger.info("Certificate chain is valid")
             return {
                 "valid": True,
                 "reason": "Certificate chain is valid",
@@ -199,6 +229,7 @@ class Verifier:
             }
             
         except Exception as e:
+            self.logger.error(f"Chain verification failed: {str(e)}")
             return {
                 "valid": False,
                 "reason": f"Chain verification failed: {str(e)}"
@@ -208,8 +239,10 @@ class Verifier:
                         parent_cert_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """验证自定义JSON格式证书"""
         try:
+            self.logger.info("Verifying JSON format certificate")
             # 检查证书数据结构
             if "cert_info" not in cert_data or "public_key" not in cert_data or "signature" not in cert_data:
+                self.logger.warning("Invalid certificate structure: Missing required fields")
                 return {
                     "valid": False,
                     "reason": "Invalid certificate structure: Missing required fields"
@@ -219,7 +252,9 @@ class Verifier:
             try:
                 public_key_hex = cert_data["public_key"]
                 public_key_data = bytes.fromhex(public_key_hex)
+                self.logger.debug("Processed public key data")
             except Exception as e:
+                self.logger.error(f"Failed to process public key: {str(e)}")
                 return {
                     "valid": False,
                     "reason": f"Failed to process public key: {str(e)}"
@@ -229,7 +264,9 @@ class Verifier:
             try:
                 signature_hex = cert_data["signature"]
                 signature = bytes.fromhex(signature_hex)
+                self.logger.debug("Processed signature data")
             except Exception as e:
+                self.logger.error(f"Failed to process signature: {str(e)}")
                 return {
                     "valid": False,
                     "reason": f"Failed to process signature: {str(e)}"
@@ -240,6 +277,7 @@ class Verifier:
                 # 提取时间戳和正向偏移量
                 timestamp_str = cert_data.get("timestamp", "")
                 if not timestamp_str:
+                    self.logger.warning("Missing timestamp")
                     return {
                         "valid": False,
                         "reason": "Missing timestamp"
@@ -274,7 +312,9 @@ class Verifier:
                 
                 # 重建消息，顺序与生成时完全相同
                 message = public_key_data + timestamp_bytes + offset_bytes + cert_info_bytes
+                self.logger.debug("Reconstructed message for signature verification")
             except Exception as e:
+                self.logger.error(f"Failed to reconstruct message: {str(e)}")
                 return {
                     "valid": False,
                     "reason": f"Failed to reconstruct message: {str(e)}"
@@ -288,11 +328,13 @@ class Verifier:
                         public_key_data,
                         backend=self.backend
                     )
+                    self.logger.debug("Loaded root certificate public key for verification")
                 else:
                     # 二级证书：使用上级证书公钥验证
                     if not parent_cert_data:
                         # 尝试从parent_public_key字段获取上级公钥
                         if not parent_public_key:
+                            self.logger.warning("Secondary certificate requires parent certificate or parent_public_key field")
                             return {
                                 "valid": False,
                                 "reason": "Secondary certificate requires parent certificate or parent_public_key field"
@@ -303,7 +345,9 @@ class Verifier:
                                 parent_public_key_data,
                                 backend=self.backend
                             )
+                            self.logger.debug("Loaded parent public key from parent_public_key field")
                         except Exception as e:
+                            self.logger.error(f"Failed to load parent public key: {str(e)}")
                             return {
                                 "valid": False,
                                 "reason": f"Failed to load parent public key: {str(e)}"
@@ -312,6 +356,7 @@ class Verifier:
                         # 使用提供的上级证书公钥验证
                         parent_public_key_hex = parent_cert_data.get("public_key", "")
                         if not parent_public_key_hex:
+                            self.logger.warning("Parent certificate missing public key")
                             return {
                                 "valid": False,
                                 "reason": "Parent certificate missing public key"
@@ -321,7 +366,9 @@ class Verifier:
                             parent_public_key_data,
                             backend=self.backend
                         )
+                        self.logger.debug("Loaded parent public key from parent_cert_data")
             except Exception as e:
+                self.logger.error(f"Failed to load verifying key: {str(e)}")
                 return {
                     "valid": False,
                     "reason": f"Failed to load verifying key: {str(e)}"
@@ -339,23 +386,28 @@ class Verifier:
                         ),
                         hashes.SHA256()
                     )
+                    self.logger.debug("Verified RSA signature")
                 elif isinstance(verifying_key, ec.EllipticCurvePublicKey):
                     verifying_key.verify(
                         signature,
                         message,
                         ec.ECDSA(hashes.SHA256())
                     )
+                    self.logger.debug("Verified ECC signature")
                 else:
+                    self.logger.warning("Unsupported public key type")
                     return {
                         "valid": False,
                         "reason": "Unsupported public key type"
                     }
             except Exception as e:
+                self.logger.error(f"Failed to verify signature: {str(e)}")
                 return {
                     "valid": False,
                     "reason": f"Failed to verify signature: {str(e)}"
                 }
             
+            self.logger.info("JSON certificate signature is valid")
             return {
                 "valid": True,
                 "reason": "Certificate signature is valid",
@@ -364,6 +416,7 @@ class Verifier:
             }
             
         except Exception as e:
+            self.logger.error(f"JSON certificate verification failed with unexpected error: {str(e)}")
             return {
                 "valid": False,
                 "reason": f"Verification failed with unexpected error: {str(e)}"
@@ -373,13 +426,17 @@ class Verifier:
                                    public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey]) -> Dict[str, Any]:
         """从JSON签名文件验证带签名的文件"""
         try:
+            self.logger.info(f"Verifying signed file from JSON signature: {signed_file}")
             # 加载签名数据
             signature, hash_algorithm, file_info = self.file_signer.load_signature(signature_file)
             
             # 验证文件签名
-            return self.verify_file_signature(signed_file, signature, public_key, hash_algorithm)
+            result = self.verify_file_signature(signed_file, signature, public_key, hash_algorithm)
+            self.logger.info("Signed file verification from JSON completed")
+            return result
             
         except Exception as e:
+            self.logger.error(f"Signed file verification from JSON failed: {str(e)}")
             return {
                 "valid": False,
                 "reason": f"Verification failed: {str(e)}"
