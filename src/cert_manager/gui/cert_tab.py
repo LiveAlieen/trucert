@@ -1,15 +1,14 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox, QSpinBox, QTabWidget, QListWidget, QListWidgetItem
 from PyQt5.QtCore import Qt
-from src.cert_manager.core.cert_manager import CertManager
-from src.cert_manager.core.key_manager import KeyManager
-from src.cert_manager.core.config import ConfigManager
+from src.cert_manager.core.services import CertService, KeyService, ConfigService
 from src.cert_manager.utils import file_utils
 
 class CertTab(QWidget):
     def __init__(self):
         super().__init__()
-        self.cert_manager = CertManager()
-        self.key_manager = KeyManager()
+        self.cert_service = CertService()
+        self.key_service = KeyService()
+        self.config_service = ConfigService()
         self.init_ui()
     
     def init_ui(self):
@@ -140,7 +139,7 @@ class CertTab(QWidget):
         
         # 获取存储的密钥对列表
         try:
-            keys = self.key_manager.list_keys()
+            keys = self.key_service.list_keys()
             for key_info in keys:
                 key_id = key_info["id"]
                 key_type = key_info["type"]
@@ -321,7 +320,7 @@ class CertTab(QWidget):
         
         # 获取证书列表
         try:
-            certs = self.cert_manager.list_certs()
+            certs = self.cert_service.list_certs()
             for cert_info in certs:
                 filename = cert_info["filename"]
                 cert_type = cert_info["type"]
@@ -373,7 +372,7 @@ class CertTab(QWidget):
         
         if reply == QMessageBox.Yes:
             # 删除证书
-            success = self.cert_manager.delete_cert(cert_info['path'])
+            success = self.cert_service.delete_cert(cert_info['path'])
             if success:
                 QMessageBox.information(self, "成功", "证书删除成功")
                 # 刷新证书列表
@@ -392,7 +391,7 @@ class CertTab(QWidget):
         
         try:
             # 导入证书
-            cert_data = self.cert_manager.import_cert(file_path)
+            cert_data = self.cert_service.import_cert(file_path)
             QMessageBox.information(self, "成功", "证书导入成功")
             # 刷新证书列表
             self.refresh_cert_list()
@@ -454,14 +453,14 @@ class CertTab(QWidget):
                 QMessageBox.warning(self, "警告", "请选择公钥文件")
                 return
             
-            private_key = self.key_manager.load_private_key(key_path, None)
-            public_key = self.key_manager.load_public_key(pub_key_path)
+            private_key = self.key_service.load_private_key(key_path, None)
+            public_key = self.key_service.load_public_key(pub_key_path)
             
             # 生成证书
             validity_days = self.validity_spin.value()
             forward_offset = self.offset_spin.value()
             
-            cert_data = self.cert_manager.generate_self_signed_cert(
+            cert_data = self.cert_service.generate_self_signed_cert(
                 public_key,
                 private_key,
                 validity_days,
@@ -471,7 +470,7 @@ class CertTab(QWidget):
             self.current_cert = cert_data
             
             # 显示证书信息
-            cert_info = self.cert_manager.get_cert_info(cert_data)
+            cert_info = self.cert_service.get_cert_info(cert_data)
             info_text = "证书信息:\n"
             for key, value in cert_info.items():
                 if isinstance(value, dict):
@@ -500,7 +499,7 @@ class CertTab(QWidget):
             return
         
         try:
-            self.cert_manager.save_cert(self.current_cert, file_path)
+            self.cert_service.save_cert(self.current_cert, file_path)
             QMessageBox.information(self, "成功", "证书保存成功")
         except Exception as e:
             QMessageBox.critical(self, "错误", f"保存证书失败: {str(e)}")
@@ -527,31 +526,32 @@ class CertTab(QWidget):
                 return
             
             # 加载上级证书以获取公钥
-            parent_cert_data = self.cert_manager.load_cert(parent_cert_path)
+            parent_cert_data = self.cert_service.load_cert(parent_cert_path)
             parent_public_key_hex = parent_cert_data.get("public_key", "")
             if not parent_public_key_hex:
                 QMessageBox.warning(self, "警告", "上级证书文件无效，缺少public_key字段")
                 return
             
             # 加载上级私钥
-            parent_private_key = self.key_manager.load_private_key(parent_key_path, None)
+            parent_private_key = self.key_service.load_private_key(parent_key_path, None)
             
             # 加载上级公钥
             from cryptography.hazmat.primitives import serialization
+            from cryptography.hazmat.backends import default_backend
             parent_public_key_data = bytes.fromhex(parent_public_key_hex)
             parent_public_key = serialization.load_der_public_key(
                 parent_public_key_data,
-                backend=self.key_manager.backend
+                backend=default_backend()
             )
             
             # 加载二级公钥
-            secondary_public_key = self.key_manager.load_public_key(secondary_pub_key_path)
+            secondary_public_key = self.key_service.load_public_key(secondary_pub_key_path)
             
             # 签名证书
             validity_days = self.sign_validity_spin.value()
             forward_offset = self.sign_offset_spin.value()
             
-            cert_data = self.cert_manager.generate_secondary_cert(
+            cert_data = self.cert_service.generate_secondary_cert(
                 secondary_public_key,
                 parent_private_key,
                 parent_public_key,
@@ -562,7 +562,7 @@ class CertTab(QWidget):
             self.current_sign_cert = cert_data
             
             # 显示证书信息
-            cert_info = self.cert_manager.get_cert_info(cert_data)
+            cert_info = self.cert_service.get_cert_info(cert_data)
             info_text = "证书信息:\n"
             for key, value in cert_info.items():
                 if isinstance(value, dict):
@@ -592,7 +592,7 @@ class CertTab(QWidget):
             return
         
         try:
-            self.cert_manager.save_cert(self.current_sign_cert, file_path)
+            self.cert_service.save_cert(self.current_sign_cert, file_path)
             QMessageBox.information(self, "成功", "证书保存成功")
         except Exception as e:
             QMessageBox.critical(self, "错误", f"保存证书失败: {str(e)}")

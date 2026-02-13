@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-02-13T06:59:48.671919",
+  "forward_offset": 0,
+  "cert_info": {
+    "algorithm": "ECC",
+    "signature_algorithm": "ECDSA-SHA256",
+    "storage_formats": {
+      "public_key": "DER_HEX",
+      "signature": "HEX",
+      "parent_public_key": "DER_HEX"
+    },
+    "parent_public_key": ""
+  },
+  "public_key": "3059301306072a8648ce3d020106082a8648ce3d03010703420004be72244fea4a01e712160bc11b97e0ff3b0c9087a55a7307103888ac5f2fcff2a61d1d7a66fe98abae649cf6708d87e5c04afa796b4a9510f288cee3477be6ca",
+  "signature": "3045022100fbb07c197232351bbcfab23f5be36d37ce4c188ff879359ec3b6bb4a2bbdd49c022019e49cda0a9120c1fcaa00adf833f6475381e281ba2e0d4a48bf95e56029fe13"
+}

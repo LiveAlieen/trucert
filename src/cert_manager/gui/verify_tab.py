@@ -1,21 +1,17 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox, QTabWidget
 from PyQt5.QtCore import Qt
-from src.cert_manager.core.verifier import Verifier
-from src.cert_manager.core.key_manager import KeyManager
-from src.cert_manager.core.cert_manager import CertManager
-from src.cert_manager.core.file_signer import FileSigner
-from src.cert_manager.core.config import ConfigManager
+from src.cert_manager.core.services import VerifierService, KeyService, CertService, FileSignerService, ConfigService
 from src.cert_manager.utils import file_utils
 
 class VerifyTab(QWidget):
     def __init__(self):
         super().__init__()
-        self.verifier = Verifier()
-        self.key_manager = KeyManager()
-        self.cert_manager = CertManager()
-        self.file_signer = FileSigner()
-        self.config_manager = ConfigManager()
-        self.algorithms = self.config_manager.get_algorithms()
+        self.verifier_service = VerifierService()
+        self.key_service = KeyService()
+        self.cert_service = CertService()
+        self.file_signer_service = FileSignerService()
+        self.config_service = ConfigService()
+        self.algorithms = self.config_service.get_algorithms()
         self.init_ui()
     
     def init_ui(self):
@@ -184,16 +180,16 @@ class VerifyTab(QWidget):
                 return
             
             # 加载证书
-            cert = self.cert_manager.load_cert(cert_path)
+            cert = self.cert_service.load_cert(cert_path)
             
             # 加载上级证书（如果提供）
             parent_cert = None
             parent_path = self.parent_path_edit.text()
             if parent_path:
-                parent_cert = self.cert_manager.load_cert(parent_path)
+                parent_cert = self.cert_service.load_cert(parent_path)
             
             # 验证证书
-            result = self.verifier.verify_json_cert(cert, parent_cert)
+            result = self.verifier_service.verify_json_cert(cert, parent_cert)
             
             # 显示验证结果
             result_text = "验证结果:\n"
@@ -231,7 +227,7 @@ class VerifyTab(QWidget):
                 return
             
             # 加载公钥
-            public_key = self.key_manager.load_public_key(key_path)
+            public_key = self.key_service.load_public_key(key_path)
             
             # 获取哈希算法
             hash_algorithm = self.verify_hash_combo.currentText()
@@ -240,14 +236,14 @@ class VerifyTab(QWidget):
             is_signed_file = False
             try:
                 # 尝试提取签名
-                file_content, signature = self.file_signer.extract_signature_from_file(file_path)
+                file_content, signature = self.file_signer_service.extract_signature_from_file(file_path)
                 is_signed_file = True
             except:
                 is_signed_file = False
             
             if is_signed_file:
                 # 验证带签名的文件
-                result = self.verifier.verify_signed_file(file_path, public_key, hash_algorithm)
+                result = self.verifier_service.verify_signed_file(file_path, public_key, hash_algorithm)
             else:
                 # 检查是否提供了签名文件
                 sig_path = self.sig_path_edit.text()
@@ -257,13 +253,13 @@ class VerifyTab(QWidget):
                 
                 # 加载签名
                 # 加载签名、哈希算法和文件信息
-                signature, sig_hash_algorithm, file_info = self.file_signer.load_signature(sig_path)
+                signature, sig_hash_algorithm, file_info = self.file_signer_service.load_signature(sig_path)
                 # 如果从签名文件中获取到哈希算法，则使用它
                 if sig_hash_algorithm:
                     hash_algorithm = sig_hash_algorithm
                 
                 # 验证文件
-                result = self.verifier.verify_file_signature(file_path, signature, public_key, hash_algorithm)
+                result = self.verifier_service.verify_file_signature(file_path, signature, public_key, hash_algorithm)
             
             # 显示验证结果
             result_text = "验证结果:\n"

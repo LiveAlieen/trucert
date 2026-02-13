@@ -1,17 +1,15 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox
 from PyQt5.QtCore import Qt
-from src.cert_manager.core.file_signer import FileSigner
-from src.cert_manager.core.key_manager import KeyManager
-from src.cert_manager.core.config import ConfigManager
+from src.cert_manager.core.services import FileSignerService, KeyService, ConfigService
 from src.cert_manager.utils import file_utils
 
 class FileTab(QWidget):
     def __init__(self):
         super().__init__()
-        self.file_signer = FileSigner()
-        self.key_manager = KeyManager()
-        self.config_manager = ConfigManager()
-        self.algorithms = self.config_manager.get_algorithms()
+        self.file_signer_service = FileSignerService()
+        self.key_service = KeyService()
+        self.config_service = ConfigService()
+        self.algorithms = self.config_service.get_algorithms()
         self.init_ui()
     
     def init_ui(self):
@@ -155,18 +153,18 @@ class FileTab(QWidget):
                 return
             
             # 加载私钥
-            private_key = self.key_manager.load_private_key(key_path, None)
+            private_key = self.key_service.load_private_key(key_path, None)
             
             # 获取哈希算法
             hash_algorithm = self.hash_combo.currentText()
             
             # 签名文件
-            signature = self.file_signer.sign_file(file_path, private_key, hash_algorithm)
+            signature = self.file_signer_service.sign_file(file_path, private_key, hash_algorithm)
             
             self.current_signature = signature
             
             # 显示签名信息
-            file_info = self.file_signer.get_file_info(file_path)
+            file_info = self.file_signer_service.get_file_info(file_path)
             info_text = "文件信息:\n"
             for key, value in file_info.items():
                 info_text += f"{key}: {value}\n"
@@ -199,7 +197,7 @@ class FileTab(QWidget):
             # 保存为JSON格式
             hash_algorithm = self.hash_combo.currentText()
             original_file = self.file_path_edit.text()
-            self.file_signer.save_signature(self.current_signature, file_path, original_file, hash_algorithm)
+            self.file_signer_service.save_signature(self.current_signature, file_path, original_file, hash_algorithm)
             QMessageBox.information(self, "成功", "签名保存成功")
         except Exception as e:
             QMessageBox.critical(self, "错误", f"保存签名失败: {str(e)}")
@@ -217,7 +215,7 @@ class FileTab(QWidget):
             return
         
         try:
-            result_path = self.file_signer.attach_signature_to_file(file_path, self.current_signature, output_path)
+            result_path = self.file_signer_service.attach_signature_to_file(file_path, self.current_signature, output_path)
             QMessageBox.information(self, "成功", f"签名已附加到文件: {result_path}")
         except Exception as e:
             QMessageBox.critical(self, "错误", f"附加签名失败: {str(e)}")
@@ -258,13 +256,13 @@ class FileTab(QWidget):
                 return
             
             # 加载私钥
-            private_key = self.key_manager.load_private_key(key_path, None)
+            private_key = self.key_service.load_private_key(key_path, None)
             
             # 获取哈希算法
             hash_algorithm = self.hash_combo.currentText()
             
             # 执行批量签名
-            results = self.file_signer.batch_sign(
+            results = self.file_signer_service.batch_sign(
                 self.batch_files,
                 private_key,
                 output_dir,
