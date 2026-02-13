@@ -5,7 +5,7 @@
 
 import sys
 from PyQt5.QtWidgets import QApplication
-from cert_manager.gui import MainWindow
+from src.cert_manager.gui import MainWindow
 
 
 def main():
