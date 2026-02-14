@@ -10,21 +10,29 @@ import sys
 import os
 from typing import Optional
 
-# 添加项目根目录到Python路径
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+# 添加src目录到Python路径
+current_dir = os.path.dirname(__file__)
+parent_dir = os.path.dirname(current_dir)
+grandparent_dir = os.path.dirname(parent_dir)
+src_dir = os.path.join(os.path.dirname(grandparent_dir), 'src')
+sys.path.insert(0, src_dir)
 
-from cert_manager.core.services import KeyService, CertService, FileSignerService, VerifierService, ConfigService
-from cert_manager.cli.commands import key_commands, cert_commands, file_commands, verify_commands
-from cert_manager.core.utils import initialize_dependencies
+try:
+    from cert_manager.core.services import KeyService, CertService, FileSignerService, VerifierService, ConfigService
+    from cert_manager.cli.commands import key_commands, cert_commands, file_commands, verify_commands
+    from cert_manager.core.utils import initialize_dependencies
+except ImportError as e:
+    print(f"Import error: {str(e)}")
+    import traceback
+    traceback.print_exc()
+    sys.exit(1)
 
 class CLI:
     """CLI主类"""
     
     def __init__(self):
         # 初始化依赖注入容器
-        print("Initializing dependencies...")
         initialize_dependencies()
-        print("Dependencies initialized successfully!")
         
         self.parser = argparse.ArgumentParser(
             prog='cert-cli',
