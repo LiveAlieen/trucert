@@ -220,8 +220,11 @@ class FileSigner:
                         continue
                     
                     # 直接调用sign_file方法，确保使用完全相同的代码路径
+                    self.logger.debug(f"Batch signing file: {filepath}")
+                    self.logger.debug(f"Using hash algorithm: {hash_algorithm}")
                     signature = self.sign_file(filepath, private_key, hash_algorithm)
                     self.logger.debug(f"Generated signature for file {filepath}, length: {len(signature)}")
+                    self.logger.debug(f"Generated signature first 10 bytes: {signature[:10]}")
                     
                     # 生成签名文件路径（保存到output_dir根目录）
                     filename = os.path.basename(filepath)
@@ -239,8 +242,7 @@ class FileSigner:
                     results.append({
                         "file": filepath,
                         "success": True,
-                        "signature_file": signature_filepath,
-                        "signature": signature  # 添加生成的签名到结果中
+                        "signature_file": signature_filepath
                     })
                     self.logger.info(f"Batch sign completed for file: {filepath}")
                     
@@ -265,7 +267,12 @@ class FileSigner:
         """验证文件签名"""
         try:
             self.logger.info(f"Verifying file signature for: {filepath}")
+            self.logger.debug(f"Signature length: {len(signature)}")
+            self.logger.debug(f"Hash algorithm: {hash_algorithm}")
+            self.logger.debug(f"Public key type: {type(public_key)}")
+            
             file_hash = self.calculate_file_hash(filepath, hash_algorithm)
+            self.logger.debug(f"Calculated file hash: {file_hash[:10]}...")
             
             try:
                 if isinstance(public_key, rsa.RSAPublicKey):
@@ -287,9 +294,7 @@ class FileSigner:
                 return True
             except Exception as e:
                 self.logger.warning(f"File signature verification failed for {filepath}: {str(e)}")
-                print(f"验证失败详情: {str(e)}")
                 return False
         except Exception as e:
             self.logger.error(f"Failed to verify file signature for {filepath}: {str(e)}")
-            print(f"验证过程错误: {str(e)}")
             return False

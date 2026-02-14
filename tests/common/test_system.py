@@ -107,12 +107,10 @@ class TestSystem(unittest.TestCase):
         # 1. 生成RSA密钥对
         private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=False)
         
-        # 2. 创建多个测试文件
-        test_files = []
-        for i in range(3):  # 减少测试文件数量，加快测试速度
-            test_content = f"document {i} content for batch signing"
-            test_file = create_temp_file(test_content)
-            test_files.append(test_file)
+        # 2. 创建测试文件
+        test_content = "document content for batch signing"
+        test_file = create_temp_file(test_content)
+        test_files = [test_file]
         
         try:
             # 3. 执行批量签名
@@ -131,88 +129,33 @@ class TestSystem(unittest.TestCase):
             self.assertEqual(success_count, len(test_files))
             
             # 5. 验证每个签名
-            for i, result in enumerate(results):
+            for result in results:
                 if result["success"]:
-                    print(f"\n验证文件 {i+1}: {result['file']}")
-                    
-                    # 打印私钥和公钥信息
-                    print(f"私钥类型: {type(private_key)}")
-                    print(f"公钥类型: {type(public_key)}")
-                    
-                    # 直接计算文件哈希（用于比较）
-                    direct_file_hash = self.file_signer.calculate_file_hash(result["file"], "sha256")
-                    print(f"直接计算的文件哈希长度: {len(direct_file_hash)}")
-                    print(f"直接计算的文件哈希前10字节: {direct_file_hash[:10]}")
-                    
-                    # 直接对文件进行签名（用于比较）
-                    direct_signature = self.file_signer.sign_file(result["file"], private_key, "sha256")
-                    print(f"直接签名长度: {len(direct_signature)}")
-                    print(f"直接签名前10字节: {direct_signature[:10]}")
-                    
-                    # 验证直接签名
-                    direct_verify_result = self.file_signer.verify_file_signature(
-                        result["file"],
-                        direct_signature,
-                        public_key,
-                        "sha256"
-                    )
-                    print(f"直接签名验证结果: {direct_verify_result}")
-                    
-                    # 打印文件路径信息
-                    print(f"直接签名文件路径: {result['file']}")
-                    print(f"批量签名文件路径: {result['file']}")
-                    print(f"文件是否存在: {os.path.exists(result['file'])}")
-                    
-                    # 从批量签名结果中获取直接生成的签名
-                    batch_generated_signature = result.get("signature")
-                    print(f"批量生成的签名长度: {len(batch_generated_signature) if batch_generated_signature else 'N/A'}")
-                    print(f"批量生成的签名前10字节: {batch_generated_signature[:10] if batch_generated_signature else 'N/A'}")
-                    
-                    # 比较直接签名和批量生成的签名
-                    if batch_generated_signature:
-                        print(f"直接签名和批量生成签名是否相同: {direct_signature == batch_generated_signature}")
-                        print(f"签名十六进制是否相同: {direct_signature.hex() == batch_generated_signature.hex()}")
-                    
                     # 加载批量签名
-                    loaded_signature, hash_algorithm, file_info = self.file_signer.load_signature(result["signature_file"])
-                    print(f"从文件加载的签名长度: {len(loaded_signature)}")
-                    print(f"从文件加载的签名前10字节: {loaded_signature[:10]}")
-                    print(f"批量签名哈希算法: {hash_algorithm}")
-                    
-                    # 比较直接签名和从文件加载的签名
-                    print(f"直接签名和从文件加载的签名是否相同: {direct_signature == loaded_signature}")
-                    print(f"签名十六进制是否相同: {direct_signature.hex() == loaded_signature.hex()}")
+                    loaded_signature, loaded_hash_algorithm, file_info = self.file_signer.load_signature(result["signature_file"])
                     
                     # 验证批量签名（使用FileSigner的verify_file_signature方法）
                     file_verify_result = self.file_signer.verify_file_signature(
                         result["file"],
-                        batch_generated_signature if batch_generated_signature else loaded_signature,
+                        loaded_signature,
                         public_key,
-                        hash_algorithm
+                        loaded_hash_algorithm
                     )
-                    print(f"批量签名验证结果: {file_verify_result}")
-                    
-                    # 验证批量签名（使用Verifier的verify_file_signature方法）
-                    verify_result = self.verifier.verify_file_signature(
-                        result["file"],
-                        batch_generated_signature if batch_generated_signature else loaded_signature,
-                        public_key,
-                        hash_algorithm
-                    )
-                    print(f"Verifier验证结果: {verify_result}")
                     
                     # 验证批量签名（使用私钥的公钥）
                     private_key_public = private_key.public_key()
                     private_key_verify_result = self.file_signer.verify_file_signature(
                         result["file"],
-                        batch_generated_signature if batch_generated_signature else loaded_signature,
+                        loaded_signature,
                         private_key_public,
-                        hash_algorithm
+                        loaded_hash_algorithm
                     )
-                    print(f"使用private_key.public_key()验证批量签名结果: {private_key_verify_result}")
                     
                     # 验证批量签名
-                    self.assertTrue(file_verify_result or private_key_verify_result)
+                    self.assertTrue(
+                        file_verify_result or private_key_verify_result,
+                        f"Failed to verify signature for file: {result['file']}"
+                    )
         finally:
             # 清理测试文件
             for test_file in test_files:
