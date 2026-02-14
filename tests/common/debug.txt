@@ -1,0 +1,57 @@
+=== 批量签名测试调试信息 ===
+测试文件数量: 3
+成功签名数量: 3
+
+--- 文件 1 ---
+文件路径: C:\Users\LiveA\AppData\Local\Temp\tmp12kfetv3\test_file.txt
+签名成功: True
+签名文件: C:\Users\LiveA\AppData\Local\Temp\tmpsmye6kj0\signatures\test_file.sig.json
+签名长度: 256
+哈希算法: sha256
+文件存在: True
+文件大小: 19
+文件内容: b'test file 0 content'
+签名长度: 256
+签名前10字节: b"\x18Z\xcb\x93NX'\xf9\x8cp"
+FileSigner验证结果: False
+文件哈希长度: 32
+文件哈希前10字节: b'\x1f\x0c:\xb5\xc8pj;\xa2\t'
+手动验证失败: name 'padding' is not defined
+Verifier验证结果: {'valid': False, 'reason': 'File signature verification failed'}
+测试失败: False is not true
+
+--- 文件 2 ---
+文件路径: C:\Users\LiveA\AppData\Local\Temp\tmpcmgkywqm\test_file.txt
+签名成功: True
+签名文件: C:\Users\LiveA\AppData\Local\Temp\tmpsmye6kj0\signatures\test_file.sig.json
+签名长度: 256
+哈希算法: sha256
+文件存在: True
+文件大小: 19
+文件内容: b'test file 1 content'
+签名长度: 256
+签名前10字节: b"\x18Z\xcb\x93NX'\xf9\x8cp"
+FileSigner验证结果: False
+文件哈希长度: 32
+文件哈希前10字节: b'\xa5\xb7z\x89\xf6B\xdb\xd8\\\x8a'
+手动验证失败: name 'padding' is not defined
+Verifier验证结果: {'valid': False, 'reason': 'File signature verification failed'}
+测试失败: False is not true
+
+--- 文件 3 ---
+文件路径: C:\Users\LiveA\AppData\Local\Temp\tmpxxdyorif\test_file.txt
+签名成功: True
+签名文件: C:\Users\LiveA\AppData\Local\Temp\tmpsmye6kj0\signatures\test_file.sig.json
+签名长度: 256
+哈希算法: sha256
+文件存在: True
+文件大小: 19
+文件内容: b'test file 2 content'
+签名长度: 256
+签名前10字节: b"\x18Z\xcb\x93NX'\xf9\x8cp"
+FileSigner验证结果: True
+文件哈希长度: 32
+文件哈希前10字节: b'j\x9a\xe3W\xe6GR\xceo\\'
+手动验证失败: name 'padding' is not defined
+Verifier验证结果: {'valid': True, 'reason': 'File signature is valid', 'file_info': {'file_path': 'C:\\Users\\LiveA\\AppData\\Local\\Temp\\tmpxxdyorif\\test_file.txt', 'file_size': 19, 'hash_algorithm': 'sha256'}}
+测试通过

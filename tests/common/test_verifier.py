@@ -9,7 +9,7 @@ from cert_manager.core.verifier import Verifier
 from cert_manager.core.key_manager import KeyManager
 from cert_manager.core.cert_manager import CertManager
 from cert_manager.core.file_signer import FileSigner
-from tests.test_utils import create_temp_file, create_temp_directory, cleanup_temp_path
+from tests.utils.test_utils import create_temp_directory, create_temp_file, cleanup_temp_path
 
 
 class TestVerifier(unittest.TestCase):
@@ -82,6 +82,7 @@ class TestVerifier(unittest.TestCase):
         # 创建测试文件
         test_content = "test file content"
         test_file = create_temp_file(test_content)
+        signed_file = None
         
         try:
             # 签名文件
@@ -100,7 +101,8 @@ class TestVerifier(unittest.TestCase):
             self.assertTrue(result["valid"])
         finally:
             cleanup_temp_path(test_file)
-            cleanup_temp_path(signed_file)
+            if signed_file:
+                cleanup_temp_path(signed_file)
     
     def test_verify_signature_from_json(self):
         """测试从JSON文件验证签名"""

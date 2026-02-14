@@ -12,7 +12,7 @@ from cert_manager.core.storage.cert_storage import CertStorage
 from cert_manager.core.storage.config_storage import ConfigStorage
 from cert_manager.core.key_manager import KeyManager
 from cert_manager.core.cert_manager import CertManager
-from tests.test_utils import create_temp_directory, cleanup_temp_path
+from tests.utils.test_utils import create_temp_directory, cleanup_temp_path
 
 
 class TestStorage(unittest.TestCase):

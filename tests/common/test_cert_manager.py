@@ -7,7 +7,7 @@ import unittest
 import os
 from cert_manager.core.cert_manager import CertManager
 from cert_manager.core.key_manager import KeyManager
-from tests.test_utils import create_temp_directory, cleanup_temp_path
+from tests.utils.test_utils import create_temp_directory, cleanup_temp_path
 
 
 class TestCertManager(unittest.TestCase):

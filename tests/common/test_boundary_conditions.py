@@ -5,10 +5,18 @@
 
 import unittest
 import os
+import sys
+
+# 添加src目录到Python路径
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
+# 添加tests目录到Python路径
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
 from cert_manager.core.key_manager import KeyManager
 from cert_manager.core.cert_manager import CertManager
 from cert_manager.core.file_signer import FileSigner
-from tests.test_utils import create_temp_file, cleanup_temp_path
+from tests.utils.test_utils import create_temp_directory, create_temp_file, cleanup_temp_path
 
 
 class TestBoundaryConditions(unittest.TestCase):

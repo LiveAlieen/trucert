@@ -6,9 +6,13 @@
 """
 
 import os
+import sys
 import tempfile
 import shutil
 from typing import Optional
+
+# 添加src目录到Python路径
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src'))
 
 
 def create_temp_directory() -> str:
@@ -19,6 +23,33 @@ def create_temp_directory() -> str:
         str: 临时目录路径
     """
     return tempfile.mkdtemp()
+
+
+def create_temp_file(content: str = "test content", suffix: str = None) -> str:
+    """
+    创建临时文件
+    
+    Args:
+        content: 文件内容
+        suffix: 文件后缀（可选）
+    
+    Returns:
+        str: 临时文件路径
+    """
+    # 生成临时文件
+    temp_file = generate_test_file(content)
+    
+    # 如果指定了后缀，重命名文件
+    if suffix:
+        import os
+        directory = os.path.dirname(temp_file)
+        filename = os.path.basename(temp_file)
+        new_filename = f"{os.path.splitext(filename)[0]}{suffix}"
+        new_temp_file = os.path.join(directory, new_filename)
+        os.rename(temp_file, new_temp_file)
+        temp_file = new_temp_file
+    
+    return temp_file
 
 
 def cleanup_temp_path(path: str) -> None:

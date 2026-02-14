@@ -146,7 +146,7 @@ class Verifier:
             return False
     
     def verify_file_signature(self, filepath: str, signature: bytes, public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey],
-                             hash_algorithm: str = "sha256") -> bool:
+                             hash_algorithm: str = "sha256") -> dict:
         """验证文件签名
         
         Args:
@@ -156,12 +156,13 @@ class Verifier:
             hash_algorithm: 哈希算法
         
         Returns:
-            是否验证成功
+            验证结果字典，包含"valid"字段表示验证是否成功
         """
-        return self.file_signer.verify_file_signature(filepath, signature, public_key, hash_algorithm)
+        result = self.file_signer.verify_file_signature(filepath, signature, public_key, hash_algorithm)
+        return {"valid": result}
     
     def verify_signed_file(self, signed_filepath: str, public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey],
-                          hash_algorithm: str = "sha256") -> bool:
+                          hash_algorithm: str = "sha256") -> dict:
         """验证带签名的文件
         
         Args:
@@ -170,7 +171,7 @@ class Verifier:
             hash_algorithm: 哈希算法
         
         Returns:
-            是否验证成功
+            验证结果字典，包含"valid"字段表示验证是否成功
         """
         try:
             self.logger.info(f"Verifying signed file: {signed_filepath}")
@@ -187,49 +188,51 @@ class Verifier:
             try:
                 # 验证签名
                 result = self.verify_file_signature(temp_file_path, signature, public_key, hash_algorithm)
-                self.logger.info(f"Signed file verification {'successful' if result else 'failed'}")
+                self.logger.info(f"Signed file verification {'successful' if result['valid'] else 'failed'}")
                 return result
             finally:
                 # 清理临时文件
                 os.unlink(temp_file_path)
         except Exception as e:
             self.logger.error(f"Failed to verify signed file {signed_filepath}: {str(e)}")
-            return False
+            return {"valid": False}
     
-    def verify_json_cert(self, cert_json_path: str, public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey]) -> bool:
+    def verify_json_cert(self, cert_data: dict, public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey] = None) -> dict:
         """验证JSON格式的证书
         
         Args:
-            cert_json_path: 证书JSON文件路径
-            public_key: 公钥对象
+            cert_data: 证书数据字典
+            public_key: 公钥对象（可选，如果不提供则使用证书中的公钥）
         
         Returns:
-            是否验证成功
+            验证结果字典，包含"valid"字段表示验证是否成功
         """
         try:
-            self.logger.info(f"Verifying JSON certificate: {cert_json_path}")
-            
-            # 加载证书数据
-            with open(cert_json_path, "r", encoding="utf-8") as f:
-                cert_data = json.load(f)
+            self.logger.info("Verifying JSON certificate")
             
             # 验证证书签名
+            if not public_key:
+                # 如果没有提供公钥，使用证书中的公钥（自签名证书）
+                from cryptography.hazmat.primitives import serialization
+                public_key_pem = bytes.fromhex(cert_data.get("public_key", ""))
+                public_key = serialization.load_pem_public_key(public_key_pem, backend=self.backend)
+            
             if not self.verify_cert_signature(cert_data, public_key):
                 self.logger.error("JSON certificate verification failed: invalid signature")
-                return False
+                return {"valid": False}
             
             # 验证证书有效性
             if not self.verify_cert_validity(cert_data):
                 self.logger.error("JSON certificate verification failed: invalid validity")
-                return False
+                return {"valid": False}
             
             self.logger.info("JSON certificate verified successfully")
-            return True
+            return {"valid": True}
         except Exception as e:
-            self.logger.error(f"Failed to verify JSON certificate {cert_json_path}: {str(e)}")
-            return False
+            self.logger.error(f"Failed to verify JSON certificate: {str(e)}")
+            return {"valid": False}
     
-    def verify_signature_from_json(self, signature_json_path: str, filepath: str, public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey]) -> bool:
+    def verify_signature_from_json(self, signature_json_path: str, filepath: str, public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey]) -> dict:
         """从JSON文件验证签名
         
         Args:
@@ -238,7 +241,7 @@ class Verifier:
             public_key: 公钥对象
         
         Returns:
-            是否验证成功
+            验证结果字典，包含"valid"字段表示验证是否成功
         """
         try:
             self.logger.info(f"Verifying signature from JSON file: {signature_json_path}")
@@ -248,11 +251,11 @@ class Verifier:
             
             # 验证签名
             result = self.verify_file_signature(filepath, signature, public_key, hash_algorithm)
-            self.logger.info(f"Signature verification from JSON {'successful' if result else 'failed'}")
+            self.logger.info(f"Signature verification from JSON {'successful' if result['valid'] else 'failed'}")
             return result
         except Exception as e:
             self.logger.error(f"Failed to verify signature from JSON file {signature_json_path}: {str(e)}")
-            return False
+            return {"valid": False}
     
     def _build_data_to_verify(self, cert_data: Dict[str, Any]) -> bytes:
         """构建待验证数据

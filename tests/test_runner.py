@@ -15,6 +15,9 @@ from datetime import datetime
 from unittest import TextTestRunner, TestLoader
 from unittest.runner import TextTestResult
 
+# 添加src目录到Python路径
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+
 
 class StreamWrapper:
     """流包装器，添加writeln方法"""

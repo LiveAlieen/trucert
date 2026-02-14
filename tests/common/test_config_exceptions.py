@@ -7,7 +7,7 @@ import unittest
 import os
 import tempfile
 from cert_manager.core.config import ConfigManager
-from tests.test_utils import create_temp_directory, cleanup_temp_path
+from tests.utils.test_utils import create_temp_directory, cleanup_temp_path
 
 
 class TestConfigExceptions(unittest.TestCase):

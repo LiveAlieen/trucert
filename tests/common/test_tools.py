@@ -12,7 +12,7 @@ from cert_manager.core.utils import (
     read_binary_file, write_binary_file,
     file_exists, directory_exists
 )
-from tests.test_utils import create_temp_file, cleanup_temp_path
+from tests.utils.test_utils import create_temp_file, generate_test_file, cleanup_temp_path
 
 
 class TestHashUtils(unittest.TestCase):
@@ -35,14 +35,14 @@ class TestHashUtils(unittest.TestCase):
     def test_calculate_file_hash(self):
         """测试计算文件哈希值"""
         test_content = "test file content"
-        temp_file = create_temp_file(test_content)
+        temp_file = generate_test_file(test_content)
         
         try:
             hash_value = calculate_file_hash(temp_file)
             self.assertIsInstance(hash_value, str)
             self.assertEqual(len(hash_value), 64)  # SHA-256 长度
         finally:
-            cleanup_temp_path(temp_file)
+            cleanup_temp_path(os.path.dirname(temp_file))
     
     def test_verify_hash(self):
         """测试验证哈希值"""

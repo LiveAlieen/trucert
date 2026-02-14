@@ -6,7 +6,7 @@
 import unittest
 import os
 from src.cert_manager.core.services import VerifierService, KeyService, CertService
-from tests.test_utils import create_temp_file, cleanup_temp_path
+from tests.utils.test_utils import create_temp_directory, create_temp_file, cleanup_temp_path
 
 
 class TestVerifierService(unittest.TestCase):

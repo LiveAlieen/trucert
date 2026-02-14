@@ -9,6 +9,10 @@ import unittest
 import sys
 import os
 from unittest.mock import patch
+
+# 添加src目录到Python路径
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
 from cert_manager.cli.main import CLI
 
 

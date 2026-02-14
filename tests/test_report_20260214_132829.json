@@ -1,0 +1,499 @@
+{
+  "generated_at": "2026-02-14T13:28:29.751706",
+  "suites": {
+    "common": {
+      "total_tests": 62,
+      "success": 60,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "test_results": [
+        {
+          "test": "test_certificate_validity_boundaries (test_boundary_conditions.TestBoundaryConditions.test_certificate_validity_boundaries)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_ecc_curve_validation (test_boundary_conditions.TestBoundaryConditions.test_ecc_curve_validation)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_signature_edge_cases (test_boundary_conditions.TestBoundaryConditions.test_file_signature_edge_cases)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_invalid_hash_algorithm (test_boundary_conditions.TestBoundaryConditions.test_invalid_hash_algorithm)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_nonexistent_file (test_boundary_conditions.TestBoundaryConditions.test_nonexistent_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_rsa_key_size_boundaries (test_boundary_conditions.TestBoundaryConditions.test_rsa_key_size_boundaries)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_generate_self_signed_cert (test_cert_manager.TestCertManager.test_generate_self_signed_cert)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_get_cert_info (test_cert_manager.TestCertManager.test_get_cert_info)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_list_certs (test_cert_manager.TestCertManager.test_list_certs)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_save_and_load_cert (test_cert_manager.TestCertManager.test_save_and_load_cert)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_get_algorithms (test_config.TestConfigManager.test_get_algorithms)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_get_algorithms (test_config_exceptions.TestConfigExceptions.test_get_algorithms)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_invalid_config_file (test_config_exceptions.TestConfigExceptions.test_invalid_config_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_missing_config_file (test_config_exceptions.TestConfigExceptions.test_missing_config_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_attach_signature_to_file (test_file_signer.TestFileSigner.test_attach_signature_to_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_batch_sign (test_file_signer.TestFileSigner.test_batch_sign)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_save_and_load_signature (test_file_signer.TestFileSigner.test_save_and_load_signature)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_sign_file (test_file_signer.TestFileSigner.test_sign_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_batch_signing (test_integration.TestIntegration.test_batch_signing)",
+          "status": "failure",
+          "message": "(<class 'AssertionError'>, AssertionError('False is not true'), <traceback object at 0x0000028B88B16880>)"
+        },
+        {
+          "test": "test_file_signing_and_verification (test_integration.TestIntegration.test_file_signing_and_verification)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_full_certificate_lifecycle (test_integration.TestIntegration.test_full_certificate_lifecycle)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_signed_file_creation_and_verification (test_integration.TestIntegration.test_signed_file_creation_and_verification)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_generate_ecc_key (test_key_manager.TestKeyManager.test_generate_ecc_key)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_generate_rsa_key (test_key_manager.TestKeyManager.test_generate_rsa_key)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_get_key_info (test_key_manager.TestKeyManager.test_get_key_info)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_list_keys (test_key_manager.TestKeyManager.test_list_keys)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_save_and_load_keys (test_key_manager.TestKeyManager.test_save_and_load_keys)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_service (test_services.TestServices.test_cert_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_config_service (test_services.TestServices.test_config_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_signer_service (test_services.TestServices.test_file_signer_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_service (test_services.TestServices.test_key_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verifier_service (test_services.TestServices.test_verifier_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_storage (test_storage.TestStorage.test_cert_storage)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_config_storage (test_storage.TestStorage.test_config_storage)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_storage (test_storage.TestStorage.test_key_storage)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_storage_manager (test_storage.TestStorage.test_storage_manager)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_batch_file_signing_system (test_system.TestSystem.test_batch_file_signing_system)",
+          "status": "failure",
+          "message": "(<class 'AssertionError'>, AssertionError('False is not true'), <traceback object at 0x0000028B88B16800>)"
+        },
+        {
+          "test": "test_certificate_chain_verification (test_system.TestSystem.test_certificate_chain_verification)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_end_to_end_certificate_management (test_system.TestSystem.test_end_to_end_certificate_management)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_end_to_end_file_signing (test_system.TestSystem.test_end_to_end_file_signing)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_generate_ecc_key (test_tools.TestCryptoUtils.test_generate_ecc_key)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_generate_rsa_key (test_tools.TestCryptoUtils.test_generate_rsa_key)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_save_and_load_keys (test_tools.TestCryptoUtils.test_save_and_load_keys)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_sign_and_verify_data (test_tools.TestCryptoUtils.test_sign_and_verify_data)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_exists (test_tools.TestFileUtils.test_file_exists)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_read_write_binary_file (test_tools.TestFileUtils.test_read_write_binary_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_calculate_file_hash (test_tools.TestHashUtils.test_calculate_file_hash)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_calculate_hash (test_tools.TestHashUtils.test_calculate_hash)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_file_hash (test_tools.TestHashUtils.test_verify_file_hash)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_hash (test_tools.TestHashUtils.test_verify_hash)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_file_signature (test_verifier.TestVerifier.test_verify_file_signature)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_json_cert (test_verifier.TestVerifier.test_verify_json_cert)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_signature_from_json (test_verifier.TestVerifier.test_verify_signature_from_json)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_signed_file (test_verifier.TestVerifier.test_verify_signed_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert_chain (test_verifier_service.TestVerifierService.test_verify_cert_chain)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert_data (test_verifier_service.TestVerifierService.test_verify_cert_data)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_file_signature (test_verifier_service.TestVerifierService.test_verify_file_signature)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_signed_file (test_verifier_service.TestVerifierService.test_verify_signed_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cleanup_all (test_z_cleanup.TestCleanup.test_cleanup_all)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cleanup_certs (test_z_cleanup.TestCleanup.test_cleanup_certs)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cleanup_keys (test_z_cleanup.TestCleanup.test_cleanup_keys)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cleanup_root_keys (test_z_cleanup.TestCleanup.test_cleanup_root_keys)",
+          "status": "success",
+          "message": null
+        }
+      ]
+    },
+    "gui": {
+      "total_tests": 0,
+      "success": 0,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "test_results": []
+    },
+    "cli": {
+      "total_tests": 30,
+      "success": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "test_results": [
+        {
+          "test": "test_batch_sign_empty_directory (test_cli_boundary.TestCLIBoundary.test_batch_sign_empty_directory)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed_invalid_validity (test_cli_boundary.TestCLIBoundary.test_cert_self_signed_invalid_validity)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed_nonexistent_keys (test_cli_boundary.TestCLIBoundary.test_cert_self_signed_nonexistent_keys)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_sign_nonexistent_file (test_cli_boundary.TestCLIBoundary.test_file_sign_nonexistent_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_verify_nonexistent_files (test_cli_boundary.TestCLIBoundary.test_file_verify_nonexistent_files)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_invalid_subcommand (test_cli_boundary.TestCLIBoundary.test_invalid_subcommand)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_invalid_curve (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_curve)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_invalid_size (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_size)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_invalid_type (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_type)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_missing_required_args (test_cli_boundary.TestCLIBoundary.test_missing_required_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert_nonexistent_files (test_cli_boundary.TestCLIBoundary.test_verify_cert_nonexistent_files)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_batch_sign (test_cli_commands.TestCLICommands.test_batch_sign)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed (test_cli_commands.TestCLICommands.test_cert_self_signed)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_sign (test_cli_commands.TestCLICommands.test_file_sign)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_verify (test_cli_commands.TestCLICommands.test_file_verify)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate (test_cli_commands.TestCLICommands.test_key_generate)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_list (test_cli_commands.TestCLICommands.test_key_list)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert (test_cli_commands.TestCLICommands.test_verify_cert)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_command_help (test_cli_parser.TestCLIParser.test_cert_command_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed_args (test_cli_parser.TestCLIParser.test_cert_self_signed_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_command_help (test_cli_parser.TestCLIParser.test_file_command_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_sign_args (test_cli_parser.TestCLIParser.test_file_sign_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_invalid_command (test_cli_parser.TestCLIParser.test_invalid_command)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_command_help (test_cli_parser.TestCLIParser.test_key_command_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_args (test_cli_parser.TestCLIParser.test_key_generate_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_ecc_args (test_cli_parser.TestCLIParser.test_key_generate_ecc_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_main_help (test_cli_parser.TestCLIParser.test_main_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_missing_subcommand (test_cli_parser.TestCLIParser.test_missing_subcommand)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert_args (test_cli_parser.TestCLIParser.test_verify_cert_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_command_help (test_cli_parser.TestCLIParser.test_verify_command_help)",
+          "status": "success",
+          "message": null
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_tests": 92,
+    "success": 90,
+    "failures": 2,
+    "errors": 0,
+    "skipped": 0,
+    "success_rate": "97.83%"
+  }
+}

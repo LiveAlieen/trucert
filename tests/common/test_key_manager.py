@@ -6,7 +6,7 @@
 import unittest
 import os
 from cert_manager.core.key_manager import KeyManager
-from tests.test_utils import create_temp_directory, cleanup_temp_path
+from tests.utils.test_utils import create_temp_directory, cleanup_temp_path
 
 
 class TestKeyManager(unittest.TestCase):
@@ -46,16 +46,13 @@ class TestKeyManager(unittest.TestCase):
         # 生成RSA密钥对并自动保存
         private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=True)
         
-        # 获取密钥ID
-        key_id = f"rsa_{private_key.key_size}_{os.urandom(8).hex()[:8]}"  # 模拟密钥ID
-        
         # 测试保存私钥
-        private_key_path = os.path.join(self.test_dir, f"{key_id}_private.pem")
+        private_key_path = os.path.join(self.test_dir, "test_private.pem")
         self.key_manager.save_private_key(private_key, private_key_path)
         self.assertTrue(os.path.exists(private_key_path))
         
         # 测试保存公钥
-        public_key_path = os.path.join(self.test_dir, f"{key_id}_public.pem")
+        public_key_path = os.path.join(self.test_dir, "test_public.pem")
         self.key_manager.save_public_key(public_key, public_key_path)
         self.assertTrue(os.path.exists(public_key_path))
         

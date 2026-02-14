@@ -68,7 +68,18 @@ class VerifierService:
         Returns:
             bool: 是否验证成功
         """
-        return self.verifier.verify_json_cert(cert_json_path, public_key)
+        try:
+            # 加载证书数据
+            import json
+            with open(cert_json_path, 'r', encoding='utf-8') as f:
+                cert_data = json.load(f)
+            
+            # 验证证书
+            result = self.verifier.verify_json_cert(cert_data, public_key)
+            return result['valid']
+        except Exception as e:
+            print(f"验证证书失败: {str(e)}")
+            return False
     
     def verify_cert_data(self, cert_data: Dict[str, Any], public_key: Any) -> Dict[str, Any]:
         """验证内存中的证书数据

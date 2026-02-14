@@ -1,0 +1,294 @@
+{
+  "generated_at": "2026-02-14T13:10:51.463482",
+  "suites": {
+    "common": {
+      "total_tests": 21,
+      "success": 9,
+      "failures": 0,
+      "errors": 12,
+      "skipped": 0,
+      "test_results": [
+        {
+          "test": "test_boundary_conditions (unittest.loader._FailedTest.test_boundary_conditions)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_boundary_conditions\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_boundary_conditions.py\", line 11, in <module>\\n    from tests.test_utils import create_temp_file, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B0CA2D80>)"
+        },
+        {
+          "test": "test_cert_manager (unittest.loader._FailedTest.test_cert_manager)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_cert_manager\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_cert_manager.py\", line 10, in <module>\\n    from tests.test_utils import create_temp_directory, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B0CA2D40>)"
+        },
+        {
+          "test": "test_config (unittest.loader._FailedTest.test_config)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_config\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_config.py\", line 9, in <module>\\n    from tests.test_utils import create_temp_directory, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B0CA2E80>)"
+        },
+        {
+          "test": "test_config_exceptions (unittest.loader._FailedTest.test_config_exceptions)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_config_exceptions\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_config_exceptions.py\", line 10, in <module>\\n    from tests.test_utils import create_temp_directory, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B0CA2F40>)"
+        },
+        {
+          "test": "test_file_signer (unittest.loader._FailedTest.test_file_signer)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_file_signer\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_file_signer.py\", line 10, in <module>\\n    from tests.test_utils import create_temp_file, create_temp_directory, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B0CA3100>)"
+        },
+        {
+          "test": "test_integration (unittest.loader._FailedTest.test_integration)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_integration\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_integration.py\", line 12, in <module>\\n    from tests.test_utils import create_temp_file, create_temp_directory, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B0CA32C0>)"
+        },
+        {
+          "test": "test_key_manager (unittest.loader._FailedTest.test_key_manager)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_key_manager\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_key_manager.py\", line 9, in <module>\\n    from tests.test_utils import create_temp_directory, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B0CA3380>)"
+        },
+        {
+          "test": "test_cert_service (test_services.TestServices.test_cert_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_config_service (test_services.TestServices.test_config_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_signer_service (test_services.TestServices.test_file_signer_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_service (test_services.TestServices.test_key_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verifier_service (test_services.TestServices.test_verifier_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_storage (unittest.loader._FailedTest.test_storage)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_storage\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_storage.py\", line 15, in <module>\\n    from tests.test_utils import create_temp_directory, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B0CA3A00>)"
+        },
+        {
+          "test": "test_system (unittest.loader._FailedTest.test_system)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_system\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_system.py\", line 13, in <module>\\n    from tests.test_utils import create_temp_file, create_temp_directory, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B0CA36C0>)"
+        },
+        {
+          "test": "test_tools (unittest.loader._FailedTest.test_tools)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_tools\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_tools.py\", line 15, in <module>\\n    from tests.test_utils import create_temp_file, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B0CA3800>)"
+        },
+        {
+          "test": "test_verifier (unittest.loader._FailedTest.test_verifier)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_verifier\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_verifier.py\", line 12, in <module>\\n    from tests.test_utils import create_temp_file, create_temp_directory, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B0CA3640>)"
+        },
+        {
+          "test": "test_verifier_service (unittest.loader._FailedTest.test_verifier_service)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_verifier_service\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_verifier_service.py\", line 9, in <module>\\n    from tests.test_utils import create_temp_file, cleanup_temp_path\\nModuleNotFoundError: No module named \\'tests.test_utils\\'\\n'), <traceback object at 0x00000284B08C4600>)"
+        },
+        {
+          "test": "test_cleanup_all (test_z_cleanup.TestCleanup.test_cleanup_all)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cleanup_certs (test_z_cleanup.TestCleanup.test_cleanup_certs)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cleanup_keys (test_z_cleanup.TestCleanup.test_cleanup_keys)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cleanup_root_keys (test_z_cleanup.TestCleanup.test_cleanup_root_keys)",
+          "status": "success",
+          "message": null
+        }
+      ]
+    },
+    "gui": {
+      "total_tests": 0,
+      "success": 0,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "test_results": []
+    },
+    "cli": {
+      "total_tests": 30,
+      "success": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "test_results": [
+        {
+          "test": "test_batch_sign_empty_directory (test_cli_boundary.TestCLIBoundary.test_batch_sign_empty_directory)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed_invalid_validity (test_cli_boundary.TestCLIBoundary.test_cert_self_signed_invalid_validity)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed_nonexistent_keys (test_cli_boundary.TestCLIBoundary.test_cert_self_signed_nonexistent_keys)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_sign_nonexistent_file (test_cli_boundary.TestCLIBoundary.test_file_sign_nonexistent_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_verify_nonexistent_files (test_cli_boundary.TestCLIBoundary.test_file_verify_nonexistent_files)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_invalid_subcommand (test_cli_boundary.TestCLIBoundary.test_invalid_subcommand)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_invalid_curve (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_curve)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_invalid_size (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_size)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_invalid_type (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_type)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_missing_required_args (test_cli_boundary.TestCLIBoundary.test_missing_required_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert_nonexistent_files (test_cli_boundary.TestCLIBoundary.test_verify_cert_nonexistent_files)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_batch_sign (test_cli_commands.TestCLICommands.test_batch_sign)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed (test_cli_commands.TestCLICommands.test_cert_self_signed)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_sign (test_cli_commands.TestCLICommands.test_file_sign)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_verify (test_cli_commands.TestCLICommands.test_file_verify)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate (test_cli_commands.TestCLICommands.test_key_generate)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_list (test_cli_commands.TestCLICommands.test_key_list)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert (test_cli_commands.TestCLICommands.test_verify_cert)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_command_help (test_cli_parser.TestCLIParser.test_cert_command_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cert_self_signed_args (test_cli_parser.TestCLIParser.test_cert_self_signed_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_command_help (test_cli_parser.TestCLIParser.test_file_command_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_sign_args (test_cli_parser.TestCLIParser.test_file_sign_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_invalid_command (test_cli_parser.TestCLIParser.test_invalid_command)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_command_help (test_cli_parser.TestCLIParser.test_key_command_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_args (test_cli_parser.TestCLIParser.test_key_generate_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generate_ecc_args (test_cli_parser.TestCLIParser.test_key_generate_ecc_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_main_help (test_cli_parser.TestCLIParser.test_main_help)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_missing_subcommand (test_cli_parser.TestCLIParser.test_missing_subcommand)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert_args (test_cli_parser.TestCLIParser.test_verify_cert_args)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_command_help (test_cli_parser.TestCLIParser.test_verify_command_help)",
+          "status": "success",
+          "message": null
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_tests": 51,
+    "success": 39,
+    "failures": 0,
+    "errors": 12,
+    "skipped": 0,
+    "success_rate": "76.47%"
+  }
+}

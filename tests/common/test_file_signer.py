@@ -5,9 +5,10 @@
 
 import unittest
 import os
+
 from cert_manager.core.file_signer import FileSigner
 from cert_manager.core.key_manager import KeyManager
-from tests.test_utils import create_temp_file, create_temp_directory, cleanup_temp_path
+from tests.utils.test_utils import create_temp_directory, create_temp_file, cleanup_temp_path
 
 
 class TestFileSigner(unittest.TestCase):
@@ -51,6 +52,7 @@ class TestFileSigner(unittest.TestCase):
         # 创建测试文件
         test_content = "test file content"
         test_file = create_temp_file(test_content)
+        signature_file = None
         
         try:
             # 签名文件
@@ -72,7 +74,8 @@ class TestFileSigner(unittest.TestCase):
             self.assertIsInstance(file_info, dict)
         finally:
             cleanup_temp_path(test_file)
-            cleanup_temp_path(signature_file)
+            if signature_file:
+                cleanup_temp_path(signature_file)
     
     def test_attach_signature_to_file(self):
         """测试将签名附加到文件"""
@@ -82,6 +85,7 @@ class TestFileSigner(unittest.TestCase):
         # 创建测试文件
         test_content = "test file content"
         test_file = create_temp_file(test_content)
+        signed_file = None
         
         try:
             # 签名文件
@@ -102,7 +106,8 @@ class TestFileSigner(unittest.TestCase):
             self.assertIsInstance(extracted_signature, bytes)
         finally:
             cleanup_temp_path(test_file)
-            cleanup_temp_path(signed_file)
+            if signed_file:
+                cleanup_temp_path(signed_file)
     
     def test_batch_sign(self):
         """测试批量签名"""

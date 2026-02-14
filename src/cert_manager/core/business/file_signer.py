@@ -21,16 +21,30 @@ class FileSigner:
     def calculate_file_hash(self, filepath: str, hash_algorithm: str = "sha256") -> bytes:
         """计算文件哈希值"""
         try:
-            self.logger.info(f"Calculating file hash for: {filepath} using algorithm: {hash_algorithm}")
+            # 确保使用绝对路径
+            absolute_filepath = os.path.abspath(filepath)
+            self.logger.info(f"Calculating file hash for: {absolute_filepath} using algorithm: {hash_algorithm}")
+            
+            # 检查文件是否存在
+            if not os.path.exists(absolute_filepath):
+                self.logger.error(f"File not found: {absolute_filepath}")
+                raise FileNotFoundError(f"File not found: {absolute_filepath}")
+            
+            # 检查文件大小
+            file_size = os.path.getsize(absolute_filepath)
+            self.logger.debug(f"File size: {file_size} bytes")
+            
+            # 计算文件哈希
             hash_obj = getattr(hashes, hash_algorithm.upper())()
             digest = hashes.Hash(hash_obj, self.backend)
             
-            with open(filepath, "rb") as f:
+            with open(absolute_filepath, "rb") as f:
                 while chunk := f.read(8192):
                     digest.update(chunk)
             
             file_hash = digest.finalize()
-            self.logger.info(f"File hash calculated successfully for: {filepath}")
+            self.logger.info(f"File hash calculated successfully for: {absolute_filepath}")
+            self.logger.debug(f"File hash: {file_hash}")
             return file_hash
         except Exception as e:
             self.logger.error(f"Failed to calculate file hash for {filepath}: {str(e)}")
@@ -205,21 +219,28 @@ class FileSigner:
                         self.logger.warning(f"File does not exist: {filepath}")
                         continue
                     
-                    # 生成签名
+                    # 直接调用sign_file方法，确保使用完全相同的代码路径
                     signature = self.sign_file(filepath, private_key, hash_algorithm)
+                    self.logger.debug(f"Generated signature for file {filepath}, length: {len(signature)}")
                     
                     # 生成签名文件路径（保存到output_dir根目录）
                     filename = os.path.basename(filepath)
-                    signature_filename = f"{os.path.splitext(filename)[0]}.sig.json"
+                    # 为了避免文件名冲突，添加一个唯一标识符
+                    import uuid
+                    unique_id = str(uuid.uuid4())[:8]
+                    signature_filename = f"{os.path.splitext(filename)[0]}_{unique_id}.sig.json"
                     signature_filepath = os.path.join(output_dir, signature_filename)
+                    self.logger.debug(f"Signature file path: {signature_filepath}")
                     
                     # 保存签名
                     self.save_signature(signature, signature_filepath, filepath, hash_algorithm)
+                    self.logger.debug(f"Signature saved to file: {signature_filepath}")
                     
                     results.append({
                         "file": filepath,
                         "success": True,
-                        "signature_file": signature_filepath
+                        "signature_file": signature_filepath,
+                        "signature": signature  # 添加生成的签名到结果中
                     })
                     self.logger.info(f"Batch sign completed for file: {filepath}")
                     
@@ -266,7 +287,9 @@ class FileSigner:
                 return True
             except Exception as e:
                 self.logger.warning(f"File signature verification failed for {filepath}: {str(e)}")
+                print(f"验证失败详情: {str(e)}")
                 return False
         except Exception as e:
             self.logger.error(f"Failed to verify file signature for {filepath}: {str(e)}")
+            print(f"验证过程错误: {str(e)}")
             return False

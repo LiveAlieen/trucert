@@ -1,0 +1,309 @@
+{
+  "generated_at": "2026-02-14T13:19:17.256866",
+  "suites": {
+    "common": {
+      "total_tests": 35,
+      "success": 13,
+      "failures": 1,
+      "errors": 21,
+      "skipped": 0,
+      "test_results": [
+        {
+          "test": "test_boundary_conditions (unittest.loader._FailedTest.test_boundary_conditions)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_boundary_conditions\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_boundary_conditions.py\", line 8, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A756740>)"
+        },
+        {
+          "test": "test_cert_format (unittest.loader._FailedTest.test_cert_format)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_cert_format\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_cert_format.py\", line 12, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A7564C0>)"
+        },
+        {
+          "test": "test_cert_generation (unittest.loader._FailedTest.test_cert_generation)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_cert_generation\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_cert_generation.py\", line 12, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A6D6600>)"
+        },
+        {
+          "test": "test_cert_hierarchy (unittest.loader._FailedTest.test_cert_hierarchy)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_cert_hierarchy\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_cert_hierarchy.py\", line 12, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A770540>)"
+        },
+        {
+          "test": "test_cert_manager (unittest.loader._FailedTest.test_cert_manager)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_cert_manager\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_cert_manager.py\", line 8, in <module>\\n    from cert_manager.core.cert_manager import CertManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A770700>)"
+        },
+        {
+          "test": "test_cert_parent_signature (unittest.loader._FailedTest.test_cert_parent_signature)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_cert_parent_signature\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_cert_parent_signature.py\", line 12, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A770940>)"
+        },
+        {
+          "test": "test_get_algorithms (test_config.TestConfigManager.test_get_algorithms)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_config_exceptions (unittest.loader._FailedTest.test_config_exceptions)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_config_exceptions\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_config_exceptions.py\", line 9, in <module>\\n    from cert_manager.core.config import ConfigManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A770C00>)"
+        },
+        {
+          "test": "test_ecc_cert (unittest.loader._FailedTest.test_ecc_cert)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_ecc_cert\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_ecc_cert.py\", line 12, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A771100>)"
+        },
+        {
+          "test": "test_existing_cert (unittest.loader._FailedTest.test_existing_cert)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_existing_cert\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_existing_cert.py\", line 13, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A770FC0>)"
+        },
+        {
+          "test": "test_file_signer (unittest.loader._FailedTest.test_file_signer)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_file_signer\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_file_signer.py\", line 8, in <module>\\n    from cert_manager.core.file_signer import FileSigner\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A770D40>)"
+        },
+        {
+          "test": "test_integration (unittest.loader._FailedTest.test_integration)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_integration\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_integration.py\", line 8, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A771340>)"
+        },
+        {
+          "test": "test_key_gen (unittest.loader._FailedTest.test_key_gen)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_key_gen\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_key_gen.py\", line 4, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A771580>)"
+        },
+        {
+          "test": "test_key_generation (unittest.loader._FailedTest.test_key_generation)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_key_generation\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_key_generation.py\", line 1, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A7717C0>)"
+        },
+        {
+          "test": "test_key_manager (unittest.loader._FailedTest.test_key_manager)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_key_manager\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_key_manager.py\", line 8, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A771A00>)"
+        },
+        {
+          "test": "test_parent_signature (unittest.loader._FailedTest.test_parent_signature)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_parent_signature\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_parent_signature.py\", line 12, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A771C40>)"
+        },
+        {
+          "test": "test_secondary_cert (unittest.loader._FailedTest.test_secondary_cert)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_secondary_cert\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_secondary_cert.py\", line 12, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A771E80>)"
+        },
+        {
+          "test": "test_cert_service (test_services.TestServices.test_cert_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_config_service (test_services.TestServices.test_config_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_signer_service (test_services.TestServices.test_file_signer_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_service (test_services.TestServices.test_key_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verifier_service (test_services.TestServices.test_verifier_service)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_storage (unittest.loader._FailedTest.test_storage)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_storage\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_storage.py\", line 9, in <module>\\n    from cert_manager.core.storage.storage_manager import StorageManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A6BB100>)"
+        },
+        {
+          "test": "test_batch_file_signing_system (test_system.TestSystem.test_batch_file_signing_system)",
+          "status": "failure",
+          "message": "(<class 'AssertionError'>, AssertionError('False is not true'), <traceback object at 0x0000014A7A80DEC0>)"
+        },
+        {
+          "test": "test_certificate_chain_verification (test_system.TestSystem.test_certificate_chain_verification)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_end_to_end_certificate_management (test_system.TestSystem.test_end_to_end_certificate_management)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_end_to_end_file_signing (test_system.TestSystem.test_end_to_end_file_signing)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_tools (unittest.loader._FailedTest.test_tools)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_tools\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_tools.py\", line 8, in <module>\\n    from cert_manager.core.utils import (\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A5A5D80>)"
+        },
+        {
+          "test": "test_verification_logic (unittest.loader._FailedTest.test_verification_logic)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_verification_logic\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_verification_logic.py\", line 12, in <module>\\n    from cert_manager.core.key_manager import KeyManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A80F380>)"
+        },
+        {
+          "test": "test_verifier (unittest.loader._FailedTest.test_verifier)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_verifier\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_verifier.py\", line 8, in <module>\\n    from cert_manager.core.verifier import Verifier\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A80F2C0>)"
+        },
+        {
+          "test": "test_verify_cert_chain (test_verifier_service.TestVerifierService.test_verify_cert_chain)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_cert_data (test_verifier_service.TestVerifierService.test_verify_cert_data)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_file_signature (test_verifier_service.TestVerifierService.test_verify_file_signature)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_signed_file (test_verifier_service.TestVerifierService.test_verify_signed_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_z_cleanup (unittest.loader._FailedTest.test_z_cleanup)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_z_cleanup\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_z_cleanup.py\", line 4, in <module>\\n    from cert_manager.core.storage.storage_manager import StorageManager\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7A80D8C0>)"
+        }
+      ]
+    },
+    "gui": {
+      "total_tests": 0,
+      "success": 0,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "test_results": []
+    },
+    "cli": {
+      "total_tests": 19,
+      "success": 0,
+      "failures": 0,
+      "errors": 19,
+      "skipped": 0,
+      "test_results": [
+        {
+          "test": "test_batch_sign_empty_directory (test_cli_boundary.TestCLIBoundary.test_batch_sign_empty_directory)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA18D80>)"
+        },
+        {
+          "test": "test_cert_self_signed_invalid_validity (test_cli_boundary.TestCLIBoundary.test_cert_self_signed_invalid_validity)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA1B2C0>)"
+        },
+        {
+          "test": "test_cert_self_signed_nonexistent_keys (test_cli_boundary.TestCLIBoundary.test_cert_self_signed_nonexistent_keys)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA188C0>)"
+        },
+        {
+          "test": "test_file_sign_nonexistent_file (test_cli_boundary.TestCLIBoundary.test_file_sign_nonexistent_file)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA1B800>)"
+        },
+        {
+          "test": "test_file_verify_nonexistent_files (test_cli_boundary.TestCLIBoundary.test_file_verify_nonexistent_files)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA1B780>)"
+        },
+        {
+          "test": "test_invalid_subcommand (test_cli_boundary.TestCLIBoundary.test_invalid_subcommand)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA1B9C0>)"
+        },
+        {
+          "test": "test_key_generate_invalid_curve (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_curve)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA18C40>)"
+        },
+        {
+          "test": "test_key_generate_invalid_size (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_size)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA1B840>)"
+        },
+        {
+          "test": "test_key_generate_invalid_type (test_cli_boundary.TestCLIBoundary.test_key_generate_invalid_type)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA1B340>)"
+        },
+        {
+          "test": "test_missing_required_args (test_cli_boundary.TestCLIBoundary.test_missing_required_args)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA18C80>)"
+        },
+        {
+          "test": "test_verify_cert_nonexistent_files (test_cli_boundary.TestCLIBoundary.test_verify_cert_nonexistent_files)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA1B680>)"
+        },
+        {
+          "test": "test_batch_sign (test_cli_commands.TestCLICommands.test_batch_sign)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA24C40>)"
+        },
+        {
+          "test": "test_cert_self_signed (test_cli_commands.TestCLICommands.test_cert_self_signed)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA24840>)"
+        },
+        {
+          "test": "test_file_sign (test_cli_commands.TestCLICommands.test_file_sign)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA24E80>)"
+        },
+        {
+          "test": "test_file_verify (test_cli_commands.TestCLICommands.test_file_verify)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA25A80>)"
+        },
+        {
+          "test": "test_key_generate (test_cli_commands.TestCLICommands.test_key_generate)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA25A80>)"
+        },
+        {
+          "test": "test_key_list (test_cli_commands.TestCLICommands.test_key_list)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA25A00>)"
+        },
+        {
+          "test": "test_verify_cert (test_cli_commands.TestCLICommands.test_verify_cert)",
+          "status": "error",
+          "message": "(<class 'ModuleNotFoundError'>, ModuleNotFoundError(\"No module named 'cert_manager'\"), <traceback object at 0x0000014A7AA24800>)"
+        },
+        {
+          "test": "test_cli_parser (unittest.loader._FailedTest.test_cli_parser)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_cli_parser\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\cli\\\\test_cli_parser.py\", line 12, in <module>\\n    from cert_manager.cli.main import CLI\\nModuleNotFoundError: No module named \\'cert_manager\\'\\n'), <traceback object at 0x0000014A7AA1B2C0>)"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_tests": 54,
+    "success": 13,
+    "failures": 1,
+    "errors": 40,
+    "skipped": 0,
+    "success_rate": "24.07%"
+  }
+}
