@@ -1,12 +1,21 @@
 from typing import Optional, Tuple, Union, List, Dict, Any
 from cryptography.hazmat.primitives import serialization
-from ..business.key_manager import KeyManager
+from ..utils import get
 
 class KeyService:
-    """密钥服务类，封装密钥管理功能，作为GUI和核心业务逻辑之间的桥梁"""
+    """密钥服务类，封装密钥管理功能，作为GUI和核心业务逻辑之间的桥梁
+    
+    提供标准化的接口调用，负责从业务层调用和封装密钥管理功能，
+    统一GUI和CLI的接口规范，确保接口的一致性和可维护性。
+    """
     
     def __init__(self):
-        self.key_manager = KeyManager()
+        """初始化密钥服务
+        
+        使用依赖注入获取密钥管理组件，确保与业务层的解耦。
+        """
+        # 使用依赖注入获取业务层组件
+        self.key_manager = get("key_manager")
     
     def generate_rsa_key(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """生成RSA密钥对

@@ -5,17 +5,27 @@ import os
 import json
 from datetime import datetime
 from typing import Optional, Union, Tuple
-from ..storage import StorageManager
-from ..utils import get_logger
+from ..utils import get_logger, get
 
 
 class FileSigner:
+    """文件签名类，负责文件的哈希计算、签名和验证
+    
+    提供文件哈希计算、文件签名、签名保存、批量签名等功能，
+    是整个系统中文件签名功能的核心组件。
+    """
+    
     def __init__(self):
+        """初始化文件签名器
+        
+        使用依赖注入获取存储组件，确保与存储层的解耦。
+        """
         # 初始化日志记录器
         self.logger = get_logger("file_signer")
         
         self.backend = default_backend()
-        self.storage_manager = StorageManager()
+        # 使用依赖注入获取存储组件
+        self.storage_manager = get("storage_manager")
         self.logger.info("FileSigner initialized successfully")
     
     def calculate_file_hash(self, filepath: str, hash_algorithm: str = "sha256") -> bytes:
@@ -204,24 +214,29 @@ class FileSigner:
             os.makedirs(output_dir, exist_ok=True)
             self.logger.debug(f"Created output directory: {output_dir}")
             
+            # 预处理：过滤不存在的文件
+            valid_filepaths = []
             for filepath in filepaths:
+                if not os.path.exists(filepath):
+                    results.append({
+                        "file": filepath,
+                        "success": False,
+                        "reason": "File does not exist"
+                    })
+                    self.logger.warning(f"File does not exist: {filepath}")
+                else:
+                    valid_filepaths.append(filepath)
+            
+            self.logger.info(f"Valid files for signing: {len(valid_filepaths)}")
+            
+            # 批量处理有效文件
+            for filepath in valid_filepaths:
                 try:
-                    # 检查文件是否存在
-                    if not os.path.exists(filepath):
-                        results.append({
-                            "file": filepath,
-                            "success": False,
-                            "reason": "File does not exist"
-                        })
-                        self.logger.warning(f"File does not exist: {filepath}")
-                        continue
-                    
                     # 直接调用sign_file方法，确保使用完全相同的代码路径
                     self.logger.debug(f"Batch signing file: {filepath}")
                     self.logger.debug(f"Using hash algorithm: {hash_algorithm}")
                     signature = self.sign_file(filepath, private_key, hash_algorithm)
                     self.logger.debug(f"Generated signature for file {filepath}, length: {len(signature)}")
-                    self.logger.debug(f"Generated signature first 10 bytes: {signature[:10]}")
                     
                     # 生成签名文件路径（保存到output_dir根目录）
                     filename = os.path.basename(filepath)

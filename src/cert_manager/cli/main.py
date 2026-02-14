@@ -15,11 +15,17 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 from cert_manager.core.services import KeyService, CertService, FileSignerService, VerifierService, ConfigService
 from cert_manager.cli.commands import key_commands, cert_commands, file_commands, verify_commands
+from cert_manager.core.utils import initialize_dependencies
 
 class CLI:
     """CLI主类"""
     
     def __init__(self):
+        # 初始化依赖注入容器
+        print("Initializing dependencies...")
+        initialize_dependencies()
+        print("Dependencies initialized successfully!")
+        
         self.parser = argparse.ArgumentParser(
             prog='cert-cli',
             description='证书管理工具命令行界面',

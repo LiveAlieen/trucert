@@ -1,11 +1,20 @@
 from typing import Optional, Dict, Any, List
-from ..business.config import ConfigManager
+from ..utils import get
 
 class ConfigService:
-    """配置服务类，封装配置管理功能，作为GUI和核心业务逻辑之间的桥梁"""
+    """配置服务类，封装配置管理功能，作为GUI和核心业务逻辑之间的桥梁
+    
+    提供标准化的接口调用，负责从业务层调用和封装配置管理功能，
+    统一GUI和CLI的接口规范，确保接口的一致性和可维护性。
+    """
     
     def __init__(self):
-        self.config_manager = ConfigManager()
+        """初始化配置服务
+        
+        使用依赖注入获取配置管理组件，确保与业务层的解耦。
+        """
+        # 使用依赖注入获取业务层组件
+        self.config_manager = get("config_manager")
     
     def load_config(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """加载配置文件

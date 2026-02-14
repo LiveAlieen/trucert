@@ -12,9 +12,16 @@ import unittest
 import os
 import tempfile
 from src.cert_manager.core.services import KeyService, CertService, FileSignerService, VerifierService, ConfigService
+from src.cert_manager.core.utils import initialize_dependencies
 
 class TestServices(unittest.TestCase):
     """测试服务层功能"""
+    
+    @classmethod
+    def setUpClass(cls):
+        """类级别的设置，初始化依赖注入容器"""
+        # 初始化依赖注入容器
+        initialize_dependencies()
     
     def setUp(self):
         """设置测试环境"""
@@ -44,35 +51,56 @@ class TestServices(unittest.TestCase):
     def test_key_service(self):
         """测试KeyService功能"""
         # 测试生成RSA密钥对
-        private_info, public_info = self.key_service.generate_rsa_key(2048)
-        self.assertIsInstance(private_info, dict)
-        self.assertIsInstance(public_info, dict)
-        self.assertEqual(private_info["type"], "RSA Private Key")
-        self.assertEqual(public_info["type"], "RSA Public Key")
+        result = self.key_service.generate_rsa_key({"key_size": 2048})
+        self.assertTrue(result["success"])
+        data = result["data"]
+        self.assertIsInstance(data, dict)
+        self.assertIsInstance(data["private_key_info"], dict)
+        self.assertIsInstance(data["public_key_info"], dict)
+        self.assertEqual(data["private_key_info"]["type"], "RSA Private Key")
+        self.assertEqual(data["public_key_info"]["type"], "RSA Public Key")
         
         # 测试生成ECC密钥对
-        private_info, public_info = self.key_service.generate_ecc_key("SECP256R1")
-        self.assertIsInstance(private_info, dict)
-        self.assertIsInstance(public_info, dict)
-        self.assertEqual(private_info["type"], "ECC Private Key")
-        self.assertEqual(public_info["type"], "ECC Public Key")
+        result = self.key_service.generate_ecc_key({"curve": "secp256r1"})
+        self.assertTrue(result["success"])
+        data = result["data"]
+        self.assertIsInstance(data, dict)
+        self.assertIsInstance(data["private_key_info"], dict)
+        self.assertIsInstance(data["public_key_info"], dict)
+        self.assertEqual(data["private_key_info"]["type"], "ECC Private Key")
+        self.assertEqual(data["public_key_info"]["type"], "ECC Public Key")
         
         # 测试列出所有密钥
-        keys = self.key_service.list_keys()
+        result = self.key_service.list_keys()
+        self.assertTrue(result["success"])
+        keys = result["data"]
         self.assertIsInstance(keys, list)
     
     def test_cert_service(self):
         """测试CertService功能"""
         # 生成密钥对用于测试
-        private_key, public_key = self.key_service.load_key_pair(self.key_service.list_keys()[0]["id"])
+        result = self.key_service.list_keys()
+        self.assertTrue(result["success"])
+        keys = result["data"]
+        self.assertGreater(len(keys), 0)
+        
+        # 加载密钥对
+        key_id = keys[0]["id"]
+        load_result = self.key_service.load_key_pair({"key_id": key_id})
+        self.assertTrue(load_result["success"])
+        key_data = load_result["data"]
+        private_key = key_data["private_key"]
+        public_key = key_data["public_key"]
         
         # 测试生成自签名证书
-        cert_data = self.cert_service.generate_self_signed_cert(
-            public_key,
-            private_key,
-            validity_days=365,
-            forward_offset=0
-        )
+        result = self.cert_service.generate_self_signed_cert({
+            "public_key": public_key,
+            "private_key": private_key,
+            "validity_days": 365,
+            "forward_offset": 0
+        })
+        self.assertTrue(result["success"])
+        cert_data = result["data"]
         self.assertIsInstance(cert_data, dict)
         self.assertIn("cert_info", cert_data)
         self.assertIn("public_key", cert_data)
@@ -80,10 +108,14 @@ class TestServices(unittest.TestCase):
         
         # 测试保存和加载证书
         temp_cert_file = os.path.join(self.temp_dir, "test_cert.json")
-        saved_path = self.cert_service.save_cert(cert_data, temp_cert_file)
+        save_result = self.cert_service.save_cert({"cert_data": cert_data, "filepath": temp_cert_file})
+        self.assertTrue(save_result["success"])
+        saved_path = save_result["data"]
         self.assertTrue(os.path.exists(saved_path))
         
-        loaded_cert = self.cert_service.load_cert(saved_path)
+        load_result = self.cert_service.load_cert({"filepath": saved_path})
+        self.assertTrue(load_result["success"])
+        loaded_cert = load_result["data"]
         self.assertIsInstance(loaded_cert, dict)
         self.assertEqual(loaded_cert["public_key"], cert_data["public_key"])
         
@@ -94,23 +126,44 @@ class TestServices(unittest.TestCase):
     def test_file_signer_service(self):
         """测试FileSignerService功能"""
         # 生成密钥对用于测试
-        private_key, public_key = self.key_service.load_key_pair(self.key_service.list_keys()[0]["id"])
+        result = self.key_service.list_keys()
+        self.assertTrue(result["success"])
+        keys = result["data"]
+        self.assertGreater(len(keys), 0)
+        
+        # 加载密钥对
+        key_id = keys[0]["id"]
+        load_result = self.key_service.load_key_pair({"key_id": key_id})
+        self.assertTrue(load_result["success"])
+        key_data = load_result["data"]
+        private_key = key_data["private_key"]
+        public_key = key_data["public_key"]
         
         # 测试计算文件哈希
-        file_hash = self.file_signer_service.calculate_file_hash(self.temp_file, "sha256")
+        result = self.file_signer_service.calculate_file_hash({"file_path": self.temp_file, "hash_algorithm": "sha256"})
+        self.assertTrue(result["success"])
+        file_hash = result["data"]
         self.assertIsInstance(file_hash, bytes)
         self.assertEqual(len(file_hash), 32)  # SHA-256 哈希长度为 32 字节
         
         # 测试签名文件
-        signature = self.file_signer_service.sign_file(self.temp_file, private_key, "sha256")
+        result = self.file_signer_service.sign_file({"file_path": self.temp_file, "private_key": private_key, "hash_algorithm": "sha256"})
+        self.assertTrue(result["success"])
+        signature = result["data"]
         self.assertIsInstance(signature, bytes)
         
         # 测试保存和加载签名
         temp_sig_file = os.path.join(self.temp_dir, "test_signature.json")
-        self.file_signer_service.save_signature(signature, temp_sig_file, self.temp_file, "sha256")
+        result = self.file_signer_service.save_signature({"signature": signature, "file_path": temp_sig_file, "original_file_path": self.temp_file, "hash_algorithm": "sha256"})
+        self.assertTrue(result["success"])
         self.assertTrue(os.path.exists(temp_sig_file))
         
-        loaded_signature, loaded_hash_algorithm, file_info = self.file_signer_service.load_signature(temp_sig_file)
+        result = self.file_signer_service.load_signature({"file_path": temp_sig_file})
+        self.assertTrue(result["success"])
+        data = result["data"]
+        loaded_signature = data["signature"]
+        loaded_hash_algorithm = data["hash_algorithm"]
+        file_info = data["file_info"]
         self.assertIsInstance(loaded_signature, bytes)
         self.assertEqual(loaded_hash_algorithm, "sha256")
         self.assertIsInstance(file_info, dict)

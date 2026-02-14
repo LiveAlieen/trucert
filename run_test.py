@@ -11,23 +11,29 @@ import unittest
 sys.path.insert(0, os.path.join(os.getcwd(), 'src'))
 
 # 导入相关类
-from cert_manager.core.key_manager import KeyManager
-from cert_manager.core.file_signer import FileSigner
-from cert_manager.core.verifier import Verifier
+from cert_manager.core.business.key_manager import KeyManager
+from cert_manager.core.business.file_signer import FileSigner
+from cert_manager.core.business.verifier import Verifier
+from cert_manager.core.utils.di_initializer import initialize_dependencies
 from tests.utils.test_utils import create_temp_directory, create_temp_file, cleanup_temp_path
 
 # 调试测试
 if __name__ == '__main__':
+    # 初始化依赖注入容器
+    initialize_dependencies()
+    
     # 模拟测试环境
     test_dir = create_temp_directory()
     key_manager = KeyManager()
     file_signer = FileSigner()
     verifier = Verifier()
     
+    test_file = None
     try:
         # 生成RSA密钥对
         print("1. 生成RSA密钥对...")
-        private_key, public_key = key_manager.generate_rsa_key(key_size=2048, auto_save=False)
+        key_id, private_key, public_key = key_manager.generate_rsa_key(key_size=2048)
+        print(f"   密钥ID: {key_id}")
         print(f"   私钥类型: {type(private_key)}")
         print(f"   公钥类型: {type(public_key)}")
         
@@ -69,5 +75,6 @@ if __name__ == '__main__':
         
     finally:
         cleanup_temp_path(test_dir)
-        cleanup_temp_path(test_file)
+        if test_file:
+            cleanup_temp_path(test_file)
         print("\n测试完成，清理临时文件")

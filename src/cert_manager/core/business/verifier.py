@@ -7,19 +7,28 @@ from typing import Optional, Union, Dict, Any, Tuple
 import os
 import json
 import datetime
-from ..storage import StorageManager
-from .file_signer import FileSigner
-from ..utils import get_logger
+from ..utils import get_logger, get
 
 
 class Verifier:
+    """验证类，负责证书签名和文件签名的验证
+    
+    提供证书签名验证、证书链验证、文件签名验证等功能，
+    是整个系统中验证功能的核心组件。
+    """
+    
     def __init__(self):
+        """初始化验证器
+        
+        使用依赖注入获取存储组件和文件签名器，确保与其他模块的解耦。
+        """
         # 初始化日志记录器
         self.logger = get_logger("verifier")
         
         self.backend = default_backend()
-        self.storage_manager = StorageManager()
-        self.file_signer = FileSigner()
+        # 使用依赖注入获取存储组件
+        self.storage_manager = get("storage_manager")
+        self.file_signer = get("file_signer")
         self.logger.info("Verifier initialized successfully")
     
     def verify_cert_signature(self, cert_data: Dict[str, Any], public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey]) -> bool:
@@ -129,6 +138,15 @@ class Verifier:
         try:
             self.logger.info("Verifying certificate chain")
             
+            # 快速检查证书数据格式
+            if not isinstance(cert_data, dict):
+                self.logger.error("Certificate chain verification failed: invalid certificate data format")
+                return False
+            
+            if "signature" not in cert_data or "public_key" not in cert_data:
+                self.logger.error("Certificate chain verification failed: missing required fields")
+                return False
+            
             # 验证证书签名
             if not self.verify_cert_signature(cert_data, parent_public_key):
                 self.logger.error("Certificate chain verification failed: invalid signature")
@@ -214,8 +232,8 @@ class Verifier:
             if not public_key:
                 # 如果没有提供公钥，使用证书中的公钥（自签名证书）
                 from cryptography.hazmat.primitives import serialization
-                public_key_pem = bytes.fromhex(cert_data.get("public_key", ""))
-                public_key = serialization.load_pem_public_key(public_key_pem, backend=self.backend)
+                public_key_der = bytes.fromhex(cert_data.get("public_key", ""))
+                public_key = serialization.load_der_public_key(public_key_der, backend=self.backend)
             
             if not self.verify_cert_signature(cert_data, public_key):
                 self.logger.error("JSON certificate verification failed: invalid signature")

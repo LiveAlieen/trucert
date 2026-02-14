@@ -1,11 +1,20 @@
 from typing import Optional, Dict, Any, List, Tuple
-from ..business.file_signer import FileSigner
+from ..utils import get
 
 class FileSignerService:
-    """文件签名服务类，封装文件签名功能，作为GUI和核心业务逻辑之间的桥梁"""
+    """文件签名服务类，封装文件签名功能，作为GUI和核心业务逻辑之间的桥梁
+    
+    提供标准化的接口调用，负责从业务层调用和封装文件签名功能，
+    统一GUI和CLI的接口规范，确保接口的一致性和可维护性。
+    """
     
     def __init__(self):
-        self.file_signer = FileSigner()
+        """初始化文件签名服务
+        
+        使用依赖注入获取文件签名组件，确保与业务层的解耦。
+        """
+        # 使用依赖注入获取业务层组件
+        self.file_signer = get("file_signer")
     
     def sign_file(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """签名文件

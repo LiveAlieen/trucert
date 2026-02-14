@@ -10,16 +10,23 @@ import sys
 # 添加src目录到Python路径
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'src'))
 
-from cert_manager.core.key_manager import KeyManager
-from cert_manager.core.cert_manager import CertManager
-from cert_manager.core.file_signer import FileSigner
-from cert_manager.core.verifier import Verifier
-from cert_manager.core.config import ConfigManager
+from cert_manager.core.business.key_manager import KeyManager
+from cert_manager.core.business.cert_manager import CertManager
+from cert_manager.core.business.file_signer import FileSigner
+from cert_manager.core.business.verifier import Verifier
+from cert_manager.core.business.config import ConfigManager
+from cert_manager.core.utils.di_initializer import initialize_dependencies
 from tests.utils.test_utils import create_temp_directory, create_temp_file, cleanup_temp_path
 
 
 class TestSystem(unittest.TestCase):
     """系统测试"""
+    
+    @classmethod
+    def setUpClass(cls):
+        """设置测试类环境"""
+        # 初始化依赖注入容器
+        initialize_dependencies()
     
     def setUp(self):
         """设置测试环境"""
@@ -43,7 +50,7 @@ class TestSystem(unittest.TestCase):
         self.assertIsInstance(algorithms, dict)
         
         # 2. 生成RSA密钥对
-        private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=False)
+        key_id, private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048)
         
         # 3. 生成自签名证书
         cert_data = self.cert_manager.generate_self_signed_cert(
@@ -71,7 +78,7 @@ class TestSystem(unittest.TestCase):
     def test_end_to_end_file_signing(self):
         """测试端到端文件签名流程"""
         # 1. 生成RSA密钥对
-        private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=False)
+        key_id, private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048)
         
         # 2. 创建测试文件
         test_content = "important document content"
@@ -105,7 +112,7 @@ class TestSystem(unittest.TestCase):
     def test_batch_file_signing_system(self):
         """测试批量文件签名系统功能"""
         # 1. 生成RSA密钥对
-        private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=False)
+        key_id, private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048)
         
         # 2. 创建测试文件
         test_content = "document content for batch signing"
@@ -164,7 +171,7 @@ class TestSystem(unittest.TestCase):
     def test_certificate_chain_verification(self):
         """测试证书链验证"""
         # 1. 生成根密钥对
-        root_private_key, root_public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=False)
+        root_key_id, root_private_key, root_public_key = self.key_manager.generate_rsa_key(key_size=2048)
         
         # 2. 生成根证书
         root_cert_data = self.cert_manager.generate_self_signed_cert(
@@ -179,7 +186,7 @@ class TestSystem(unittest.TestCase):
         self.cert_manager.save_cert(root_cert_data, root_cert_file)
         
         # 4. 生成二级密钥对
-        secondary_private_key, secondary_public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=False)
+        secondary_key_id, secondary_private_key, secondary_public_key = self.key_manager.generate_rsa_key(key_size=2048)
         
         # 5. 生成二级证书
         secondary_cert_data = self.cert_manager.generate_secondary_cert(
@@ -198,7 +205,13 @@ class TestSystem(unittest.TestCase):
         loaded_secondary_cert = self.cert_manager.load_cert(secondary_cert_file)
         loaded_root_cert = self.cert_manager.load_cert(root_cert_file)
         
-        verify_result = self.verifier.verify_json_cert(loaded_secondary_cert, loaded_root_cert)
+        # 从根证书中提取公钥
+        from cryptography.hazmat.primitives import serialization
+        root_public_key_der = bytes.fromhex(loaded_root_cert.get("public_key", ""))
+        root_public_key = serialization.load_der_public_key(root_public_key_der)
+        
+        # 验证二级证书
+        verify_result = self.verifier.verify_json_cert(loaded_secondary_cert, root_public_key)
         self.assertTrue(verify_result["valid"])
 
 

@@ -5,18 +5,28 @@ from datetime import datetime
 from typing import Optional, Union, Dict, Any
 import json
 import os
-from ..storage import CertStorage, StorageManager
-from ..utils import get_logger
+from ..utils import get_logger, get
 
 
 class CertManager:
+    """证书管理类，负责证书的生成、签名、验证和管理
+    
+    提供自签名证书和二级证书的生成、保存、导入等功能，
+    是整个系统中证书管理的核心组件。
+    """
+    
     def __init__(self):
+        """初始化证书管理器
+        
+        使用依赖注入获取存储组件，确保与存储层的解耦。
+        """
         # 初始化日志记录器
         self.logger = get_logger("cert_manager")
         
         self.backend = default_backend()
-        self.storage_manager = StorageManager()
-        self.cert_storage = CertStorage(self.storage_manager)
+        # 使用依赖注入获取存储组件
+        self.storage_manager = get("storage_manager")
+        self.cert_storage = get("cert_storage")
         self.logger.info("CertManager initialized successfully")
     
     def _calculate_hash(self, data: bytes) -> bytes:
@@ -164,6 +174,19 @@ class CertManager:
             offset = str(forward_offset).encode('utf-8')
             cert_info_bytes = json.dumps(cert_info, sort_keys=True).encode('utf-8')
             
+            # 获取上级证书公钥的字节表示
+            parent_public_key_data = parent_public_key.public_bytes(
+                encoding=serialization.Encoding.DER,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo
+            )
+            parent_public_key_hex = parent_public_key_data.hex()
+            
+            # 添加parent_public_key到cert_info（在生成签名之前）
+            cert_info["parent_public_key"] = parent_public_key_hex
+            
+            # 重新序列化cert_info（包含parent_public_key）
+            cert_info_bytes = json.dumps(cert_info, sort_keys=True).encode('utf-8')
+            
             # 生成签名
             signature = self._generate_signature(
                 parent_private_key,
@@ -173,16 +196,6 @@ class CertManager:
                 cert_info_bytes
             )
             signature_hex = signature.hex()
-            
-            # 获取上级证书公钥的字节表示
-            parent_public_key_data = parent_public_key.public_bytes(
-                encoding=serialization.Encoding.DER,
-                format=serialization.PublicFormat.SubjectPublicKeyInfo
-            )
-            parent_public_key_hex = parent_public_key_data.hex()
-            
-            # 添加parent_public_key到cert_info
-            cert_info["parent_public_key"] = parent_public_key_hex
             
             # 构建证书数据
             cert_data = {

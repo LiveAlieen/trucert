@@ -8,18 +8,28 @@ import json
 import hashlib
 from datetime import datetime
 from typing import Optional, Tuple, Union
-from ..storage import KeyStorage, StorageManager
-from ..utils import get_logger
+from ..utils import get_logger, get
 
 
 class KeyManager:
+    """密钥管理类，负责密钥对的生成、加载、保存和管理
+    
+    提供RSA和ECC密钥对的生成、加载、保存、删除等功能，
+    是整个系统中密钥管理的核心组件。
+    """
+    
     def __init__(self):
+        """初始化密钥管理器
+        
+        使用依赖注入获取存储组件，确保与存储层的解耦。
+        """
         # 初始化日志记录器
         self.logger = get_logger("key_manager")
         
         self.backend = default_backend()
-        self.storage_manager = StorageManager()
-        self.key_storage = KeyStorage(self.storage_manager)
+        # 使用依赖注入获取存储组件
+        self.storage_manager = get("storage_manager")
+        self.key_storage = get("key_storage")
         self.logger.info("KeyManager initialized successfully")
     
     def generate_rsa_key(self, key_size: int = 2048, password: Optional[bytes] = None,

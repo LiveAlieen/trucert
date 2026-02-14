@@ -56,7 +56,40 @@ from .verify_utils import (
 from .log_utils import (
     setup_logger,
     get_logger,
-    default_logger
+    default_logger,
+    set_log_level,
+    set_console_level,
+    set_file_level,
+    log_manager
+)
+
+from .error_utils import (
+    CertManagerError,
+    KeyError,
+    CertError,
+    FileError,
+    StorageError,
+    ValidationError,
+    ConfigError,
+    handle_error,
+    raise_error
+)
+
+from .di import (
+    DependencyInjector,
+    di_container,
+    register,
+    register_factory,
+    register_singleton,
+    get,
+    has,
+    inject,
+    clear
+)
+
+from .di_initializer import (
+    DIInitializer,
+    initialize_dependencies
 )
 
 __all__ = [
@@ -105,5 +138,32 @@ __all__ = [
     # log_utils
     "setup_logger",
     "get_logger",
-    "default_logger"
+    "default_logger",
+    "set_log_level",
+    "set_console_level",
+    "set_file_level",
+    "log_manager",
+    # error_utils
+    "CertManagerError",
+    "KeyError",
+    "CertError",
+    "FileError",
+    "StorageError",
+    "ValidationError",
+    "ConfigError",
+    "handle_error",
+    "raise_error",
+    # di
+    "DependencyInjector",
+    "di_container",
+    "register",
+    "register_factory",
+    "register_singleton",
+    "get",
+    "has",
+    "inject",
+    "clear",
+    # di_initializer
+    "DIInitializer",
+    "initialize_dependencies"
 ]

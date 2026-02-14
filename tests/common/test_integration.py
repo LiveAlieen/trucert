@@ -10,15 +10,22 @@ import sys
 # 添加src目录到Python路径
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'src'))
 
-from cert_manager.core.key_manager import KeyManager
-from cert_manager.core.cert_manager import CertManager
-from cert_manager.core.file_signer import FileSigner
-from cert_manager.core.verifier import Verifier
+from cert_manager.core.business.key_manager import KeyManager
+from cert_manager.core.business.cert_manager import CertManager
+from cert_manager.core.business.file_signer import FileSigner
+from cert_manager.core.business.verifier import Verifier
+from cert_manager.core.utils.di_initializer import initialize_dependencies
 from tests.utils.test_utils import create_temp_directory, create_temp_file, cleanup_temp_path
 
 
 class TestIntegration(unittest.TestCase):
     """集成测试"""
+    
+    @classmethod
+    def setUpClass(cls):
+        """设置测试类环境"""
+        # 初始化依赖注入容器
+        initialize_dependencies()
     
     def setUp(self):
         """设置测试环境"""
@@ -37,7 +44,7 @@ class TestIntegration(unittest.TestCase):
     def test_full_certificate_lifecycle(self):
         """测试完整的证书生命周期"""
         # 1. 生成RSA密钥对
-        private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=False)
+        key_id, private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048)
         
         # 2. 生成自签名证书
         cert_data = self.cert_manager.generate_self_signed_cert(
@@ -61,7 +68,7 @@ class TestIntegration(unittest.TestCase):
     def test_file_signing_and_verification(self):
         """测试文件签名和验证"""
         # 1. 生成RSA密钥对
-        private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=False)
+        key_id, private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048)
         
         # 2. 创建测试文件
         test_content = "test file content for signing"
@@ -80,7 +87,7 @@ class TestIntegration(unittest.TestCase):
     def test_signed_file_creation_and_verification(self):
         """测试创建和验证带签名的文件"""
         # 1. 生成RSA密钥对
-        private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=False)
+        key_id, private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048)
         
         # 2. 创建测试文件
         test_content = "test file content for signed file"
@@ -103,7 +110,7 @@ class TestIntegration(unittest.TestCase):
     def test_batch_signing(self):
         """测试批量签名"""
         # 1. 生成RSA密钥对
-        private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=False)
+        key_id, private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048)
         
         # 2. 创建多个测试文件
         test_files = []

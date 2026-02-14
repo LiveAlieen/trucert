@@ -1,12 +1,21 @@
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timedelta
-from ..business.cert_manager import CertManager
+from ..utils import get
 
 class CertService:
-    """证书服务类，封装证书管理功能，作为GUI和核心业务逻辑之间的桥梁"""
+    """证书服务类，封装证书管理功能，作为GUI和核心业务逻辑之间的桥梁
+    
+    提供标准化的接口调用，负责从业务层调用和封装证书管理功能，
+    统一GUI和CLI的接口规范，确保接口的一致性和可维护性。
+    """
     
     def __init__(self):
-        self.cert_manager = CertManager()
+        """初始化证书服务
+        
+        使用依赖注入获取证书管理组件，确保与业务层的解耦。
+        """
+        # 使用依赖注入获取业务层组件
+        self.cert_manager = get("cert_manager")
     
     def generate_self_signed_cert(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """生成自签名证书
