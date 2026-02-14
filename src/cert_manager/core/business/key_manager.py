@@ -156,29 +156,50 @@ class KeyManager:
             self.logger.error(f"Failed to load public key from {key_path}: {str(e)}")
             raise
     
-    def get_key_info(self, key_id: str) -> dict:
+    def get_key_info(self, key_identifier: str) -> dict:
         """获取密钥信息
         
         Args:
-            key_id: 密钥ID
+            key_identifier: 密钥ID
         
         Returns:
             密钥信息字典
         """
         try:
-            self.logger.info(f"Getting key info for ID: {key_id}")
+            self.logger.info(f"Getting key info for ID: {key_identifier}")
             # 遍历所有密钥，找到匹配的密钥ID
             all_keys = self.key_storage.list_keys()
             for key_info in all_keys:
-                if key_info.get("id") == key_id:
+                if key_info.get("id") == key_identifier:
                     self.logger.debug(f"Retrieved key info: {key_info}")
                     return key_info
             # 如果没有找到匹配的密钥ID，返回空字典
-            self.logger.warning(f"Key with ID {key_id} not found")
+            self.logger.warning(f"Key with ID {key_identifier} not found")
             return {}
         except Exception as e:
-            self.logger.error(f"Failed to get key info for ID {key_id}: {str(e)}")
+            self.logger.error(f"Failed to get key info for ID {key_identifier}: {str(e)}")
             raise
+    
+    def delete_key(self, key_id: str) -> bool:
+        """删除密钥
+        
+        Args:
+            key_id: 密钥ID
+        
+        Returns:
+            是否删除成功
+        """
+        try:
+            self.logger.info(f"Deleting key with ID: {key_id}")
+            success = self.key_storage.delete_key(key_id)
+            if success:
+                self.logger.info(f"Key with ID {key_id} deleted successfully")
+            else:
+                self.logger.warning(f"Failed to delete key with ID {key_id}")
+            return success
+        except Exception as e:
+            self.logger.error(f"Failed to delete key with ID {key_id}: {str(e)}")
+            return False
     
     def list_keys(self) -> list:
         """列出所有密钥

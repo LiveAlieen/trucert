@@ -78,9 +78,7 @@ class KeyService:
         Returns:
             bool: 是否删除成功
         """
-        # 简化处理，实际应该调用key_manager的删除方法
-        # 由于key_manager.py中没有实现delete_key方法，这里返回True
-        return True
+        return self.key_manager.delete_key(key_id)
     
     def save_private_key(self, private_key: Any, file_path: str, password: Optional[str] = None) -> None:
         """保存私钥
@@ -149,4 +147,21 @@ class KeyService:
         Returns:
             Dict[str, Any]: 密钥信息
         """
-        return self.key_manager.get_key_info(key)
+        # 从密钥对象中提取信息
+        from cryptography.hazmat.primitives.asymmetric import rsa, ec
+        key_info = {}
+        
+        if isinstance(key, rsa.RSAPrivateKey):
+            key_info["type"] = "RSA Private Key"
+            key_info["key_size"] = key.key_size
+        elif isinstance(key, rsa.RSAPublicKey):
+            key_info["type"] = "RSA Public Key"
+            key_info["key_size"] = key.key_size
+        elif isinstance(key, ec.EllipticCurvePrivateKey):
+            key_info["type"] = "ECC Private Key"
+            key_info["curve"] = key.curve.name
+        elif isinstance(key, ec.EllipticCurvePublicKey):
+            key_info["type"] = "ECC Public Key"
+            key_info["curve"] = key.curve.name
+        
+        return key_info
