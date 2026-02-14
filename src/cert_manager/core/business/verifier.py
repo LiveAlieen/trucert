@@ -257,6 +257,26 @@ class Verifier:
             self.logger.error(f"Failed to verify signature from JSON file {signature_json_path}: {str(e)}")
             return {"valid": False}
     
+    def load_json_cert(self, cert_json_path: str) -> Dict[str, Any]:
+        """加载JSON格式的证书
+        
+        Args:
+            cert_json_path: 证书JSON文件路径
+        
+        Returns:
+            证书数据字典
+        """
+        try:
+            self.logger.info(f"Loading JSON certificate from: {cert_json_path}")
+            # 加载证书数据
+            with open(cert_json_path, 'r', encoding='utf-8') as f:
+                cert_data = json.load(f)
+            self.logger.info("JSON certificate loaded successfully")
+            return cert_data
+        except Exception as e:
+            self.logger.error(f"Failed to load JSON certificate from {cert_json_path}: {str(e)}")
+            raise
+    
     def _build_data_to_verify(self, cert_data: Dict[str, Any]) -> bytes:
         """构建待验证数据
         

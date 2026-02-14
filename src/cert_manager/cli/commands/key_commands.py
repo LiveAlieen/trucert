@@ -37,9 +37,18 @@ class KeyCommands:
             print(f"生成{args.type.upper()}密钥对...")
             
             if args.type == 'rsa':
-                private_info, public_info = key_service.generate_rsa_key(args.size)
+                result = key_service.generate_rsa_key({"key_size": args.size})
             else:
-                private_info, public_info = key_service.generate_ecc_key(args.curve.upper())
+                result = key_service.generate_ecc_key({"curve": args.curve.upper()})
+            
+            if not result.get("success"):
+                print(f"生成密钥失败: {result.get('error', '未知错误')}")
+                return 1
+            
+            data = result["data"]
+            private_info = data["private_key_info"]
+            public_info = data["public_key_info"]
+            key_id = data["key_id"]
             
             print("密钥生成成功!")
             print(f"私钥信息:")
@@ -48,18 +57,33 @@ class KeyCommands:
             print(f"公钥信息:")
             for key, value in public_info.items():
                 print(f"  {key}: {value}")
+            print(f"密钥ID: {key_id}")
             
             if args.output:
                 os.makedirs(args.output, exist_ok=True)
                 # 保存密钥到文件
-                key_id = private_info.get('id')
-                if key_id:
-                    private_key, public_key = key_service.load_key_pair(key_id)
-                    private_path = os.path.join(args.output, f"private_{key_id}.pem")
-                    public_path = os.path.join(args.output, f"public_{key_id}.pem")
-                    key_service.save_private_key(private_key, private_path)
-                    key_service.save_public_key(public_key, public_path)
-                    print(f"密钥已保存到: {args.output}")
+                result_load = key_service.load_key_pair({"key_id": key_id})
+                if not result_load.get("success"):
+                    print(f"加载密钥失败: {result_load.get('error', '未知错误')}")
+                    return 1
+                
+                private_key = result_load["data"]["private_key"]
+                public_key = result_load["data"]["public_key"]
+                
+                private_path = os.path.join(args.output, f"private_{key_id}.pem")
+                public_path = os.path.join(args.output, f"public_{key_id}.pem")
+                
+                result_save_private = key_service.save_private_key({"private_key": private_key, "file_path": private_path, "password": None})
+                if not result_save_private.get("success"):
+                    print(f"保存私钥失败: {result_save_private.get('error', '未知错误')}")
+                    return 1
+                
+                result_save_public = key_service.save_public_key({"public_key": public_key, "file_path": public_path})
+                if not result_save_public.get("success"):
+                    print(f"保存公钥失败: {result_save_public.get('error', '未知错误')}")
+                    return 1
+                
+                print(f"密钥已保存到: {args.output}")
             
             return 0
         except Exception as e:
@@ -70,7 +94,12 @@ class KeyCommands:
     def _list_keys(args, key_service):
         """列出存储的密钥"""
         try:
-            keys = key_service.list_keys()
+            result = key_service.list_keys()
+            if not result.get("success"):
+                print(f"列出密钥失败: {result.get('error', '未知错误')}")
+                return 1
+            
+            keys = result["data"]
             if not keys:
                 print("没有存储的密钥")
                 return 0
@@ -78,14 +107,12 @@ class KeyCommands:
             print("存储的密钥:")
             for i, key in enumerate(keys, 1):
                 print(f"{i}. ID: {key['id']}")
-                print(f"   类型: {key['type']}")
+                print(f"   类型: {key.get('type', '未知')}")
                 print(f"   创建时间: {key.get('created_at', '未知')}")
-                if 'private_info' in key:
-                    private_info = key['private_info']
-                    if 'key_size' in private_info:
-                        print(f"   密钥大小: {private_info['key_size']}")
-                    elif 'curve' in private_info:
-                        print(f"   曲线: {private_info['curve']}")
+                if 'key_size' in key:
+                    print(f"   密钥大小: {key['key_size']}")
+                elif 'curve' in key:
+                    print(f"   曲线: {key['curve']}")
                 print()
             return 0
         except Exception as e:
@@ -96,9 +123,25 @@ class KeyCommands:
     def _load_key(args, key_service):
         """加载密钥"""
         try:
-            private_key, public_key = key_service.load_key_pair(args.key_id)
-            private_info = key_service.get_key_info(private_key)
-            public_info = key_service.get_key_info(public_key)
+            result_load = key_service.load_key_pair({"key_id": args.key_id})
+            if not result_load.get("success"):
+                print(f"加载密钥失败: {result_load.get('error', '未知错误')}")
+                return 1
+            
+            private_key = result_load["data"]["private_key"]
+            public_key = result_load["data"]["public_key"]
+            
+            result_private_info = key_service.get_key_info({"key": private_key})
+            if not result_private_info.get("success"):
+                print(f"获取私钥信息失败: {result_private_info.get('error', '未知错误')}")
+                return 1
+            private_info = result_private_info["data"]
+            
+            result_public_info = key_service.get_key_info({"key": public_key})
+            if not result_public_info.get("success"):
+                print(f"获取公钥信息失败: {result_public_info.get('error', '未知错误')}")
+                return 1
+            public_info = result_public_info["data"]
             
             print(f"密钥加载成功: {args.key_id}")
             print("私钥信息:")
@@ -116,13 +159,25 @@ class KeyCommands:
     def _save_key(args, key_service):
         """保存密钥到文件"""
         try:
-            private_key, public_key = key_service.load_key_pair(args.key_id)
+            result_load = key_service.load_key_pair({"key_id": args.key_id})
+            if not result_load.get("success"):
+                print(f"加载密钥失败: {result_load.get('error', '未知错误')}")
+                return 1
+            
+            private_key = result_load["data"]["private_key"]
+            public_key = result_load["data"]["public_key"]
             
             if args.type == 'private':
-                key_service.save_private_key(private_key, args.output, args.password)
+                result_save = key_service.save_private_key({"private_key": private_key, "file_path": args.output, "password": args.password})
+                if not result_save.get("success"):
+                    print(f"保存私钥失败: {result_save.get('error', '未知错误')}")
+                    return 1
                 print(f"私钥已保存到: {args.output}")
             else:
-                key_service.save_public_key(public_key, args.output)
+                result_save = key_service.save_public_key({"public_key": public_key, "file_path": args.output})
+                if not result_save.get("success"):
+                    print(f"保存公钥失败: {result_save.get('error', '未知错误')}")
+                    return 1
                 print(f"公钥已保存到: {args.output}")
             return 0
         except Exception as e:
@@ -133,7 +188,12 @@ class KeyCommands:
     def _delete_key(args, key_service):
         """删除密钥"""
         try:
-            success = key_service.delete_key(args.key_id)
+            result = key_service.delete_key({"key_id": args.key_id})
+            if not result.get("success"):
+                print(f"删除密钥失败: {result.get('error', '未知错误')}")
+                return 1
+            
+            success = result["data"]
             if success:
                 print(f"密钥删除成功: {args.key_id}")
                 return 0

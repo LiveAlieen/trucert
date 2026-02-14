@@ -304,3 +304,48 @@ class KeyManager:
         except Exception as e:
             self.logger.error(f"Failed to load key with ID {key_id}: {str(e)}")
             raise
+    
+    def save_private_key(self, private_key: Union[rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey], 
+                        filepath: str, password: Optional[str] = None) -> None:
+        """保存私钥
+        
+        Args:
+            private_key: 私钥对象
+            filepath: 文件路径
+            password: 密码（可选）
+        """
+        try:
+            self.logger.info(f"Saving private key to file: {filepath}")
+            password_bytes = password.encode('utf-8') if password else None
+            pem = private_key.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.TraditionalOpenSSL,
+                encryption_algorithm=serialization.BestAvailableEncryption(password_bytes) if password_bytes else serialization.NoEncryption()
+            )
+            with open(filepath, 'wb') as f:
+                f.write(pem)
+            self.logger.info(f"Private key saved successfully to file: {filepath}")
+        except Exception as e:
+            self.logger.error(f"Failed to save private key to file {filepath}: {str(e)}")
+            raise
+    
+    def save_public_key(self, public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey], 
+                       filepath: str) -> None:
+        """保存公钥
+        
+        Args:
+            public_key: 公钥对象
+            filepath: 文件路径
+        """
+        try:
+            self.logger.info(f"Saving public key to file: {filepath}")
+            pem = public_key.public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo
+            )
+            with open(filepath, 'wb') as f:
+                f.write(pem)
+            self.logger.info(f"Public key saved successfully to file: {filepath}")
+        except Exception as e:
+            self.logger.error(f"Failed to save public key to file {filepath}: {str(e)}")
+            raise

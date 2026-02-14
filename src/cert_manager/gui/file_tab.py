@@ -202,18 +202,28 @@ class FileTab(QWidget):
                 return
             
             # 加载私钥
-            private_key = self.key_service.load_private_key(key_path, None)
+            result_key = self.key_service.load_private_key({"file_path": key_path, "password": None})
+            if not result_key.get("success"):
+                raise Exception(result_key.get("error", "加载私钥失败"))
+            private_key = result_key["data"]
             
             # 获取哈希算法
             hash_algorithm = self.hash_combo.currentText()
             
             # 签名文件
-            signature = self.file_signer_service.sign_file(file_path, private_key, hash_algorithm)
+            result_sign = self.file_signer_service.sign_file({"file_path": file_path, "private_key": private_key, "hash_algorithm": hash_algorithm})
+            if not result_sign.get("success"):
+                raise Exception(result_sign.get("error", "签名文件失败"))
+            signature = result_sign["data"]
             
             self.current_signature = signature
             
             # 显示签名信息
-            file_info = self.file_signer_service.get_file_info(file_path)
+            result_file_info = self.file_signer_service.get_file_info({"file_path": file_path})
+            if not result_file_info.get("success"):
+                raise Exception(result_file_info.get("error", "获取文件信息失败"))
+            file_info = result_file_info["data"]
+            
             info_text = "文件信息:\n"
             for key, value in file_info.items():
                 info_text += f"{key}: {value}\n"
@@ -246,7 +256,17 @@ class FileTab(QWidget):
             # 保存为JSON格式
             hash_algorithm = self.hash_combo.currentText()
             original_file = self.file_path_edit.text()
-            self.file_signer_service.save_signature(self.current_signature, file_path, original_file, hash_algorithm)
+            
+            result = self.file_signer_service.save_signature({
+                "signature": self.current_signature,
+                "file_path": file_path,
+                "original_file_path": original_file,
+                "hash_algorithm": hash_algorithm
+            })
+            
+            if not result.get("success"):
+                raise Exception(result.get("error", "保存签名失败"))
+            
             QMessageBox.information(self, "成功", "签名保存成功")
         except Exception as e:
             QMessageBox.critical(self, "错误", f"保存签名失败: {str(e)}")
@@ -264,7 +284,16 @@ class FileTab(QWidget):
             return
         
         try:
-            result_path = self.file_signer_service.attach_signature_to_file(file_path, self.current_signature, output_path)
+            result = self.file_signer_service.attach_signature_to_file({
+                "original_file": file_path,
+                "signature": self.current_signature,
+                "output_file": output_path
+            })
+            
+            if not result.get("success"):
+                raise Exception(result.get("error", "附加签名失败"))
+            
+            result_path = result["data"]
             QMessageBox.information(self, "成功", f"签名已附加到文件: {result_path}")
         except Exception as e:
             QMessageBox.critical(self, "错误", f"附加签名失败: {str(e)}")
@@ -310,18 +339,26 @@ class FileTab(QWidget):
                 return
             
             # 加载私钥
-            private_key = self.key_service.load_private_key(key_path, None)
+            result_key = self.key_service.load_private_key({"file_path": key_path, "password": None})
+            if not result_key.get("success"):
+                raise Exception(result_key.get("error", "加载私钥失败"))
+            private_key = result_key["data"]
             
             # 获取哈希算法
             hash_algorithm = self.batch_hash_combo.currentText()
             
             # 执行批量签名
-            results = self.file_signer_service.batch_sign(
-                self.batch_files,
-                private_key,
-                output_dir,
-                hash_algorithm
-            )
+            result_batch = self.file_signer_service.batch_sign({
+                "file_paths": self.batch_files,
+                "private_key": private_key,
+                "output_dir": output_dir,
+                "hash_algorithm": hash_algorithm
+            })
+            
+            if not result_batch.get("success"):
+                raise Exception(result_batch.get("error", "批量签名失败"))
+            
+            results = result_batch["data"]
             
             # 显示批量签名结果
             result_text = "批量签名结果:\n"

@@ -34,15 +34,12 @@ class FileSigner:
             file_size = os.path.getsize(absolute_filepath)
             self.logger.debug(f"File size: {file_size} bytes")
             
-            # 计算文件哈希
-            hash_obj = getattr(hashes, hash_algorithm.upper())()
-            digest = hashes.Hash(hash_obj, self.backend)
+            # 使用工具层中的函数计算文件哈希
+            from ..utils.hash_utils import calculate_file_hash
+            hash_hex = calculate_file_hash(absolute_filepath, hash_algorithm)
+            # 转换为字节格式
+            file_hash = bytes.fromhex(hash_hex)
             
-            with open(absolute_filepath, "rb") as f:
-                while chunk := f.read(8192):
-                    digest.update(chunk)
-            
-            file_hash = digest.finalize()
             self.logger.info(f"File hash calculated successfully for: {absolute_filepath}")
             self.logger.debug(f"File hash: {file_hash}")
             return file_hash

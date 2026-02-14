@@ -143,10 +143,18 @@ class KeyTab(QWidget):
             
             if key_type == "RSA":
                 key_size = int(self.rsa_key_size_combo.currentText())
-                private_info, public_info = self.key_service.generate_rsa_key(key_size)
+                result = self.key_service.generate_rsa_key({"key_size": key_size})
             else:
                 curve = self.ecc_curve_combo.currentText()
-                private_info, public_info = self.key_service.generate_ecc_key(curve)
+                result = self.key_service.generate_ecc_key({"curve": curve})
+            
+            if not result.get("success"):
+                raise Exception(result.get("error", "生成密钥失败"))
+            
+            # 获取密钥信息
+            private_info = result["data"]["private_key_info"]
+            public_info = result["data"]["public_key_info"]
+            key_id = result["data"]["key_id"]
             
             # 显示密钥信息
             info_text = f"私钥信息:\n"
@@ -155,7 +163,8 @@ class KeyTab(QWidget):
             info_text += f"\n公钥信息:\n"
             for key, value in public_info.items():
                 info_text += f"{key}: {value}\n"
-            info_text += f"\n已自动存储到配置文件中（使用根密钥加密）"
+            info_text += f"\n密钥ID: {key_id}\n"
+            info_text += f"已自动存储到配置文件中（使用根密钥加密）"
             
             self.info_text.setText(info_text)
             
@@ -172,11 +181,16 @@ class KeyTab(QWidget):
         try:
             self.key_list.clear()
             # 默认按最新时间排序
-            keys = self.key_service.list_keys()
+            result = self.key_service.list_keys()
+            
+            if not result.get("success"):
+                raise Exception(result.get("error", "获取密钥列表失败"))
+            
+            keys = result["data"]
             
             for key in keys:
                 # 直接显示ID，不做复杂处理
-                display_text = f"{key['id']} - {key['type']} - {key['private_info'].get('key_size', key['private_info'].get('curve', ''))}"
+                display_text = f"{key['id']} - {key.get('type', 'Unknown')} - {key.get('key_size', key.get('curve', ''))}"
                 
                 item = QListWidgetItem(display_text)
                 item.setData(Qt.UserRole, key['id'])
@@ -204,7 +218,12 @@ class KeyTab(QWidget):
         
         if reply == QMessageBox.Yes:
             try:
-                success = self.key_service.delete_key(self.selected_key_id)
+                result = self.key_service.delete_key({"key_id": self.selected_key_id})
+                
+                if not result.get("success"):
+                    raise Exception(result.get("error", "删除密钥失败"))
+                
+                success = result["data"]
                 if success:
                     QMessageBox.information(self, "成功", "密钥删除成功")
                     # 刷新密钥列表
@@ -225,14 +244,27 @@ class KeyTab(QWidget):
         
         try:
             # 使用根密钥自动解密
-            private_key, public_key = self.key_service.load_key_pair(self.selected_key_id)
+            result = self.key_service.load_key_pair({"key_id": self.selected_key_id})
+            
+            if not result.get("success"):
+                raise Exception(result.get("error", "加载密钥失败"))
+            
+            private_key = result["data"]["private_key"]
+            public_key = result["data"]["public_key"]
             
             self.current_private_key = private_key
             self.current_public_key = public_key
             
             # 显示密钥信息
-            private_info = self.key_service.get_key_info(private_key)
-            public_info = self.key_service.get_key_info(public_key)
+            result_info = self.key_service.get_key_info({"key": private_key})
+            if not result_info.get("success"):
+                raise Exception(result_info.get("error", "获取密钥信息失败"))
+            private_info = result_info["data"]
+            
+            result_info = self.key_service.get_key_info({"key": public_key})
+            if not result_info.get("success"):
+                raise Exception(result_info.get("error", "获取密钥信息失败"))
+            public_info = result_info["data"]
             
             info_text = f"私钥信息:\n"
             for key, value in private_info.items():
@@ -271,7 +303,10 @@ class KeyTab(QWidget):
             # 确定文件格式
             format = "pem" if file_path.endswith(".pem") else "der"
             
-            self.key_service.save_private_key(self.current_private_key, file_path, password if password else None)
+            result = self.key_service.save_private_key({"private_key": self.current_private_key, "file_path": file_path, "password": password if password else None})
+            if not result.get("success"):
+                raise Exception(result.get("error", "保存私钥失败"))
+            
             QMessageBox.information(self, "成功", "私钥保存成功")
         except Exception as e:
             QMessageBox.critical(self, "错误", f"保存私钥失败: {str(e)}")
@@ -288,7 +323,10 @@ class KeyTab(QWidget):
             # 确定文件格式
             format = "pem" if file_path.endswith(".pem") else "der"
             
-            self.key_service.save_public_key(self.current_public_key, file_path)
+            result = self.key_service.save_public_key({"public_key": self.current_public_key, "file_path": file_path})
+            if not result.get("success"):
+                raise Exception(result.get("error", "保存公钥失败"))
+            
             QMessageBox.information(self, "成功", "公钥保存成功")
         except Exception as e:
             QMessageBox.critical(self, "错误", f"保存公钥失败: {str(e)}")

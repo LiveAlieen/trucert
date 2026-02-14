@@ -23,8 +23,10 @@ class CertManager:
         """计算数据的哈希值"""
         try:
             self.logger.debug("Calculating hash for data")
-            import hashlib
-            hash_value = hashlib.sha256(data).digest()
+            from ..utils.hash_utils import calculate_hash
+            # 使用hash_utils中的函数计算哈希值，然后转换为字节格式
+            hash_hex = calculate_hash(data, "sha256")
+            hash_value = bytes.fromhex(hash_hex)
             self.logger.debug("Hash calculation completed")
             return hash_value
         except Exception as e:

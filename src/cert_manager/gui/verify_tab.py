@@ -183,25 +183,35 @@ class VerifyTab(QWidget):
                 return
             
             # 加载证书
-            cert = self.cert_service.load_cert(cert_path)
+            result_cert = self.cert_service.load_cert({"filepath": cert_path})
+            if not result_cert.get("success"):
+                raise Exception(result_cert.get("error", "加载证书失败"))
+            cert = result_cert["data"]
             
             # 加载上级证书（如果提供）
             parent_cert = None
             parent_path = self.parent_path_edit.text()
             if parent_path:
-                parent_cert = self.cert_service.load_cert(parent_path)
+                result_parent = self.cert_service.load_cert({"filepath": parent_path})
+                if not result_parent.get("success"):
+                    raise Exception(result_parent.get("error", "加载上级证书失败"))
+                parent_cert = result_parent["data"]
             
             # 验证证书
-            result = self.verifier_service.verify_json_cert(cert, parent_cert)
+            result_verify = self.verifier_service.verify_json_cert({"cert_json_path": cert_path, "public_key": None})
+            if not result_verify.get("success"):
+                raise Exception(result_verify.get("error", "验证证书失败"))
+            
+            result = {"valid": result_verify["data"], "reason": "证书验证成功" if result_verify["data"] else "证书验证失败"}
             
             # 显示验证结果
             result_text = "验证结果:\n"
             result_text += f"有效: {result['valid']}\n"
             result_text += f"原因: {result['reason']}\n"
             
-            if 'cert_info' in result:
+            if 'cert_info' in cert:
                 result_text += "\n证书信息:\n"
-                for key, value in result['cert_info'].items():
+                for key, value in cert['cert_info'].items():
                     result_text += f"{key}: {value}\n"
             
             self.cert_result_text.setText(result_text)
@@ -230,7 +240,10 @@ class VerifyTab(QWidget):
                 return
             
             # 加载公钥
-            public_key = self.key_service.load_public_key(key_path)
+            result_key = self.key_service.load_public_key({"file_path": key_path})
+            if not result_key.get("success"):
+                raise Exception(result_key.get("error", "加载公钥失败"))
+            public_key = result_key["data"]
             
             # 获取哈希算法
             hash_algorithm = self.verify_hash_combo.currentText()
@@ -239,14 +252,18 @@ class VerifyTab(QWidget):
             is_signed_file = False
             try:
                 # 尝试提取签名
-                file_content, signature = self.file_signer_service.extract_signature_from_file(file_path)
-                is_signed_file = True
+                result_extract = self.file_signer_service.extract_signature_from_file({"signed_file": file_path})
+                if result_extract.get("success"):
+                    is_signed_file = True
             except:
                 is_signed_file = False
             
             if is_signed_file:
                 # 验证带签名的文件
-                result = self.verifier_service.verify_signed_file(file_path, public_key, hash_algorithm)
+                result_verify = self.verifier_service.verify_signed_file({"signed_file": file_path, "public_key": public_key, "hash_algorithm": hash_algorithm})
+                if not result_verify.get("success"):
+                    raise Exception(result_verify.get("error", "验证带签名的文件失败"))
+                result = result_verify["data"]
             else:
                 # 检查是否提供了签名文件
                 sig_path = self.sig_path_edit.text()
@@ -255,14 +272,24 @@ class VerifyTab(QWidget):
                     return
                 
                 # 加载签名
-                # 加载签名、哈希算法和文件信息
-                signature, sig_hash_algorithm, file_info = self.file_signer_service.load_signature(sig_path)
+                result_load = self.file_signer_service.load_signature({"file_path": sig_path})
+                if not result_load.get("success"):
+                    raise Exception(result_load.get("error", "加载签名失败"))
+                
+                signature_data = result_load["data"]
+                signature = signature_data["signature"]
+                sig_hash_algorithm = signature_data["hash_algorithm"]
+                file_info = signature_data["file_info"]
+                
                 # 如果从签名文件中获取到哈希算法，则使用它
                 if sig_hash_algorithm:
                     hash_algorithm = sig_hash_algorithm
                 
                 # 验证文件
-                result = self.verifier_service.verify_file_signature(file_path, signature, public_key, hash_algorithm)
+                result_verify = self.verifier_service.verify_file_signature({"file_path": file_path, "signature": signature, "public_key": public_key, "hash_algorithm": hash_algorithm})
+                if not result_verify.get("success"):
+                    raise Exception(result_verify.get("error", "验证文件签名失败"))
+                result = result_verify["data"]
             
             # 显示验证结果
             result_text = "验证结果:\n"
