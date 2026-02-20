@@ -4,6 +4,7 @@
 """
 
 import os
+import json
 from typing import Optional
 
 class VerifyCommands:
@@ -31,10 +32,23 @@ class VerifyCommands:
             print(f"验证证书: {args.cert_path}")
             
             # 加载公钥
-            public_key = key_service.load_public_key(args.public_key)
+            result_key = key_service.load_public_key({"file_path": args.public_key})
+            if not result_key.get("success"):
+                print(f"加载公钥失败: {result_key.get('error', '未知错误')}")
+                return 1
+            public_key = result_key["data"]
             
             # 验证证书
-            is_valid = verifier_service.verify_json_cert(args.cert_path, public_key)
+            result_verify = verifier_service.verify_json_cert({
+                "cert_json_path": args.cert_path,
+                "public_key": public_key
+            })
+            
+            if not result_verify.get("success"):
+                print(f"验证证书失败: {result_verify.get('error', '未知错误')}")
+                return 1
+            
+            is_valid = result_verify["data"]
             
             if is_valid:
                 print("证书验证成功!")
@@ -44,6 +58,8 @@ class VerifyCommands:
                 return 1
         except Exception as e:
             print(f"验证证书失败: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return 1
     
     @staticmethod
@@ -53,15 +69,30 @@ class VerifyCommands:
             print(f"验证证书链: {args.cert_path}")
             
             # 加载父证书公钥
-            parent_public_key = key_service.load_public_key(args.parent_public_key)
+            result_parent_key = key_service.load_public_key({"file_path": args.parent_public_key})
+            if not result_parent_key.get("success"):
+                print(f"加载父证书公钥失败: {result_parent_key.get('error', '未知错误')}")
+                return 1
+            parent_public_key = result_parent_key["data"]
+            
+            # 加载证书数据
+            result_cert = cert_service.load_cert({"filepath": args.cert_path})
+            if not result_cert.get("success"):
+                print(f"加载证书失败: {result_cert.get('error', '未知错误')}")
+                return 1
+            cert_data = result_cert["data"]
             
             # 验证证书链
-            # 首先需要加载证书数据
-            import json
-            with open(args.cert_path, 'r') as f:
-                cert_data = json.load(f)
+            result_verify = verifier_service.verify_cert_chain({
+                "cert_data": cert_data,
+                "parent_public_key": parent_public_key
+            })
             
-            is_valid = verifier_service.verify_cert_chain(cert_data, parent_public_key)
+            if not result_verify.get("success"):
+                print(f"验证证书链失败: {result_verify.get('error', '未知错误')}")
+                return 1
+            
+            is_valid = result_verify["data"]
             
             if is_valid:
                 print("证书链验证成功!")
@@ -71,6 +102,8 @@ class VerifyCommands:
                 return 1
         except Exception as e:
             print(f"验证证书链失败: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return 1
 
 # 导出处理函数
