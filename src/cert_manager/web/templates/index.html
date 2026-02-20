@@ -219,7 +219,6 @@
             </div>
             
             <div class="tab-content">
-                <!-- 密钥管理 -->
                 <div id="keys" class="tab-pane active">
                     <div class="section">
                         <div class="section-title">生成密钥对</div>
@@ -255,7 +254,6 @@
                     </div>
                 </div>
                 
-                <!-- 证书管理 -->
                 <div id="certs" class="tab-pane">
                     <div class="section">
                         <div class="section-title">生成自签名证书</div>
@@ -286,7 +284,6 @@
                     </div>
                 </div>
                 
-                <!-- 文件签名 -->
                 <div id="sign" class="tab-pane">
                     <div class="section">
                         <div class="section-title">签名文件</div>
@@ -311,7 +308,6 @@
                     </div>
                 </div>
                 
-                <!-- 签名验证 -->
                 <div id="verify" class="tab-pane">
                     <div class="section">
                         <div class="section-title">验证文件签名</div>
@@ -338,7 +334,6 @@
     </div>
 
     <script>
-        // 标签页切换
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -348,7 +343,6 @@
             });
         });
         
-        // 密钥类型切换
         document.getElementById('keyType').addEventListener('change', function() {
             if (this.value === 'RSA') {
                 document.getElementById('rsaParams').style.display = 'block';
@@ -359,8 +353,8 @@
             }
         });
         
-        // 页面加载时获取数据
         window.addEventListener('load', function() {
+            console.log('页面加载完成');
             loadKeys();
             loadCerts();
         });
@@ -369,12 +363,16 @@
             const status = document.getElementById('status');
             status.className = `status ${type}`;
             status.textContent = message;
+            console.log('状态:', message);
         }
         
         async function loadKeys() {
+            console.log('加载密钥列表...');
             try {
                 const response = await fetch('/api/keys');
+                console.log('响应状态:', response.status);
                 const data = await response.json();
+                console.log('密钥数据:', data);
                 
                 if (data.success) {
                     const keyList = document.getElementById('keyList');
@@ -394,9 +392,13 @@
                     });
                     
                     updateKeySelects(data.keys);
+                    console.log('密钥列表加载完成');
+                } else {
+                    console.error('加载密钥失败:', data.error);
                 }
             } catch (e) {
-                console.error(e);
+                console.error('加载密钥出错:', e);
+                showStatus('加载密钥出错: ' + e.message, 'error');
             }
         }
         
@@ -414,6 +416,7 @@
         }
         
         async function generateKey() {
+            console.log('生成密钥...');
             try {
                 const keyType = document.getElementById('keyType').value;
                 const data = { type: keyType };
@@ -424,13 +427,17 @@
                     data.curve = document.getElementById('curve').value;
                 }
                 
+                console.log('发送数据:', data);
+                
                 const response = await fetch('/api/keys', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
                 
+                console.log('响应状态:', response.status);
                 const result = await response.json();
+                console.log('响应数据:', result);
                 
                 if (result.success) {
                     showStatus('密钥生成成功!', 'success');
@@ -439,6 +446,7 @@
                     showStatus('密钥生成失败: ' + result.error, 'error');
                 }
             } catch (e) {
+                console.error('生成密钥出错:', e);
                 showStatus('错误: ' + e.message, 'error');
             }
         }
@@ -465,9 +473,11 @@
         }
         
         async function loadCerts() {
+            console.log('加载证书列表...');
             try {
                 const response = await fetch('/api/certs');
                 const data = await response.json();
+                console.log('证书数据:', data);
                 
                 if (data.success) {
                     const certList = document.getElementById('certList');
@@ -477,18 +487,20 @@
                         const li = document.createElement('li');
                         li.className = 'list-item';
                         li.innerHTML = `
-                            <span>${cert.filename} - ${cert.type}</span>
-                            <button class="btn btn-danger" onclick="deleteCert('${cert.path}')">删除</button>
+                            <span>${cert.filename || cert.path} - ${cert.type || 'certificate'}</span>
+                            <button class="btn btn-danger" onclick="deleteCert('${encodeURIComponent(cert.path || cert.filename)}')">删除</button>
                         `;
                         certList.appendChild(li);
                     });
+                    console.log('证书列表加载完成');
                 }
             } catch (e) {
-                console.error(e);
+                console.error('加载证书出错:', e);
             }
         }
         
         async function generateCert() {
+            console.log('生成证书...');
             try {
                 const keyId = document.getElementById('certKeySelect').value;
                 if (!keyId) {
@@ -502,6 +514,8 @@
                     forward_offset: parseInt(document.getElementById('certOffset').value)
                 };
                 
+                console.log('发送数据:', data);
+                
                 const response = await fetch('/api/certs/self-signed', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -509,6 +523,7 @@
                 });
                 
                 const result = await response.json();
+                console.log('响应数据:', result);
                 
                 if (result.success) {
                     showStatus('证书生成成功!', 'success');
@@ -517,6 +532,7 @@
                     showStatus('证书生成失败: ' + result.error, 'error');
                 }
             } catch (e) {
+                console.error('生成证书出错:', e);
                 showStatus('错误: ' + e.message, 'error');
             }
         }
@@ -524,24 +540,26 @@
         async function deleteCert(certPath) {
             if (confirm('确定要删除这个证书吗？')) {
                 try {
-                    const response = await fetch(`/api/certs/${encodeURIComponent(certPath)}`, {
-                    method: 'DELETE'
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showStatus('证书删除成功!', 'success');
-                    loadCerts();
-                } else {
-                    showStatus('证书删除失败: ' + result.error, 'error');
+                    const response = await fetch(`/api/certs/${certPath}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showStatus('证书删除成功!', 'success');
+                        loadCerts();
+                    } else {
+                        showStatus('证书删除失败: ' + result.error, 'error');
+                    }
+                } catch (e) {
+                    showStatus('错误: ' + e.message, 'error');
                 }
-            } catch (e) {
-                showStatus('错误: ' + e.message, 'error');
             }
         }
         
         async function signFile() {
+            console.log('签名文件...');
             try {
                 const fileInput = document.getElementById('signFile');
                 const keyId = document.getElementById('signKeySelect').value;
@@ -567,6 +585,7 @@
                 });
                 
                 const result = await response.json();
+                console.log('签名结果:', result);
                 
                 if (result.success) {
                     showStatus('文件签名成功!', 'success');
@@ -583,11 +602,13 @@
                     showStatus('文件签名失败: ' + result.error, 'error');
                 }
             } catch (e) {
+                console.error('签名文件出错:', e);
                 showStatus('错误: ' + e.message, 'error');
             }
         }
         
         async function verifyFile() {
+            console.log('验证签名...');
             try {
                 const fileInput = document.getElementById('verifyFile');
                 const sigInput = document.getElementById('verifySig');
@@ -614,6 +635,7 @@
                 });
                 
                 const result = await response.json();
+                console.log('验证结果:', result);
                 
                 if (result.success) {
                     if (result.valid) {
@@ -625,6 +647,7 @@
                     showStatus('验证失败: ' + result.error, 'error');
                 }
             } catch (e) {
+                console.error('验证签名出错:', e);
                 showStatus('错误: ' + e.message, 'error');
             }
         }
