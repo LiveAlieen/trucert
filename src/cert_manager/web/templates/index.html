@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>证书管理系统</title>
+    <title>证书生成与管理工具</title>
     <style>
         * {
             margin: 0;
@@ -12,47 +12,40 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #f0f0f0;
             padding: 20px;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
         }
         
-        h1 {
+        .title-bar {
+            background: #0078d4;
             color: white;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
         }
         
         .tabs {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
-        
-        .tab-nav {
             display: flex;
-            background: #f0f0f0;
-            border-bottom: 2px solid #e0e0e0;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ccc;
         }
         
         .tab-btn {
-            flex: 1;
-            padding: 20px;
+            padding: 10px 20px;
             border: none;
             background: none;
-            font-size: 16px;
             cursor: pointer;
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
+            font-size: 14px;
+            border-bottom: 2px solid transparent;
         }
         
         .tab-btn:hover {
@@ -61,13 +54,13 @@
         
         .tab-btn.active {
             background: white;
-            border-bottom-color: #667eea;
-            font-weight: bold;
-            color: #667eea;
+            border-bottom-color: #0078d4;
+            color: #0078d4;
         }
         
         .tab-content {
-            padding: 30px;
+            padding: 20px;
+            min-height: 400px;
         }
         
         .tab-pane {
@@ -79,116 +72,128 @@
         }
         
         .section {
-            margin-bottom: 25px;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
         }
         
         .section-title {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
             margin-bottom: 15px;
             color: #333;
         }
         
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         
         label {
             display: block;
             margin-bottom: 5px;
-            font-weight: 500;
+            font-size: 13px;
             color: #555;
         }
         
-        input, select, textarea {
+        input, select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 13px;
         }
         
-        input:focus, select:focus, textarea:focus {
+        input:focus, select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #0078d4;
         }
         
         .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
+            padding: 6px 15px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background: #f5f5f5;
             cursor: pointer;
-            transition: all 0.3s;
+            font-size: 13px;
+            margin-right: 5px;
+        }
+        
+        .btn:hover {
+            background: #e8e8e8;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #0078d4;
             color: white;
+            border-color: #0078d4;
         }
         
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: #005a9e;
         }
         
         .btn-danger {
-            background: #e74c3c;
+            background: #d13438;
             color: white;
+            border-color: #d13438;
         }
         
-        .btn-success {
-            background: #27ae60;
-            color: white;
-        }
-        
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
+        .btn-danger:hover {
+            background: #a4262c;
         }
         
         .list {
             list-style: none;
             margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 3px;
         }
         
         .list-item {
-            padding: 12px;
-            background: white;
-            border: 1px solid #eee;
-            border-radius: 5px;
-            margin-bottom: 8px;
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 13px;
         }
         
-        .status {
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 15px;
+        .list-item:last-child {
+            border-bottom: none;
         }
         
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .list-item:hover {
+            background: #f5f5f5;
         }
         
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .status-bar {
+            background: #f5f5f5;
+            border-top: 1px solid #ccc;
+            padding: 8px 15px;
+            font-size: 12px;
+            color: #666;
         }
         
-        .status.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+        .message {
+            padding: 8px 12px;
+            border-radius: 3px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        
+        .message.success {
+            background: #dff6dd;
+            color: #107c10;
+            border: 1px solid #107c10;
+        }
+        
+        .message.error {
+            background: #fde7e9;
+            color: #a80000;
+            border: 1px solid #a80000;
         }
         
         .row {
@@ -199,138 +204,137 @@
         .col {
             flex: 1;
         }
-        
-        textarea {
-            height: 150px;
-            resize: vertical;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔐 证书管理系统</h1>
+        <div class="title-bar">证书生成与管理工具</div>
         
         <div class="tabs">
-            <div class="tab-nav">
-                <button class="tab-btn active" data-tab="keys">密钥管理</button>
-                <button class="tab-btn" data-tab="certs">证书管理</button>
-                <button class="tab-btn" data-tab="sign">文件签名</button>
-                <button class="tab-btn" data-tab="verify">签名验证</button>
+            <button class="tab-btn active" data-tab="keys">密钥管理</button>
+            <button class="tab-btn" data-tab="certs">证书管理</button>
+            <button class="tab-btn" data-tab="sign">文件签名</button>
+            <button class="tab-btn" data-tab="verify">验证</button>
+        </div>
+        
+        <div class="tab-content">
+            <div id="keys" class="tab-pane active">
+                <div class="section">
+                    <div class="section-title">生成密钥对</div>
+                    <div class="form-group">
+                        <label>密钥类型</label>
+                        <select id="keyType">
+                            <option value="RSA">RSA</option>
+                            <option value="ECC">ECC</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="rsaParams">
+                        <label>密钥大小</label>
+                        <select id="keySize">
+                            <option value="2048">2048</option>
+                            <option value="3072">3072</option>
+                            <option value="4096">4096</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="eccParams" style="display:none;">
+                        <label>曲线类型</label>
+                        <select id="curve">
+                            <option value="SECP256R1">SECP256R1</option>
+                            <option value="SECP384R1">SECP384R1</option>
+                            <option value="SECP521R1">SECP521R1</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="generateKey()">生成密钥对</button>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">存储的密钥</div>
+                    <ul class="list" id="keyList"></ul>
+                </div>
+                
+                <div id="keyMessage"></div>
             </div>
             
-            <div class="tab-content">
-                <div id="keys" class="tab-pane active">
-                    <div class="section">
-                        <div class="section-title">生成密钥对</div>
-                        <div class="form-group">
-                            <label>密钥类型</label>
-                            <select id="keyType">
-                                <option value="RSA">RSA</option>
-                                <option value="ECC">ECC</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="rsaParams">
-                            <label>密钥大小</label>
-                            <select id="keySize">
-                                <option value="2048">2048</option>
-                                <option value="3072">3072</option>
-                                <option value="4096">4096</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="eccParams" style="display:none;">
-                            <label>曲线类型</label>
-                            <select id="curve">
-                                <option value="SECP256R1">SECP256R1</option>
-                                <option value="SECP384R1">SECP384R1</option>
-                                <option value="SECP521R1">SECP521R1</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-primary" onclick="generateKey()">生成密钥对</button>
+            <div id="certs" class="tab-pane">
+                <div class="section">
+                    <div class="section-title">生成自签名证书</div>
+                    <div class="form-group">
+                        <label>选择密钥</label>
+                        <select id="certKeySelect"></select>
                     </div>
-                    
-                    <div class="section">
-                        <div class="section-title">存储的密钥</div>
-                        <ul class="list" id="keyList"></ul>
-                    </div>
-                </div>
-                
-                <div id="certs" class="tab-pane">
-                    <div class="section">
-                        <div class="section-title">生成自签名证书</div>
-                        <div class="form-group">
-                            <label>选择密钥</label>
-                            <select id="certKeySelect"></select>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label>有效期 (天)</label>
-                                    <input type="number" id="certValidity" value="365">
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label>时间偏移 (秒)</label>
-                                    <input type="number" id="certOffset" value="0">
-                                </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>有效期 (天)</label>
+                                <input type="number" id="certValidity" value="365">
                             </div>
                         </div>
-                        <button class="btn btn-primary" onclick="generateCert()">生成证书</button>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>时间偏移 (秒)</label>
+                                <input type="number" id="certOffset" value="0">
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="section">
-                        <div class="section-title">存储的证书</div>
-                        <ul class="list" id="certList"></ul>
-                    </div>
+                    <button class="btn btn-primary" onclick="generateCert()">生成证书</button>
                 </div>
                 
-                <div id="sign" class="tab-pane">
-                    <div class="section">
-                        <div class="section-title">签名文件</div>
-                        <div class="form-group">
-                            <label>选择文件</label>
-                            <input type="file" id="signFile">
-                        </div>
-                        <div class="form-group">
-                            <label>选择密钥</label>
-                            <select id="signKeySelect"></select>
-                        </div>
-                        <div class="form-group">
-                            <label>哈希算法</label>
-                            <select id="signHash">
-                                <option value="sha256">SHA256</option>
-                                <option value="sha384">SHA384</option>
-                                <option value="sha512">SHA512</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-primary" onclick="signFile()">签名文件</button>
-                        <div id="signResult"></div>
-                    </div>
+                <div class="section">
+                    <div class="section-title">存储的证书</div>
+                    <ul class="list" id="certList"></ul>
                 </div>
                 
-                <div id="verify" class="tab-pane">
-                    <div class="section">
-                        <div class="section-title">验证文件签名</div>
-                        <div class="form-group">
-                            <label>选择文件</label>
-                            <input type="file" id="verifyFile">
-                        </div>
-                        <div class="form-group">
-                            <label>选择签名文件</label>
-                            <input type="file" id="verifySig">
-                        </div>
-                        <div class="form-group">
-                            <label>选择密钥</label>
-                            <select id="verifyKeySelect"></select>
-                        </div>
-                        <button class="btn btn-primary" onclick="verifyFile()">验证签名</button>
-                        <div id="verifyResult"></div>
+                <div id="certMessage"></div>
+            </div>
+            
+            <div id="sign" class="tab-pane">
+                <div class="section">
+                    <div class="section-title">签名文件</div>
+                    <div class="form-group">
+                        <label>选择文件</label>
+                        <input type="file" id="signFile">
                     </div>
+                    <div class="form-group">
+                        <label>选择密钥</label>
+                        <select id="signKeySelect"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>哈希算法</label>
+                        <select id="signHash">
+                            <option value="sha256">SHA256</option>
+                            <option value="sha384">SHA384</option>
+                            <option value="sha512">SHA512</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="signFile()">签名文件</button>
                 </div>
+                
+                <div id="signMessage"></div>
+            </div>
+            
+            <div id="verify" class="tab-pane">
+                <div class="section">
+                    <div class="section-title">验证文件签名</div>
+                    <div class="form-group">
+                        <label>选择文件</label>
+                        <input type="file" id="verifyFile">
+                    </div>
+                    <div class="form-group">
+                        <label>选择签名文件</label>
+                        <input type="file" id="verifySig">
+                    </div>
+                    <div class="form-group">
+                        <label>选择密钥</label>
+                        <select id="verifyKeySelect"></select>
+                    </div>
+                    <button class="btn btn-primary" onclick="verifyFile()">验证签名</button>
+                </div>
+                
+                <div id="verifyMessage"></div>
             </div>
         </div>
         
-        <div id="status"></div>
+        <div class="status-bar" id="statusBar">就绪</div>
     </div>
 
     <script>
@@ -354,25 +358,23 @@
         });
         
         window.addEventListener('load', function() {
-            console.log('页面加载完成');
             loadKeys();
             loadCerts();
         });
         
-        function showStatus(message, type = 'info') {
-            const status = document.getElementById('status');
-            status.className = `status ${type}`;
-            status.textContent = message;
-            console.log('状态:', message);
+        function setStatus(message) {
+            document.getElementById('statusBar').textContent = message;
+        }
+        
+        function showMessage(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = `<div class="message ${type}">${message}</div>`;
         }
         
         async function loadKeys() {
-            console.log('加载密钥列表...');
             try {
                 const response = await fetch('/api/keys');
-                console.log('响应状态:', response.status);
                 const data = await response.json();
-                console.log('密钥数据:', data);
                 
                 if (data.success) {
                     const keyList = document.getElementById('keyList');
@@ -381,24 +383,20 @@
                     data.keys.forEach(key => {
                         const li = document.createElement('li');
                         li.className = 'list-item';
+                        const keyInfo = `${key.id} (${key.type || 'Unknown'}${key.key_size ? ` - ${key.key_size}` : ''}${key.curve ? ` - ${key.curve}` : ''})`;
                         li.innerHTML = `
-                            <span>${key.id} - ${key.type || 'Unknown'}
-                            ${key.key_size ? `- ${key.key_size}` : ''}
-                            ${key.curve ? `- ${key.curve}` : ''}
-                        </span>
-                        <button class="btn btn-danger" onclick="deleteKey('${key.id}')">删除</button>
-                    `;
+                            <span>${keyInfo}</span>
+                            <button class="btn btn-danger" onclick="deleteKey('${key.id}')">删除</button>
+                        `;
                         keyList.appendChild(li);
                     });
                     
                     updateKeySelects(data.keys);
-                    console.log('密钥列表加载完成');
-                } else {
-                    console.error('加载密钥失败:', data.error);
+                    setStatus('密钥列表已加载');
                 }
             } catch (e) {
-                console.error('加载密钥出错:', e);
-                showStatus('加载密钥出错: ' + e.message, 'error');
+                console.error(e);
+                setStatus('加载密钥失败');
             }
         }
         
@@ -416,7 +414,6 @@
         }
         
         async function generateKey() {
-            console.log('生成密钥...');
             try {
                 const keyType = document.getElementById('keyType').value;
                 const data = { type: keyType };
@@ -427,7 +424,7 @@
                     data.curve = document.getElementById('curve').value;
                 }
                 
-                console.log('发送数据:', data);
+                setStatus('正在生成密钥...');
                 
                 const response = await fetch('/api/keys', {
                     method: 'POST',
@@ -435,19 +432,16 @@
                     body: JSON.stringify(data)
                 });
                 
-                console.log('响应状态:', response.status);
                 const result = await response.json();
-                console.log('响应数据:', result);
                 
                 if (result.success) {
-                    showStatus('密钥生成成功!', 'success');
+                    showMessage('keyMessage', '密钥生成成功！', 'success');
                     loadKeys();
                 } else {
-                    showStatus('密钥生成失败: ' + result.error, 'error');
+                    showMessage('keyMessage', '密钥生成失败: ' + result.error, 'error');
                 }
             } catch (e) {
-                console.error('生成密钥出错:', e);
-                showStatus('错误: ' + e.message, 'error');
+                showMessage('keyMessage', '错误: ' + e.message, 'error');
             }
         }
         
@@ -461,23 +455,21 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        showStatus('密钥删除成功!', 'success');
+                        showMessage('keyMessage', '密钥删除成功！', 'success');
                         loadKeys();
                     } else {
-                        showStatus('密钥删除失败: ' + result.error, 'error');
+                        showMessage('keyMessage', '密钥删除失败: ' + result.error, 'error');
                     }
                 } catch (e) {
-                    showStatus('错误: ' + e.message, 'error');
+                    showMessage('keyMessage', '错误: ' + e.message, 'error');
                 }
             }
         }
         
         async function loadCerts() {
-            console.log('加载证书列表...');
             try {
                 const response = await fetch('/api/certs');
                 const data = await response.json();
-                console.log('证书数据:', data);
                 
                 if (data.success) {
                     const certList = document.getElementById('certList');
@@ -487,24 +479,24 @@
                         const li = document.createElement('li');
                         li.className = 'list-item';
                         li.innerHTML = `
-                            <span>${cert.filename || cert.path} - ${cert.type || 'certificate'}</span>
+                            <span>${cert.filename || cert.path} (${cert.type || 'certificate'})</span>
                             <button class="btn btn-danger" onclick="deleteCert('${encodeURIComponent(cert.path || cert.filename)}')">删除</button>
                         `;
                         certList.appendChild(li);
                     });
-                    console.log('证书列表加载完成');
+                    setStatus('证书列表已加载');
                 }
             } catch (e) {
-                console.error('加载证书出错:', e);
+                console.error(e);
+                setStatus('加载证书失败');
             }
         }
         
         async function generateCert() {
-            console.log('生成证书...');
             try {
                 const keyId = document.getElementById('certKeySelect').value;
                 if (!keyId) {
-                    showStatus('请选择密钥', 'error');
+                    showMessage('certMessage', '请选择密钥', 'error');
                     return;
                 }
                 
@@ -514,7 +506,7 @@
                     forward_offset: parseInt(document.getElementById('certOffset').value)
                 };
                 
-                console.log('发送数据:', data);
+                setStatus('正在生成证书...');
                 
                 const response = await fetch('/api/certs/self-signed', {
                     method: 'POST',
@@ -523,17 +515,15 @@
                 });
                 
                 const result = await response.json();
-                console.log('响应数据:', result);
                 
                 if (result.success) {
-                    showStatus('证书生成成功!', 'success');
+                    showMessage('certMessage', '证书生成成功！', 'success');
                     loadCerts();
                 } else {
-                    showStatus('证书生成失败: ' + result.error, 'error');
+                    showMessage('certMessage', '证书生成失败: ' + result.error, 'error');
                 }
             } catch (e) {
-                console.error('生成证书出错:', e);
-                showStatus('错误: ' + e.message, 'error');
+                showMessage('certMessage', '错误: ' + e.message, 'error');
             }
         }
         
@@ -547,32 +537,33 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        showStatus('证书删除成功!', 'success');
+                        showMessage('certMessage', '证书删除成功！', 'success');
                         loadCerts();
                     } else {
-                        showStatus('证书删除失败: ' + result.error, 'error');
+                        showMessage('certMessage', '证书删除失败: ' + result.error, 'error');
                     }
                 } catch (e) {
-                    showStatus('错误: ' + e.message, 'error');
+                    showMessage('certMessage', '错误: ' + e.message, 'error');
                 }
             }
         }
         
         async function signFile() {
-            console.log('签名文件...');
             try {
                 const fileInput = document.getElementById('signFile');
                 const keyId = document.getElementById('signKeySelect').value;
                 
                 if (!fileInput.files[0]) {
-                    showStatus('请选择文件', 'error');
+                    showMessage('signMessage', '请选择文件', 'error');
                     return;
                 }
                 
                 if (!keyId) {
-                    showStatus('请选择密钥', 'error');
+                    showMessage('signMessage', '请选择密钥', 'error');
                     return;
                 }
+                
+                setStatus('正在签名文件...');
                 
                 const formData = new FormData();
                 formData.append('file', fileInput.files[0]);
@@ -585,10 +576,9 @@
                 });
                 
                 const result = await response.json();
-                console.log('签名结果:', result);
                 
                 if (result.success) {
-                    showStatus('文件签名成功!', 'success');
+                    showMessage('signMessage', '文件签名成功！', 'success');
                     
                     const sigData = JSON.stringify(result.signature, null, 2);
                     const blob = new Blob([sigData], { type: 'application/json' });
@@ -599,30 +589,30 @@
                     a.click();
                     URL.revokeObjectURL(url);
                 } else {
-                    showStatus('文件签名失败: ' + result.error, 'error');
+                    showMessage('signMessage', '文件签名失败: ' + result.error, 'error');
                 }
             } catch (e) {
-                console.error('签名文件出错:', e);
-                showStatus('错误: ' + e.message, 'error');
+                showMessage('signMessage', '错误: ' + e.message, 'error');
             }
         }
         
         async function verifyFile() {
-            console.log('验证签名...');
             try {
                 const fileInput = document.getElementById('verifyFile');
                 const sigInput = document.getElementById('verifySig');
                 const keyId = document.getElementById('verifyKeySelect').value;
                 
                 if (!fileInput.files[0] || !sigInput.files[0]) {
-                    showStatus('请选择文件和签名', 'error');
+                    showMessage('verifyMessage', '请选择文件和签名', 'error');
                     return;
                 }
                 
                 if (!keyId) {
-                    showStatus('请选择密钥', 'error');
+                    showMessage('verifyMessage', '请选择密钥', 'error');
                     return;
                 }
+                
+                setStatus('正在验证签名...');
                 
                 const formData = new FormData();
                 formData.append('file', fileInput.files[0]);
@@ -635,20 +625,18 @@
                 });
                 
                 const result = await response.json();
-                console.log('验证结果:', result);
                 
                 if (result.success) {
                     if (result.valid) {
-                        showStatus('签名验证成功!', 'success');
+                        showMessage('verifyMessage', '签名验证成功！', 'success');
                     } else {
-                        showStatus('签名验证失败!', 'error');
+                        showMessage('verifyMessage', '签名验证失败！', 'error');
                     }
                 } else {
-                    showStatus('验证失败: ' + result.error, 'error');
+                    showMessage('verifyMessage', '验证失败: ' + result.error, 'error');
                 }
             } catch (e) {
-                console.error('验证签名出错:', e);
-                showStatus('错误: ' + e.message, 'error');
+                showMessage('verifyMessage', '错误: ' + e.message, 'error');
             }
         }
     </script>
