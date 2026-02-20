@@ -8,7 +8,7 @@ import json
 import hashlib
 from datetime import datetime
 from typing import Optional, Tuple, Union
-from ..utils import get_logger, get
+from ..utils import get_logger, get, get_key_info as utils_get_key_info
 
 
 class KeyManager:
@@ -34,7 +34,8 @@ class KeyManager:
     
     def generate_rsa_key(self, key_size: int = 2048, password: Optional[bytes] = None,
                         hash_algorithm: str = "sha256",
-                        key_format: str = "json") -> Tuple[str, rsa.RSAPrivateKey, rsa.RSAPublicKey]:
+                        key_format: str = "json",
+                        auto_save: bool = True):
         """生成RSA密钥对
         
         Args:
@@ -42,9 +43,11 @@ class KeyManager:
             password: 密码，用于加密私钥
             hash_algorithm: 哈希算法
             key_format: 密钥格式，支持"json"和"pem"
+            auto_save: 是否自动保存密钥
         
         Returns:
-            密钥ID, 私钥对象, 公钥对象
+            (私钥对象, 公钥对象) 如果 auto_save=False
+            (密钥ID, 私钥对象, 公钥对象) 如果 auto_save=True
         """
         try:
             self.logger.info(f"Generating RSA key with size: {key_size}")
@@ -58,20 +61,25 @@ class KeyManager:
             
             public_key = private_key.public_key()
             
-            # 保存密钥
-            import datetime
-            key_id = f"RSA_{int(datetime.datetime.now().timestamp())}"
-            self.key_storage.save_key_pair(private_key, public_key, key_id, "RSA")
-            
-            self.logger.info(f"RSA key generated and saved successfully with ID: {key_id}")
-            return key_id, private_key, public_key
+            if auto_save:
+                # 保存密钥
+                import datetime
+                key_id = f"RSA_{int(datetime.datetime.now().timestamp())}"
+                self.key_storage.save_key_pair(private_key, public_key, key_id, "RSA")
+                
+                self.logger.info(f"RSA key generated and saved successfully with ID: {key_id}")
+                return key_id, private_key, public_key
+            else:
+                self.logger.info(f"RSA key generated successfully (not saved)")
+                return private_key, public_key
         except Exception as e:
             self.logger.error(f"Failed to generate RSA key: {str(e)}")
             raise
     
     def generate_ecc_key(self, curve: str = "secp256r1", password: Optional[bytes] = None,
                         hash_algorithm: str = "sha256",
-                        key_format: str = "json") -> Tuple[str, ec.EllipticCurvePrivateKey, ec.EllipticCurvePublicKey]:
+                        key_format: str = "json",
+                        auto_save: bool = True):
         """生成ECC密钥对
         
         Args:
@@ -79,9 +87,11 @@ class KeyManager:
             password: 密码，用于加密私钥
             hash_algorithm: 哈希算法
             key_format: 密钥格式，支持"json"和"pem"
+            auto_save: 是否自动保存密钥
         
         Returns:
-            密钥ID, 私钥对象, 公钥对象
+            (私钥对象, 公钥对象) 如果 auto_save=False
+            (密钥ID, 私钥对象, 公钥对象) 如果 auto_save=True
         """
         try:
             self.logger.info(f"Generating ECC key with curve: {curve}")
@@ -97,13 +107,17 @@ class KeyManager:
             
             public_key = private_key.public_key()
             
-            # 保存密钥
-            import datetime
-            key_id = f"ECC_{int(datetime.datetime.now().timestamp())}"
-            self.key_storage.save_key_pair(private_key, public_key, key_id, "ECC")
-            
-            self.logger.info(f"ECC key generated and saved successfully with ID: {key_id}")
-            return key_id, private_key, public_key
+            if auto_save:
+                # 保存密钥
+                import datetime
+                key_id = f"ECC_{int(datetime.datetime.now().timestamp())}"
+                self.key_storage.save_key_pair(private_key, public_key, key_id, "ECC")
+                
+                self.logger.info(f"ECC key generated and saved successfully with ID: {key_id}")
+                return key_id, private_key, public_key
+            else:
+                self.logger.info(f"ECC key generated successfully (not saved)")
+                return private_key, public_key
         except Exception as e:
             self.logger.error(f"Failed to generate ECC key: {str(e)}")
             raise
@@ -166,16 +180,22 @@ class KeyManager:
             self.logger.error(f"Failed to load public key from {key_path}: {str(e)}")
             raise
     
-    def get_key_info(self, key_identifier: str) -> dict:
+    def get_key_info(self, key_identifier) -> dict:
         """获取密钥信息
         
         Args:
-            key_identifier: 密钥ID
+            key_identifier: 密钥ID或密钥对象
         
         Returns:
             密钥信息字典
         """
         try:
+            # 检查是否是密钥对象
+            if hasattr(key_identifier, 'key_size') or hasattr(key_identifier, 'curve'):
+                self.logger.info("Getting key info from key object")
+                return utils_get_key_info(key_identifier)
+            
+            # 否则，假设是密钥ID
             self.logger.info(f"Getting key info for ID: {key_identifier}")
             # 遍历所有密钥，找到匹配的密钥ID
             all_keys = self.key_storage.list_keys()
@@ -187,7 +207,7 @@ class KeyManager:
             self.logger.warning(f"Key with ID {key_identifier} not found")
             return {}
         except Exception as e:
-            self.logger.error(f"Failed to get key info for ID {key_identifier}: {str(e)}")
+            self.logger.error(f"Failed to get key info: {str(e)}")
             raise
     
     def delete_key(self, key_id: str) -> bool:

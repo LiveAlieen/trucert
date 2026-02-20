@@ -3,16 +3,16 @@
 成功签名数量: 3
 
 --- 文件 1 ---
-文件路径: C:\Users\LiveA\AppData\Local\Temp\tmpfjppe916\test_file.txt
+文件路径: C:\Users\LiveA\AppData\Local\Temp\tmptwwkrskm\test_file.txt
 签名成功: True
-签名文件: C:\Users\LiveA\AppData\Local\Temp\tmps5z5psjn\signatures\test_file_dc6b8015.sig.json
+签名文件: C:\Users\LiveA\AppData\Local\Temp\tmpiuszvdts\signatures\test_file_2221ca16.sig.json
 签名长度: 256
 哈希算法: sha256
 文件存在: True
 文件大小: 19
 文件内容: b'test file 0 content'
 签名长度: 256
-签名前10字节: b'&O\xe3W}\xac~\xed\xb6d'
+签名前10字节: b'I\x82\xf8\x87\xd1U~\xf7\x92?'
 FileSigner验证结果: True
 文件哈希长度: 32
 文件哈希前10字节: b'\x1f\x0c:\xb5\xc8pj;\xa2\t'
@@ -21,16 +21,16 @@ Verifier验证结果: {'valid': True}
 测试通过
 
 --- 文件 2 ---
-文件路径: C:\Users\LiveA\AppData\Local\Temp\tmpsczvvkxv\test_file.txt
+文件路径: C:\Users\LiveA\AppData\Local\Temp\tmphmrzymbm\test_file.txt
 签名成功: True
-签名文件: C:\Users\LiveA\AppData\Local\Temp\tmps5z5psjn\signatures\test_file_9cd38322.sig.json
+签名文件: C:\Users\LiveA\AppData\Local\Temp\tmpiuszvdts\signatures\test_file_8397f133.sig.json
 签名长度: 256
 哈希算法: sha256
 文件存在: True
 文件大小: 19
 文件内容: b'test file 1 content'
 签名长度: 256
-签名前10字节: b'I\x93En\x04&\xb4\xa9,\xb8'
+签名前10字节: b"K\xfa\xbb^B'\xe9f\xda\xd2"
 FileSigner验证结果: True
 文件哈希长度: 32
 文件哈希前10字节: b'\xa5\xb7z\x89\xf6B\xdb\xd8\\\x8a'
@@ -39,16 +39,16 @@ Verifier验证结果: {'valid': True}
 测试通过
 
 --- 文件 3 ---
-文件路径: C:\Users\LiveA\AppData\Local\Temp\tmpqh6jfvu0\test_file.txt
+文件路径: C:\Users\LiveA\AppData\Local\Temp\tmp7kxapczg\test_file.txt
 签名成功: True
-签名文件: C:\Users\LiveA\AppData\Local\Temp\tmps5z5psjn\signatures\test_file_11378f3d.sig.json
+签名文件: C:\Users\LiveA\AppData\Local\Temp\tmpiuszvdts\signatures\test_file_8e52d905.sig.json
 签名长度: 256
 哈希算法: sha256
 文件存在: True
 文件大小: 19
 文件内容: b'test file 2 content'
 签名长度: 256
-签名前10字节: b'F\x84\x04\xb5i\xf6\xe1\xa4$t'
+签名前10字节: b'v\xde\xdc\xfbC:\xf5\xeb)K'
 FileSigner验证结果: True
 文件哈希长度: 32
 文件哈希前10字节: b'j\x9a\xe3W\xe6GR\xceo\\'

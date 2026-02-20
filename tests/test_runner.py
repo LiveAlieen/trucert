@@ -18,6 +18,9 @@ from unittest.runner import TextTestResult
 # 添加src目录到Python路径
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
+# 导入初始化依赖
+from cert_manager.core.utils import initialize_dependencies
+
 
 class StreamWrapper:
     """流包装器，添加writeln方法"""
@@ -89,6 +92,15 @@ class TestRunner:
             'gui': os.path.join(os.path.dirname(__file__), 'gui'),
             'cli': os.path.join(os.path.dirname(__file__), 'cli')
         }
+        self._initialized = False
+    
+    def _initialize(self):
+        """初始化依赖注入容器"""
+        if not self._initialized:
+            print("Initializing dependencies for tests...")
+            initialize_dependencies()
+            print("Dependencies initialized successfully!")
+            self._initialized = True
     
     def discover_tests(self, suite_name):
         """发现指定测试套件的测试用例"""
@@ -107,6 +119,9 @@ class TestRunner:
     
     def run_suite(self, suite_name):
         """运行指定的测试套件"""
+        # 初始化依赖
+        self._initialize()
+        
         print(f"\n=== 运行测试套件: {suite_name} ===")
         suite = self.discover_tests(suite_name)
         if not suite:

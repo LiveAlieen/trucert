@@ -43,8 +43,8 @@ class TestKeyManager(unittest.TestCase):
     
     def test_save_and_load_keys(self):
         """测试保存和加载密钥"""
-        # 生成RSA密钥对并自动保存
-        private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=True)
+        # 生成RSA密钥对不保存
+        private_key, public_key = self.key_manager.generate_rsa_key(key_size=2048, auto_save=False)
         
         # 测试保存私钥
         private_key_path = os.path.join(self.test_dir, "test_private.pem")
@@ -70,7 +70,7 @@ class TestKeyManager(unittest.TestCase):
         self.key_manager.generate_rsa_key(key_size=2048, auto_save=True)
         
         # 生成ECC密钥对并自动保存
-        self.key_manager.generate_ecc_key(curve="SECP256R1", auto_save=True)
+        self.key_manager.generate_ecc_key(curve="secp256r1", auto_save=True)
         
         # 列出所有密钥
         keys = self.key_manager.list_keys()

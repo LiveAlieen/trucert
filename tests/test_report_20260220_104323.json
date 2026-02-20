@@ -1,0 +1,317 @@
+{
+  "generated_at": "2026-02-20T10:43:23.602737",
+  "suites": {
+    "common": {
+      "total_tests": 59,
+      "success": 28,
+      "failures": 0,
+      "errors": 31,
+      "skipped": 0,
+      "test_results": [
+        {
+          "test": "test_certificate_validity_boundaries (test_boundary_conditions.TestBoundaryConditions.test_certificate_validity_boundaries)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56929C0>)"
+        },
+        {
+          "test": "test_ecc_curve_validation (test_boundary_conditions.TestBoundaryConditions.test_ecc_curve_validation)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B5693700>)"
+        },
+        {
+          "test": "test_file_signature_edge_cases (test_boundary_conditions.TestBoundaryConditions.test_file_signature_edge_cases)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B5692C00>)"
+        },
+        {
+          "test": "test_invalid_hash_algorithm (test_boundary_conditions.TestBoundaryConditions.test_invalid_hash_algorithm)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B5693840>)"
+        },
+        {
+          "test": "test_nonexistent_file (test_boundary_conditions.TestBoundaryConditions.test_nonexistent_file)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B5693A40>)"
+        },
+        {
+          "test": "test_rsa_key_size_boundaries (test_boundary_conditions.TestBoundaryConditions.test_rsa_key_size_boundaries)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B5693D40>)"
+        },
+        {
+          "test": "test_generate_self_signed_cert (test_cert_manager.TestCertManager.test_generate_self_signed_cert)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B5693D40>)"
+        },
+        {
+          "test": "test_get_cert_info (test_cert_manager.TestCertManager.test_get_cert_info)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B5693A40>)"
+        },
+        {
+          "test": "test_list_certs (test_cert_manager.TestCertManager.test_list_certs)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56AC840>)"
+        },
+        {
+          "test": "test_save_and_load_cert (test_cert_manager.TestCertManager.test_save_and_load_cert)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56AC7C0>)"
+        },
+        {
+          "test": "test_get_algorithms (test_config.TestConfigManager.test_get_algorithms)",
+          "status": "error",
+          "message": "(<class 'KeyError'>, KeyError(\"Dependency 'config_storage' not found\"), <traceback object at 0x000001D4B56ACAC0>)"
+        },
+        {
+          "test": "test_get_algorithms (test_config_exceptions.TestConfigExceptions.test_get_algorithms)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_invalid_config_file (test_config_exceptions.TestConfigExceptions.test_invalid_config_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_missing_config_file (test_config_exceptions.TestConfigExceptions.test_missing_config_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_attach_signature_to_file (test_file_signer.TestFileSigner.test_attach_signature_to_file)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B555A000>)"
+        },
+        {
+          "test": "test_batch_sign (test_file_signer.TestFileSigner.test_batch_sign)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B5526140>)"
+        },
+        {
+          "test": "test_save_and_load_signature (test_file_signer.TestFileSigner.test_save_and_load_signature)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56AF840>)"
+        },
+        {
+          "test": "test_sign_file (test_file_signer.TestFileSigner.test_sign_file)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56AF980>)"
+        },
+        {
+          "test": "test_batch_signing (test_integration.TestIntegration.test_batch_signing)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_signing_and_verification (test_integration.TestIntegration.test_file_signing_and_verification)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_full_certificate_lifecycle (test_integration.TestIntegration.test_full_certificate_lifecycle)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_signed_file_creation_and_verification (test_integration.TestIntegration.test_signed_file_creation_and_verification)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_generation (unittest.loader._FailedTest.test_key_generation)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_key_generation\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_key_generation.py\", line 8, in <module>\\n    private_key, public_key = key_manager.generate_rsa_key(key_size=2048, auto_save=True)\\n    ^^^^^^^^^^^^^^^^^^^^^^^\\nValueError: too many values to unpack (expected 2)\\n'), <traceback object at 0x000001D4B55BF6C0>)"
+        },
+        {
+          "test": "test_generate_ecc_key (test_key_manager.TestKeyManager.test_generate_ecc_key)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56AFD40>)"
+        },
+        {
+          "test": "test_generate_rsa_key (test_key_manager.TestKeyManager.test_generate_rsa_key)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56ACEC0>)"
+        },
+        {
+          "test": "test_get_key_info (test_key_manager.TestKeyManager.test_get_key_info)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56CBC80>)"
+        },
+        {
+          "test": "test_list_keys (test_key_manager.TestKeyManager.test_list_keys)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_save_and_load_keys (test_key_manager.TestKeyManager.test_save_and_load_keys)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56D0740>)"
+        },
+        {
+          "test": "test_services (unittest.loader._FailedTest.test_services)",
+          "status": "error",
+          "message": "(<class 'ImportError'>, ImportError('Failed to import test module: test_services\\nTraceback (most recent call last):\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 419, in _find_test_path\\n    module = self._get_module_from_name(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\LiveA\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\unittest\\\\loader.py\", line 362, in _get_module_from_name\\n    __import__(name)\\n  File \"F:\\\\Users\\\\LiveA\\\\Desktop\\\\新建文件夹 (7)\\\\tests\\\\common\\\\test_services.py\", line 15\\n    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__), \\'..\\', \\'src\\'))\\n                   ^\\nSyntaxError: \\'(\\' was never closed\\n'), <traceback object at 0x000001D4B55D8D80>)"
+        },
+        {
+          "test": "test_cert_storage (test_storage.TestStorage.test_cert_storage)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56D0840>)"
+        },
+        {
+          "test": "test_config_storage (test_storage.TestStorage.test_config_storage)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_key_storage (test_storage.TestStorage.test_key_storage)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56D13C0>)"
+        },
+        {
+          "test": "test_storage_manager (test_storage.TestStorage.test_storage_manager)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_batch_file_signing_system (test_system.TestSystem.test_batch_file_signing_system)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_certificate_chain_verification (test_system.TestSystem.test_certificate_chain_verification)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_end_to_end_certificate_management (test_system.TestSystem.test_end_to_end_certificate_management)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_end_to_end_file_signing (test_system.TestSystem.test_end_to_end_file_signing)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_generate_ecc_key (test_tools.TestCryptoUtils.test_generate_ecc_key)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_generate_rsa_key (test_tools.TestCryptoUtils.test_generate_rsa_key)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_save_and_load_keys (test_tools.TestCryptoUtils.test_save_and_load_keys)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_sign_and_verify_data (test_tools.TestCryptoUtils.test_sign_and_verify_data)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_file_exists (test_tools.TestFileUtils.test_file_exists)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_read_write_binary_file (test_tools.TestFileUtils.test_read_write_binary_file)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_calculate_file_hash (test_tools.TestHashUtils.test_calculate_file_hash)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_calculate_hash (test_tools.TestHashUtils.test_calculate_hash)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_file_hash (test_tools.TestHashUtils.test_verify_file_hash)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_hash (test_tools.TestHashUtils.test_verify_hash)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_verify_file_signature (test_verifier.TestVerifier.test_verify_file_signature)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B5690140>)"
+        },
+        {
+          "test": "test_verify_json_cert (test_verifier.TestVerifier.test_verify_json_cert)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B5677C80>)"
+        },
+        {
+          "test": "test_verify_signature_from_json (test_verifier.TestVerifier.test_verify_signature_from_json)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56D2B40>)"
+        },
+        {
+          "test": "test_verify_signed_file (test_verifier.TestVerifier.test_verify_signed_file)",
+          "status": "error",
+          "message": "(<class 'ValueError'>, ValueError('too many values to unpack (expected 2)'), <traceback object at 0x000001D4B56D31C0>)"
+        },
+        {
+          "test": "test_verify_cert_chain (test_verifier_service.TestVerifierService.test_verify_cert_chain)",
+          "status": "error",
+          "message": "(<class 'KeyError'>, KeyError(\"Dependency 'verifier' not found\"), <traceback object at 0x000001D4B56D3940>)"
+        },
+        {
+          "test": "test_verify_cert_data (test_verifier_service.TestVerifierService.test_verify_cert_data)",
+          "status": "error",
+          "message": "(<class 'KeyError'>, KeyError(\"Dependency 'verifier' not found\"), <traceback object at 0x000001D4B56D3800>)"
+        },
+        {
+          "test": "test_verify_file_signature (test_verifier_service.TestVerifierService.test_verify_file_signature)",
+          "status": "error",
+          "message": "(<class 'KeyError'>, KeyError(\"Dependency 'verifier' not found\"), <traceback object at 0x000001D4B56D3940>)"
+        },
+        {
+          "test": "test_verify_signed_file (test_verifier_service.TestVerifierService.test_verify_signed_file)",
+          "status": "error",
+          "message": "(<class 'KeyError'>, KeyError(\"Dependency 'verifier' not found\"), <traceback object at 0x000001D4B56D2EC0>)"
+        },
+        {
+          "test": "test_cleanup_all (test_z_cleanup.TestCleanup.test_cleanup_all)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cleanup_certs (test_z_cleanup.TestCleanup.test_cleanup_certs)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cleanup_keys (test_z_cleanup.TestCleanup.test_cleanup_keys)",
+          "status": "success",
+          "message": null
+        },
+        {
+          "test": "test_cleanup_root_keys (test_z_cleanup.TestCleanup.test_cleanup_root_keys)",
+          "status": "success",
+          "message": null
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_tests": 59,
+    "success": 28,
+    "failures": 0,
+    "errors": 31,
+    "skipped": 0,
+    "success_rate": "47.46%"
+  }
+}
