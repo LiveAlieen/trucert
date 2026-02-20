@@ -8,5 +8,8 @@ cryptography==41.0.7
 # 配置管理
 pyyaml==6.0.1
 
+# Web框架
+Flask==3.0.0
+
 # 其他工具
 pyinstaller==6.0.0  # 用于打包
