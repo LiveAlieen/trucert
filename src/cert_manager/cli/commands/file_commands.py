@@ -190,9 +190,8 @@ class FileCommands:
                 print("目录中没有文件")
                 return 0
             
-            # 创建输出目录
-            output_dir = args.output if args.output else os.path.join(args.directory, "signed")
-            os.makedirs(output_dir, exist_ok=True)
+            # 创建输出目录（如果未指定，核心层会自动处理）
+            output_dir = args.output
             
             # 批量签名
             result_batch = file_signer_service.batch_sign({

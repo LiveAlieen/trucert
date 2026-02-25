@@ -236,7 +236,7 @@ def batch_sign_files():
         unique_id = str(uuid.uuid4())[:8]
         sig_filename = f"batch_sign_{timestamp}_{unique_id}.giqs"
         
-        # 调用批量签名服务
+        # 调用批量签名服务（使用临时目录作为输出目录）
         result_batch = file_signer_service.batch_sign({
             "filepaths": file_paths,
             "private_key": private_key,

@@ -264,7 +264,7 @@ class FileSignerService:
             params: 包含以下字段的字典：
                 - file_paths: 文件路径列表
                 - private_key: 私钥
-                - output_dir: 输出目录
+                - output_dir: 输出目录，默认为None
                 - hash_algorithm: 哈希算法，默认"sha256"
         
         Returns:
@@ -281,10 +281,10 @@ class FileSignerService:
             hash_algorithm = params.get('hash_algorithm', 'sha256')
             
             # 验证参数
-            if not file_paths or not private_key or not output_dir:
+            if not file_paths or not private_key:
                 return {
                     "success": False,
-                    "error": "缺少必要的文件路径列表、私钥或输出目录参数"
+                    "error": "缺少必要的文件路径列表或私钥参数"
                 }
             
             # 调用业务逻辑层

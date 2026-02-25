@@ -299,13 +299,35 @@ class FileTab(QWidget):
             QMessageBox.critical(self, "错误", f"附加签名失败: {str(e)}")
     
     def browse_batch_files(self):
-        """选择多个文件进行批量签名"""
-        file_paths, _ = QFileDialog.getOpenFileNames(self, "选择多个文件", "", "All Files (*)")
-        if file_paths:
-            self.batch_files = file_paths
-            # 显示选择的文件列表
-            file_list_text = "\n".join(file_paths)
-            self.batch_file_list.setText(file_list_text)
+        """选择多个文件或目录进行批量签名"""
+        # 先让用户选择是选择文件还是目录
+        import os
+        from PyQt5.QtWidgets import QFileDialog, QMessageBox
+        
+        # 提供两种选择方式
+        choice = QMessageBox.question(
+            self, 
+            "选择签名方式", 
+            "请选择要签名的项目类型:",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.Yes
+        )
+        
+        if choice == QMessageBox.Yes:
+            # 选择多个文件
+            file_paths, _ = QFileDialog.getOpenFileNames(self, "选择多个文件", "", "All Files (*)")
+            if file_paths:
+                self.batch_files = file_paths
+                # 显示选择的文件列表
+                file_list_text = "\n".join(file_paths)
+                self.batch_file_list.setText(file_list_text)
+        else:
+            # 选择目录
+            directory = QFileDialog.getExistingDirectory(self, "选择目录")
+            if directory:
+                self.batch_files = [directory]
+                # 显示选择的目录
+                self.batch_file_list.setText(f"目录: {directory}\n(将递归处理所有文件)")
     
     def browse_batch_output(self):
         """选择批量签名的输出目录"""
@@ -326,11 +348,8 @@ class FileTab(QWidget):
                 QMessageBox.warning(self, "警告", "请选择要签名的文件")
                 return
             
-            # 检查输出目录
-            output_dir = self.batch_output_edit.text()
-            if not output_dir:
-                QMessageBox.warning(self, "警告", "请选择输出目录")
-                return
+            # 检查输出目录（如果未指定，核心层会自动处理）
+            output_dir = self.batch_output_edit.text() if self.batch_output_edit.text() else None
             
             # 检查私钥路径
             key_path = self.batch_key_path_edit.text()

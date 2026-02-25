@@ -87,8 +87,21 @@ class FileSigner:
             raise
     
     def save_signature(self, signature: bytes, filepath: str, original_filepath: str = "", hash_algorithm: str = "sha256") -> None:
-        """Save signature as JSON format with minimal information"""
+        """Save signature as JSON format with minimal information
+        
+        If filepath is not provided or is a directory, the signature will be saved
+        in the same directory as the original file with .giq extension.
+        """
         try:
+            # If filepath is not provided or is a directory, use original_filepath's directory
+            if not filepath or os.path.isdir(filepath):
+                if not original_filepath:
+                    raise ValueError("Either filepath or original_filepath must be provided")
+                # Save signature in the same directory as the original file
+                signature_dir = os.path.dirname(original_filepath)
+                signature_filename = os.path.basename(original_filepath) + ".giq"
+                filepath = os.path.join(signature_dir, signature_filename)
+            
             self.logger.info(f"Saving signature to file: {filepath}")
             # Create minimal file info with only filename and relative path
             file_info = {}
@@ -220,29 +233,85 @@ class FileSigner:
             raise
     
     def batch_sign(self, filepaths: list, private_key: Union[rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey],
-                  output_dir: str, hash_algorithm: str = "sha256") -> list:
-        """批量签名多个文件，生成单个.giqs文件"""
+                  output_dir: str = None, hash_algorithm: str = "sha256") -> list:
+        """批量签名多个文件，生成单个.giqs文件
+        
+        支持目录级签名：如果提供的路径是目录，会递归处理目录中的所有文件
+        
+        Args:
+            filepaths: 文件或目录路径列表
+            private_key: 私钥
+            output_dir: 输出目录，默认为None
+            hash_algorithm: 哈希算法，默认"sha256"
+            
+        Returns:
+            签名结果列表
+        """
         try:
-            self.logger.info(f"Starting batch signing of {len(filepaths)} files")
+            self.logger.info(f"Starting batch signing of {len(filepaths)} items")
             results = []
             batch_signatures = []
+            
+            # 确定输出目录
+            if not output_dir:
+                # 如果没有指定输出目录，使用第一个文件的目录
+                # 预处理：处理目录和文件，递归收集所有文件
+                valid_filepaths = []
+                for path in filepaths:
+                    if not os.path.exists(path):
+                        results.append({
+                            "file": path,
+                            "success": False,
+                            "reason": "Path does not exist"
+                        })
+                        self.logger.warning(f"Path does not exist: {path}")
+                    elif os.path.isdir(path):
+                        # 处理目录，递归收集所有文件
+                        self.logger.info(f"Processing directory: {path}")
+                        for root, _, files in os.walk(path):
+                            for file in files:
+                                file_path = os.path.join(root, file)
+                                valid_filepaths.append(file_path)
+                                self.logger.debug(f"Added file from directory: {file_path}")
+                    else:
+                        # 处理单个文件
+                        valid_filepaths.append(path)
+                
+                # 如果有有效文件，使用第一个文件的目录作为输出目录
+                if valid_filepaths:
+                    first_file_dir = os.path.dirname(valid_filepaths[0])
+                    output_dir = first_file_dir
+                else:
+                    # 如果没有有效文件，使用当前目录
+                    output_dir = os.getcwd()
             
             # 确保输出目录存在
             os.makedirs(output_dir, exist_ok=True)
             self.logger.debug(f"Created output directory: {output_dir}")
             
-            # 预处理：过滤不存在的文件
-            valid_filepaths = []
-            for filepath in filepaths:
-                if not os.path.exists(filepath):
-                    results.append({
-                        "file": filepath,
-                        "success": False,
-                        "reason": "File does not exist"
-                    })
-                    self.logger.warning(f"File does not exist: {filepath}")
-                else:
-                    valid_filepaths.append(filepath)
+            # 确保valid_filepaths已定义
+            if 'valid_filepaths' not in locals():
+                # 预处理：处理目录和文件，递归收集所有文件
+                valid_filepaths = []
+                for path in filepaths:
+                    if not os.path.exists(path):
+                        results.append({
+                            "file": path,
+                            "success": False,
+                            "reason": "Path does not exist"
+                        })
+                        self.logger.warning(f"Path does not exist: {path}")
+                    elif os.path.isdir(path):
+                        # 处理目录，递归收集所有文件
+                        self.logger.info(f"Processing directory: {path}")
+                        for root, _, files in os.walk(path):
+                            for file in files:
+                                file_path = os.path.join(root, file)
+                                valid_filepaths.append(file_path)
+                                self.logger.debug(f"Added file from directory: {file_path}")
+                    else:
+                        # 处理单个文件
+                        valid_filepaths.append(path)
             
             self.logger.info(f"Valid files for signing: {len(valid_filepaths)}")
             
