@@ -41,10 +41,10 @@ class CertStorage:
             cert_type = cert_data.get("cert_info", {}).get("parent_public_key", "")
             if cert_type == "":
                 # 根证书
-                filename = f"self_signed_{timestamp}.json"
+                filename = f"self_signed_{timestamp}.tru"
             else:
                 # 二级证书
-                filename = f"secondary_{timestamp}.json"
+                filename = f"secondary_{timestamp}.tru"
             filepath = os.path.join(self.trust_dir, filename)
         
         self.storage_manager.save(cert_data, filepath, "json")
@@ -79,7 +79,7 @@ class CertStorage:
             证书信息列表
         """
         certs = []
-        cert_files = self.storage_manager.list_files(self.trust_dir, "*.json")
+        cert_files = self.storage_manager.list_files(self.trust_dir, "*.tru")
         
         for filepath in cert_files:
             try:

@@ -170,7 +170,7 @@ def sign_file():
                 "hash_algorithm": hash_algorithm
             }
             
-            sig_filename = file.filename + ".sig.json"
+            sig_filename = file.filename + ".giq"
             
             # 清理临时文件
             import shutil

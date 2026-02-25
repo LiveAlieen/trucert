@@ -205,10 +205,11 @@ class FileSigner:
     
     def batch_sign(self, filepaths: list, private_key: Union[rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey],
                   output_dir: str, hash_algorithm: str = "sha256") -> list:
-        """批量签名多个文件"""
+        """批量签名多个文件，生成单个.giqs文件"""
         try:
             self.logger.info(f"Starting batch signing of {len(filepaths)} files")
             results = []
+            batch_signatures = []
             
             # 确保输出目录存在
             os.makedirs(output_dir, exist_ok=True)
@@ -238,23 +239,25 @@ class FileSigner:
                     signature = self.sign_file(filepath, private_key, hash_algorithm)
                     self.logger.debug(f"Generated signature for file {filepath}, length: {len(signature)}")
                     
-                    # 生成签名文件路径（保存到output_dir根目录）
-                    filename = os.path.basename(filepath)
-                    # 为了避免文件名冲突，添加一个唯一标识符
-                    import uuid
-                    unique_id = str(uuid.uuid4())[:8]
-                    signature_filename = f"{os.path.splitext(filename)[0]}_{unique_id}.sig.json"
-                    signature_filepath = os.path.join(output_dir, signature_filename)
-                    self.logger.debug(f"Signature file path: {signature_filepath}")
+                    # 收集签名信息
+                    file_info = {}
+                    file_info["filename"] = os.path.basename(filepath)
+                    try:
+                        relative_path = os.path.relpath(filepath, output_dir)
+                        file_info["relative_path"] = relative_path
+                    except:
+                        pass
                     
-                    # 保存签名
-                    self.save_signature(signature, signature_filepath, filepath, hash_algorithm)
-                    self.logger.debug(f"Signature saved to file: {signature_filepath}")
+                    batch_signatures.append({
+                        "file_path": filepath,
+                        "file_info": file_info,
+                        "signature": signature.hex(),
+                        "hash_algorithm": hash_algorithm
+                    })
                     
                     results.append({
                         "file": filepath,
-                        "success": True,
-                        "signature_file": signature_filepath
+                        "success": True
                     })
                     self.logger.info(f"Batch sign completed for file: {filepath}")
                     
@@ -266,6 +269,33 @@ class FileSigner:
                         "reason": error_msg
                     })
                     self.logger.error(f"Batch sign failed for file {filepath}: {error_msg}")
+            
+            # 生成单个.giqs文件
+            if batch_signatures:
+                import uuid
+                import datetime
+                unique_id = str(uuid.uuid4())[:8]
+                timestamp = int(datetime.datetime.now().timestamp())
+                signature_filename = f"batch_sign_{timestamp}_{unique_id}.giqs"
+                signature_filepath = os.path.join(output_dir, signature_filename)
+                
+                # 构建批量签名数据
+                batch_data = {
+                    "batch_signatures": batch_signatures,
+                    "timestamp": datetime.datetime.now().isoformat(),
+                    "hash_algorithm": hash_algorithm,
+                    "total_files": len(valid_filepaths),
+                    "successful_files": len([r for r in results if r['success']])
+                }
+                
+                # 保存为JSON格式
+                self.storage_manager.save(batch_data, signature_filepath, "json")
+                self.logger.info(f"Batch signatures saved to file: {signature_filepath}")
+                
+                # 添加批量签名文件路径到结果
+                for result in results:
+                    if result["success"]:
+                        result["signature_file"] = signature_filepath
             
             self.logger.info(f"Batch signing completed. {len([r for r in results if r['success']])} succeeded, {len([r for r in results if not r['success']])} failed")
             return results
