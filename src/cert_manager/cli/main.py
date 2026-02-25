@@ -148,7 +148,8 @@ class CLI:
         verify_file_parser = file_subparsers.add_parser('verify', help='验证文件签名')
         verify_file_parser.add_argument('file_path', help='文件路径')
         verify_file_parser.add_argument('signature_path', help='签名文件路径')
-        verify_file_parser.add_argument('public_key', help='公钥文件路径')
+        verify_file_parser.add_argument('--public-key', dest='public_key', help='公钥文件路径')
+        verify_file_parser.add_argument('--certificate', dest='certificate', help='证书文件路径')
         verify_file_parser.add_argument('--hash', type=str, default='sha256', help='哈希算法')
         
         # 批量签名

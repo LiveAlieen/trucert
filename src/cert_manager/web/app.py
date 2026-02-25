@@ -276,13 +276,12 @@ def verify_file():
         
         file = request.files['file']
         signature_file = request.files['signature']
+        verify_method = request.form.get('verify_method', 'key')  # 'key' 或 'cert'
         key_id = request.form.get('key_id')
+        cert_id = request.form.get('cert_id')
         
         if file.filename == '' or signature_file.filename == '':
             return jsonify({"success": False, "error": "请选择文件和签名"})
-        
-        if not key_id:
-            return jsonify({"success": False, "error": "请选择密钥"})
         
         # 保存上传的文件
         import tempfile
@@ -291,13 +290,6 @@ def verify_file():
         sig_path = os.path.join(temp_dir, signature_file.filename)
         file.save(file_path)
         signature_file.save(sig_path)
-        
-        # 加载公钥
-        result_load = key_service.load_key_pair({"key_id": key_id})
-        if not result_load.get("success"):
-            return jsonify({"success": False, "error": result_load.get("error", "加载密钥失败")})
-        
-        public_key = result_load["data"]["public_key"]
         
         # 加载签名
         result_sig = file_signer_service.load_signature({"file_path": sig_path})
@@ -308,13 +300,51 @@ def verify_file():
         signature = signature_data["signature"]
         hash_algorithm = signature_data["hash_algorithm"]
         
-        # 验证签名
-        result_verify = file_signer_service.verify_file_signature({
-            "file_path": file_path,
-            "signature": signature,
-            "public_key": public_key,
-            "hash_algorithm": hash_algorithm
-        })
+        # 根据验证方式选择不同的验证方法
+        if verify_method == 'key':
+            # 使用公钥验证
+            if not key_id:
+                return jsonify({"success": False, "error": "请选择密钥"})
+            
+            # 加载公钥
+            result_load = key_service.load_key_pair({"key_id": key_id})
+            if not result_load.get("success"):
+                return jsonify({"success": False, "error": result_load.get("error", "加载密钥失败")})
+            
+            public_key = result_load["data"]["public_key"]
+            
+            # 验证签名
+            result_verify = file_signer_service.verify_file_signature({
+                "file_path": file_path,
+                "signature": signature,
+                "public_key": public_key,
+                "hash_algorithm": hash_algorithm
+            })
+        else:
+            # 使用证书验证
+            if not cert_id:
+                return jsonify({"success": False, "error": "请选择证书"})
+            
+            # 加载证书
+            result_cert = cert_service.load_cert({"filepath": cert_id})
+            if not result_cert.get("success"):
+                return jsonify({"success": False, "error": result_cert.get("error", "加载证书失败")})
+            
+            cert_data = result_cert["data"]
+            
+            # 保存证书到临时文件
+            import json
+            cert_path = os.path.join(temp_dir, f"temp_cert_{cert_id}.tru")
+            with open(cert_path, 'w', encoding='utf-8') as f:
+                json.dump(cert_data, f, indent=2, ensure_ascii=False)
+            
+            # 验证签名
+            result_verify = file_signer_service.verify_file_signature_with_cert({
+                "file_path": file_path,
+                "signature": signature,
+                "certificate": cert_path,
+                "hash_algorithm": hash_algorithm
+            })
         
         # 清理临时文件
         import shutil

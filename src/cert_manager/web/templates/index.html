@@ -345,8 +345,19 @@
                         <input type="file" id="verifySig" onchange="handleSignatureFileSelect()">
                     </div>
                     <div class="form-group">
+                        <label>验证方式</label>
+                        <select id="verifyMethod" onchange="handleVerifyMethodChange()">
+                            <option value="key">使用公钥</option>
+                            <option value="cert">使用证书</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="keyVerifyGroup">
                         <label>选择密钥</label>
                         <select id="verifyKeySelect"></select>
+                    </div>
+                    <div class="form-group" id="certVerifyGroup" style="display:none;">
+                        <label>选择证书</label>
+                        <select id="verifyCertSelect"></select>
                     </div>
                     <button class="btn btn-primary" onclick="verifyFile()">验证签名</button>
                 </div>
@@ -434,6 +445,17 @@
             });
         }
         
+        function updateCertSelects(certs) {
+            const select = document.getElementById('verifyCertSelect');
+            if (select) {
+                select.innerHTML = '<option value="">选择证书</option>';
+                certs.forEach(cert => {
+                    const certPath = cert.path || cert.filename;
+                    select.innerHTML += `<option value="${encodeURIComponent(certPath)}">${certPath}</option>`;
+                });
+            }
+        }
+        
         async function generateKey() {
             try {
                 const keyType = document.getElementById('keyType').value;
@@ -505,6 +527,8 @@
                         `;
                         certList.appendChild(li);
                     });
+                    
+                    updateCertSelects(data.certs);
                     setStatus('证书列表已加载');
                 }
             } catch (e) {
@@ -667,6 +691,17 @@
             }
         }
         
+        function handleVerifyMethodChange() {
+            const verifyMethod = document.getElementById('verifyMethod').value;
+            if (verifyMethod === 'key') {
+                document.getElementById('keyVerifyGroup').style.display = 'block';
+                document.getElementById('certVerifyGroup').style.display = 'none';
+            } else {
+                document.getElementById('keyVerifyGroup').style.display = 'none';
+                document.getElementById('certVerifyGroup').style.display = 'block';
+            }
+        }
+        
         function handleSignatureFileSelect() {
             const sigInput = document.getElementById('verifySig');
             if (!sigInput.files[0]) return;
@@ -702,15 +737,22 @@
             try {
                 const fileInput = document.getElementById('verifyFile');
                 const sigInput = document.getElementById('verifySig');
+                const verifyMethod = document.getElementById('verifyMethod').value;
                 const keyId = document.getElementById('verifyKeySelect').value;
+                const certId = document.getElementById('verifyCertSelect').value;
                 
                 if (!fileInput.files[0] || !sigInput.files[0]) {
                     showMessage('verifyMessage', '请选择文件和签名', 'error');
                     return;
                 }
                 
-                if (!keyId) {
+                if (verifyMethod === 'key' && !keyId) {
                     showMessage('verifyMessage', '请选择密钥', 'error');
+                    return;
+                }
+                
+                if (verifyMethod === 'cert' && !certId) {
+                    showMessage('verifyMessage', '请选择证书', 'error');
                     return;
                 }
                 
@@ -719,7 +761,13 @@
                 const formData = new FormData();
                 formData.append('file', fileInput.files[0]);
                 formData.append('signature', sigInput.files[0]);
-                formData.append('key_id', keyId);
+                formData.append('verify_method', verifyMethod);
+                
+                if (verifyMethod === 'key') {
+                    formData.append('key_id', keyId);
+                } else {
+                    formData.append('cert_id', certId);
+                }
                 
                 const response = await fetch('/api/verify/file', {
                     method: 'POST',

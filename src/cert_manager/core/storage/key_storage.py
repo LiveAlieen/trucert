@@ -25,7 +25,6 @@ class KeyStorage:
             self.storage_manager = storage_manager
         
         self.key_dir = self.storage_manager.get_key_dir()
-        self.root_key_dir = self.storage_manager.get_root_key_dir()
         self.backend = default_backend()
     
     def save_private_key(self, private_key, filepath: str, password: str = None) -> None:
@@ -217,41 +216,4 @@ class KeyStorage:
         
         return False
     
-    def save_root_key_pair(self, private_key, public_key) -> Dict[str, str]:
-        """保存根密钥对
-        
-        Args:
-            private_key: 根私钥对象
-            public_key: 根公钥对象
-        
-        Returns:
-            保存的文件路径
-        """
-        # 保存根私钥
-        private_key_path = os.path.join(self.root_key_dir, "root_private.pem")
-        self.save_private_key(private_key, private_key_path)
-        
-        # 保存根公钥
-        public_key_path = os.path.join(self.root_key_dir, "root_public.pem")
-        self.save_public_key(public_key, public_key_path)
-        
-        return {
-            "private_key": private_key_path,
-            "public_key": public_key_path
-        }
-    
-    def load_root_key_pair(self) -> Tuple:
-        """加载根密钥对
-        
-        Returns:
-            (根私钥对象, 根公钥对象)
-        """
-        # 加载根私钥
-        private_key_path = os.path.join(self.root_key_dir, "root_private.pem")
-        private_key = self.load_private_key(private_key_path)
-        
-        # 加载根公钥
-        public_key_path = os.path.join(self.root_key_dir, "root_public.pem")
-        public_key = self.load_public_key(public_key_path)
-        
-        return private_key, public_key
+

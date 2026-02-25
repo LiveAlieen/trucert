@@ -32,13 +32,11 @@ class StorageManager:
         # 初始化子目录
         self.key_dir = os.path.join(self.base_dir, "key")
         self.trust_dir = os.path.join(self.base_dir, "trust")
-        self.root_key_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "root_key")
         
         # 确保子目录存在
         os.makedirs(self.key_dir, exist_ok=True)
         os.makedirs(self.trust_dir, exist_ok=True)
-        os.makedirs(self.root_key_dir, exist_ok=True)
-        self.logger.info(f"Subdirectories initialized: key={self.key_dir}, trust={self.trust_dir}, root_key={self.root_key_dir}")
+        self.logger.info(f"Subdirectories initialized: key={self.key_dir}, trust={self.trust_dir}")
     
     def save(self, data: Union[Dict[str, Any], bytes], filepath: str, format: str = "json") -> None:
         """保存数据到文件
@@ -169,14 +167,7 @@ class StorageManager:
         self.logger.debug(f"Getting trust directory: {self.trust_dir}")
         return self.trust_dir
     
-    def get_root_key_dir(self) -> str:
-        """获取根密钥存储目录
-        
-        Returns:
-            根密钥存储目录路径
-        """
-        self.logger.debug(f"Getting root key directory: {self.root_key_dir}")
-        return self.root_key_dir
+
     
     def get_file_info(self, filepath: str) -> Dict[str, Any]:
         """获取文件信息

@@ -381,3 +381,46 @@ class FileSignerService:
                 "success": False,
                 "error": str(e)
             }
+    
+    def verify_file_signature_with_cert(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """使用证书验证文件签名
+        
+        Args:
+            params: 包含以下字段的字典：
+                - file_path: 文件路径
+                - signature: 签名
+                - certificate: 证书文件路径或证书对象
+                - hash_algorithm: 哈希算法，默认"sha256"
+        
+        Returns:
+            Dict[str, Any]: 包含以下字段的字典：
+                - success: bool，操作是否成功
+                - data: bool，验证是否成功
+                - error: str，错误信息（如果操作失败）
+        """
+        try:
+            # 提取参数
+            file_path = params.get('file_path')
+            signature = params.get('signature')
+            certificate = params.get('certificate')
+            hash_algorithm = params.get('hash_algorithm', 'sha256')
+            
+            # 验证参数
+            if not file_path or not signature or not certificate:
+                return {
+                    "success": False,
+                    "error": "缺少必要的文件路径、签名或证书参数"
+                }
+            
+            # 调用业务逻辑层
+            result = self.file_signer.verify_file_signature_with_cert(file_path, signature, certificate, hash_algorithm)
+            
+            return {
+                "success": True,
+                "data": result
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }

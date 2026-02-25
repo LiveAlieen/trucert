@@ -110,15 +110,47 @@ class VerifyTab(QWidget):
         sig_layout.addWidget(sig_btn)
         verify_layout.addLayout(sig_layout)
         
+        # 验证方式选择
+        method_layout = QHBoxLayout()
+        method_layout.addWidget(QLabel("验证方式:"))
+        self.verify_method_combo = QComboBox()
+        self.verify_method_combo.addItem("使用公钥")
+        self.verify_method_combo.addItem("使用证书")
+        self.verify_method_combo.currentIndexChanged.connect(self.on_verify_method_changed)
+        method_layout.addWidget(self.verify_method_combo)
+        method_layout.addStretch()
+        verify_layout.addLayout(method_layout)
+        
         # 公钥选择
-        key_layout = QHBoxLayout()
-        key_layout.addWidget(QLabel("公钥文件:"))
+        self.key_group = QGroupBox("公钥验证")
+        key_layout = QVBoxLayout()
+        key_path_layout = QHBoxLayout()
+        key_path_layout.addWidget(QLabel("公钥文件:"))
         self.verify_key_path_edit = QLineEdit()
-        key_layout.addWidget(self.verify_key_path_edit)
+        key_path_layout.addWidget(self.verify_key_path_edit)
         key_btn = QPushButton("浏览")
         key_btn.clicked.connect(self.browse_verify_key)
-        key_layout.addWidget(key_btn)
-        verify_layout.addLayout(key_layout)
+        key_path_layout.addWidget(key_btn)
+        key_layout.addLayout(key_path_layout)
+        self.key_group.setLayout(key_layout)
+        verify_layout.addWidget(self.key_group)
+        
+        # 证书选择
+        self.cert_group = QGroupBox("证书验证")
+        cert_layout = QVBoxLayout()
+        cert_path_layout = QHBoxLayout()
+        cert_path_layout.addWidget(QLabel("证书文件:"))
+        self.verify_cert_path_edit = QLineEdit()
+        cert_path_layout.addWidget(self.verify_cert_path_edit)
+        cert_btn = QPushButton("浏览")
+        cert_btn.clicked.connect(self.browse_verify_cert)
+        cert_path_layout.addWidget(cert_btn)
+        cert_layout.addLayout(cert_path_layout)
+        self.cert_group.setLayout(cert_layout)
+        verify_layout.addWidget(self.cert_group)
+        
+        # 默认显示公钥验证
+        self.on_verify_method_changed(0)
         
         # 哈希算法
         hash_layout = QHBoxLayout()
@@ -199,6 +231,19 @@ class VerifyTab(QWidget):
         if file_path:
             self.verify_key_path_edit.setText(file_path)
     
+    def browse_verify_cert(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "选择证书文件", "", "JSON Files (*.json);;TRU Files (*.tru)")
+        if file_path:
+            self.verify_cert_path_edit.setText(file_path)
+    
+    def on_verify_method_changed(self, index):
+        if index == 0:  # 使用公钥
+            self.key_group.show()
+            self.cert_group.hide()
+        else:  # 使用证书
+            self.key_group.hide()
+            self.cert_group.show()
+    
     def verify_cert(self):
         try:
             # 检查证书路径
@@ -258,18 +303,6 @@ class VerifyTab(QWidget):
                 QMessageBox.warning(self, "警告", "请选择文件")
                 return
             
-            # 检查公钥路径
-            key_path = self.verify_key_path_edit.text()
-            if not key_path:
-                QMessageBox.warning(self, "警告", "请选择公钥文件")
-                return
-            
-            # 加载公钥
-            result_key = self.key_service.load_public_key({"file_path": key_path})
-            if not result_key.get("success"):
-                raise Exception(result_key.get("error", "加载公钥失败"))
-            public_key = result_key["data"]
-            
             # 获取哈希算法
             hash_algorithm = self.verify_hash_combo.currentText()
             
@@ -283,12 +316,54 @@ class VerifyTab(QWidget):
             except:
                 is_signed_file = False
             
+            # 根据验证方式选择不同的验证方法
+            verify_method = self.verify_method_combo.currentText()
+            
             if is_signed_file:
                 # 验证带签名的文件
-                result_verify = self.verifier_service.verify_signed_file({"signed_file": file_path, "public_key": public_key, "hash_algorithm": hash_algorithm})
-                if not result_verify.get("success"):
-                    raise Exception(result_verify.get("error", "验证带签名的文件失败"))
-                result = result_verify["data"]
+                if verify_method == "使用公钥":
+                    # 检查公钥路径
+                    key_path = self.verify_key_path_edit.text()
+                    if not key_path:
+                        QMessageBox.warning(self, "警告", "请选择公钥文件")
+                        return
+                    
+                    # 加载公钥
+                    result_key = self.key_service.load_public_key({"file_path": key_path})
+                    if not result_key.get("success"):
+                        raise Exception(result_key.get("error", "加载公钥失败"))
+                    public_key = result_key["data"]
+                    
+                    result_verify = self.verifier_service.verify_signed_file({"signed_file": file_path, "public_key": public_key, "hash_algorithm": hash_algorithm})
+                else:  # 使用证书
+                    # 检查证书路径
+                    cert_path = self.verify_cert_path_edit.text()
+                    if not cert_path:
+                        QMessageBox.warning(self, "警告", "请选择证书文件")
+                        return
+                    
+                    # 这里需要修改verifier_service以支持证书验证，暂时使用文件签名服务的验证方法
+                    # 首先提取签名
+                    result_extract = self.file_signer_service.extract_signature_from_file({"signed_file": file_path})
+                    if not result_extract.get("success"):
+                        raise Exception(result_extract.get("error", "提取签名失败"))
+                    
+                    file_content, signature = result_extract["data"].values()
+                    
+                    # 使用证书验证
+                    result_verify = self.file_signer_service.verify_file_signature_with_cert({
+                        "file_path": file_path,
+                        "signature": signature,
+                        "certificate": cert_path,
+                        "hash_algorithm": hash_algorithm
+                    })
+                    
+                    # 构造结果格式
+                    if result_verify.get("success"):
+                        result_verify["data"] = {
+                            "valid": result_verify["data"],
+                            "reason": "文件签名验证成功" if result_verify["data"] else "文件签名验证失败"
+                        }
             else:
                 # 检查是否提供了签名文件
                 sig_path = self.sig_path_edit.text()
@@ -311,10 +386,52 @@ class VerifyTab(QWidget):
                     hash_algorithm = sig_hash_algorithm
                 
                 # 验证文件
-                result_verify = self.verifier_service.verify_file_signature({"file_path": file_path, "signature": signature, "public_key": public_key, "hash_algorithm": hash_algorithm})
-                if not result_verify.get("success"):
-                    raise Exception(result_verify.get("error", "验证文件签名失败"))
-                result = result_verify["data"]
+                if verify_method == "使用公钥":
+                    # 检查公钥路径
+                    key_path = self.verify_key_path_edit.text()
+                    if not key_path:
+                        QMessageBox.warning(self, "警告", "请选择公钥文件")
+                        return
+                    
+                    # 加载公钥
+                    result_key = self.key_service.load_public_key({"file_path": key_path})
+                    if not result_key.get("success"):
+                        raise Exception(result_key.get("error", "加载公钥失败"))
+                    public_key = result_key["data"]
+                    
+                    result_verify = self.file_signer_service.verify_file_signature({
+                        "file_path": file_path,
+                        "signature": signature,
+                        "public_key": public_key,
+                        "hash_algorithm": hash_algorithm
+                    })
+                else:  # 使用证书
+                    # 检查证书路径
+                    cert_path = self.verify_cert_path_edit.text()
+                    if not cert_path:
+                        QMessageBox.warning(self, "警告", "请选择证书文件")
+                        return
+                    
+                    # 使用证书验证
+                    result_verify = self.file_signer_service.verify_file_signature_with_cert({
+                        "file_path": file_path,
+                        "signature": signature,
+                        "certificate": cert_path,
+                        "hash_algorithm": hash_algorithm
+                    })
+                
+                # 构造结果格式
+                if result_verify.get("success"):
+                    result_verify["data"] = {
+                        "valid": result_verify["data"],
+                        "reason": "文件签名验证成功" if result_verify["data"] else "文件签名验证失败",
+                        "file_info": file_info
+                    }
+            
+            if not result_verify.get("success"):
+                raise Exception(result_verify.get("error", "验证文件签名失败"))
+            
+            result = result_verify["data"]
             
             # 显示验证结果
             result_text = "验证结果:\n"

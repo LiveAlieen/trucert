@@ -117,13 +117,6 @@ class FileCommands:
         try:
             print(f"验证文件签名: {args.file_path}")
             
-            # 加载公钥
-            result_key = key_service.load_public_key({"file_path": args.public_key})
-            if not result_key.get("success"):
-                print(f"加载公钥失败: {result_key.get('error', '未知错误')}")
-                return 1
-            public_key = result_key["data"]
-            
             # 加载签名
             result_load = file_signer_service.load_signature({"file_path": args.signature_path})
             if not result_load.get("success"):
@@ -141,12 +134,34 @@ class FileCommands:
                 hash_algorithm = args.hash
             
             # 验证签名
-            result_verify = file_signer_service.verify_file_signature({
-                "file_path": args.file_path,
-                "signature": signature,
-                "public_key": public_key,
-                "hash_algorithm": hash_algorithm
-            })
+            if args.certificate:
+                # 使用证书验证
+                print(f"使用证书验证: {args.certificate}")
+                result_verify = file_signer_service.verify_file_signature_with_cert({
+                    "file_path": args.file_path,
+                    "signature": signature,
+                    "certificate": args.certificate,
+                    "hash_algorithm": hash_algorithm
+                })
+            elif args.public_key:
+                # 使用公钥验证
+                print(f"使用公钥验证: {args.public_key}")
+                # 加载公钥
+                result_key = key_service.load_public_key({"file_path": args.public_key})
+                if not result_key.get("success"):
+                    print(f"加载公钥失败: {result_key.get('error', '未知错误')}")
+                    return 1
+                public_key = result_key["data"]
+                
+                result_verify = file_signer_service.verify_file_signature({
+                    "file_path": args.file_path,
+                    "signature": signature,
+                    "public_key": public_key,
+                    "hash_algorithm": hash_algorithm
+                })
+            else:
+                print("错误: 必须指定 --public-key 或 --certificate 参数")
+                return 1
             
             if not result_verify.get("success"):
                 print(f"验证文件签名失败: {result_verify.get('error', '未知错误')}")

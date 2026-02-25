@@ -4,7 +4,7 @@ from cryptography.hazmat.backends import default_backend
 import os
 import json
 from datetime import datetime
-from typing import Optional, Union, Tuple
+from typing import Optional, Union, Tuple, Any
 from ..utils import get_logger, get
 
 
@@ -424,4 +424,66 @@ class FileSigner:
                 return False
         except Exception as e:
             self.logger.error(f"Failed to verify file signature for {filepath}: {str(e)}")
+            return False
+    
+    def verify_file_signature_with_cert(self, filepath: str, signature: bytes, 
+                                       cert: Union[Any, str],
+                                       hash_algorithm: str = "sha256") -> bool:
+        """使用证书验证文件签名
+        
+        Args:
+            filepath: 要验证的文件路径
+            signature: 签名数据
+            cert: 证书对象或证书文件路径
+            hash_algorithm: 哈希算法，默认"sha256"
+            
+        Returns:
+            验证是否成功
+        """
+        try:
+            self.logger.info(f"Verifying file signature with certificate for: {filepath}")
+            self.logger.debug(f"Signature length: {len(signature)}")
+            self.logger.debug(f"Hash algorithm: {hash_algorithm}")
+            
+            # 加载证书并提取公钥
+            from ..utils.verify_utils import load_certificate, extract_public_key_from_certificate
+            from ..utils.crypto_utils import load_public_key
+            from cryptography.hazmat.primitives import serialization
+            
+            public_key = None
+            
+            if isinstance(cert, str):
+                # 从文件路径加载证书
+                self.logger.debug(f"Loading certificate from file: {cert}")
+                try:
+                    # 尝试作为PEM证书加载
+                    cert_obj = load_certificate(cert)
+                    public_key = extract_public_key_from_certificate(cert_obj)
+                    self.logger.debug(f"Loaded PEM certificate and extracted public key")
+                except Exception as e:
+                    # 尝试作为JSON证书加载
+                    self.logger.debug(f"Failed to load as PEM certificate, trying JSON format: {str(e)}")
+                    import json
+                    with open(cert, 'r', encoding='utf-8') as f:
+                        cert_data = json.load(f)
+                    
+                    # 从JSON证书中提取公钥
+                    if 'public_key' in cert_data:
+                        public_key_hex = cert_data['public_key']
+                        public_key_data = bytes.fromhex(public_key_hex)
+                        public_key = serialization.load_der_public_key(public_key_data, backend=self.backend)
+                        self.logger.debug(f"Loaded JSON certificate and extracted public key")
+                    else:
+                        raise ValueError("Certificate file does not contain public_key field")
+            else:
+                # 使用证书对象
+                self.logger.debug(f"Using provided certificate object")
+                public_key = extract_public_key_from_certificate(cert)
+            
+            self.logger.debug(f"Extracted public key type: {type(public_key)}")
+            
+            # 调用现有的验证方法
+            return self.verify_file_signature(filepath, signature, public_key, hash_algorithm)
+        except Exception as e:
+            self.logger.error(f"Failed to verify file signature with certificate for {filepath}: {str(e)}")
             return False
