@@ -1,6 +1,7 @@
 from typing import Optional, Tuple, Union, List, Dict, Any
 from cryptography.hazmat.primitives import serialization
 from ..utils import get
+from ..utils.service_utils import ServiceUtils
 
 class KeyService:
     """密钥服务类，封装密钥管理功能，作为GUI和核心业务逻辑之间的桥梁
@@ -17,6 +18,7 @@ class KeyService:
         # 使用依赖注入获取业务层组件
         self.key_manager = get("key_manager")
     
+    @ServiceUtils.handle_service_method
     def generate_rsa_key(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """生成RSA密钥对
         
@@ -25,43 +27,29 @@ class KeyService:
                 - key_size: 密钥大小，默认2048
         
         Returns:
-            Dict[str, Any]: 包含以下字段的字典：
-                - success: bool，操作是否成功
-                - data: Dict[str, Any]，包含私钥信息和公钥信息
-                - error: str，错误信息（如果操作失败）
+            Dict[str, Any]: 包含私钥信息、公钥信息和密钥ID的字典
         """
-        try:
-            # 提取参数
-            key_size = params.get('key_size', 2048)
-            
-            # 验证参数
-            if key_size <= 0:
-                return {
-                    "success": False,
-                    "error": "密钥大小必须为正数"
-                }
-            
-            # 调用业务逻辑层
-            key_id, private_key, public_key = self.key_manager.generate_rsa_key(key_size)
-            private_info = self.key_manager.get_key_info(key_id)
-            private_info["type"] = "RSA Private Key"
-            public_info = private_info.copy()
-            public_info["type"] = "RSA Public Key"
-            
-            return {
-                "success": True,
-                "data": {
-                    "private_key_info": private_info,
-                    "public_key_info": public_info,
-                    "key_id": key_id
-                }
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        # 提取参数
+        extracted = ServiceUtils.extract_params(params, [], {"key_size": 2048})
+        key_size = extracted["key_size"]
+        
+        # 验证参数
+        ServiceUtils.validate_positive(key_size, "密钥大小")
+        
+        # 调用业务逻辑层
+        key_id, private_key, public_key = self.key_manager.generate_rsa_key(key_size)
+        private_info = self.key_manager.get_key_info(key_id)
+        private_info["type"] = "RSA Private Key"
+        public_info = private_info.copy()
+        public_info["type"] = "RSA Public Key"
+        
+        return {
+            "private_key_info": private_info,
+            "public_key_info": public_info,
+            "key_id": key_id
+        }
     
+    @ServiceUtils.handle_service_method
     def generate_ecc_key(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """生成ECC密钥对
         
@@ -70,74 +58,49 @@ class KeyService:
                 - curve: 曲线类型，默认"secp256r1"
         
         Returns:
-            Dict[str, Any]: 包含以下字段的字典：
-                - success: bool，操作是否成功
-                - data: Dict[str, Any]，包含私钥信息和公钥信息
-                - error: str，错误信息（如果操作失败）
+            Dict[str, Any]: 包含私钥信息、公钥信息和密钥ID的字典
         """
-        try:
-            # 提取参数
-            curve = params.get('curve', "secp256r1")
-            
-            # 验证参数
-            if not curve:
-                return {
-                    "success": False,
-                    "error": "缺少必要的曲线类型参数"
-                }
-            
-            # 调用业务逻辑层
-            key_id, private_key, public_key = self.key_manager.generate_ecc_key(curve)
-            private_info = self.key_manager.get_key_info(key_id)
-            private_info["type"] = "ECC Private Key"
-            public_info = private_info.copy()
-            public_info["type"] = "ECC Public Key"
-            
-            return {
-                "success": True,
-                "data": {
-                    "private_key_info": private_info,
-                    "public_key_info": public_info,
-                    "key_id": key_id
-                }
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        # 提取参数
+        extracted = ServiceUtils.extract_params(params, [], {"curve": "secp256r1"})
+        curve = extracted["curve"]
+        
+        # 验证参数
+        ServiceUtils.validate_not_empty(curve, "曲线类型")
+        
+        # 调用业务逻辑层
+        key_id, private_key, public_key = self.key_manager.generate_ecc_key(curve)
+        private_info = self.key_manager.get_key_info(key_id)
+        private_info["type"] = "ECC Private Key"
+        public_info = private_info.copy()
+        public_info["type"] = "ECC Public Key"
+        
+        return {
+            "private_key_info": private_info,
+            "public_key_info": public_info,
+            "key_id": key_id
+        }
     
-    def list_keys(self) -> Dict[str, Any]:
+    @ServiceUtils.handle_service_method
+    def list_keys(self) -> List[Dict[str, Any]]:
         """列出所有存储的密钥
         
         Returns:
-            Dict[str, Any]: 包含以下字段的字典：
-                - success: bool，操作是否成功
-                - data: List[Dict[str, Any]]，密钥列表
-                - error: str，错误信息（如果操作失败）
+            List[Dict[str, Any]]: 密钥列表
         """
-        try:
-            # 调用业务逻辑层
-            key_ids = self.key_manager.list_keys()
-            keys_info = []
-            for key_id in key_ids:
-                try:
-                    key_info = self.key_manager.get_key_info(key_id)
-                    key_info["id"] = key_id
-                    keys_info.append(key_info)
-                except Exception:
-                    pass
-            
-            return {
-                "success": True,
-                "data": keys_info
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        # 调用业务逻辑层
+        key_ids = self.key_manager.list_keys()
+        keys_info = []
+        for key_id in key_ids:
+            try:
+                key_info = self.key_manager.get_key_info(key_id)
+                key_info["id"] = key_id
+                keys_info.append(key_info)
+            except Exception:
+                pass
+        
+        return keys_info
     
+    @ServiceUtils.handle_service_method
     def load_key_pair(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """加载密钥对
         
@@ -146,39 +109,22 @@ class KeyService:
                 - key_id: 密钥ID
         
         Returns:
-            Dict[str, Any]: 包含以下字段的字典：
-                - success: bool，操作是否成功
-                - data: Dict[str, Any]，包含私钥和公钥
-                - error: str，错误信息（如果操作失败）
+            Dict[str, Any]: 包含私钥和公钥的字典
         """
-        try:
-            # 提取参数
-            key_id = params.get('key_id')
-            
-            # 验证参数
-            if not key_id:
-                return {
-                    "success": False,
-                    "error": "缺少必要的密钥ID参数"
-                }
-            
-            # 调用业务逻辑层
-            private_key, public_key, _ = self.key_manager.load_key(key_id)
-            
-            return {
-                "success": True,
-                "data": {
-                    "private_key": private_key,
-                    "public_key": public_key
-                }
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        # 提取参数
+        extracted = ServiceUtils.extract_params(params, ["key_id"])
+        key_id = extracted["key_id"]
+        
+        # 调用业务逻辑层
+        private_key, public_key, _ = self.key_manager.load_key(key_id)
+        
+        return {
+            "private_key": private_key,
+            "public_key": public_key
+        }
     
-    def delete_key(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    @ServiceUtils.handle_service_method
+    def delete_key(self, params: Dict[str, Any]) -> bool:
         """删除密钥
         
         Args:
@@ -186,36 +132,17 @@ class KeyService:
                 - key_id: 密钥ID
         
         Returns:
-            Dict[str, Any]: 包含以下字段的字典：
-                - success: bool，操作是否成功
-                - data: bool，是否删除成功
-                - error: str，错误信息（如果操作失败）
+            bool: 是否删除成功
         """
-        try:
-            # 提取参数
-            key_id = params.get('key_id')
-            
-            # 验证参数
-            if not key_id:
-                return {
-                    "success": False,
-                    "error": "缺少必要的密钥ID参数"
-                }
-            
-            # 调用业务逻辑层
-            success = self.key_manager.delete_key(key_id)
-            
-            return {
-                "success": True,
-                "data": success
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        # 提取参数
+        extracted = ServiceUtils.extract_params(params, ["key_id"])
+        key_id = extracted["key_id"]
+        
+        # 调用业务逻辑层
+        return self.key_manager.delete_key(key_id)
     
-    def save_private_key(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    @ServiceUtils.handle_service_method
+    def save_private_key(self, params: Dict[str, Any]) -> None:
         """保存私钥
         
         Args:
@@ -223,75 +150,35 @@ class KeyService:
                 - private_key: 私钥
                 - file_path: 文件路径
                 - password: 密码（可选）
-        
-        Returns:
-            Dict[str, Any]: 包含以下字段的字典：
-                - success: bool，操作是否成功
-                - error: str，错误信息（如果操作失败）
         """
-        try:
-            # 提取参数
-            private_key = params.get('private_key')
-            file_path = params.get('file_path')
-            password = params.get('password', None)
-            
-            # 验证参数
-            if not private_key or not file_path:
-                return {
-                    "success": False,
-                    "error": "缺少必要的私钥或文件路径参数"
-                }
-            
-            # 调用业务逻辑层
-            self.key_manager.save_private_key(private_key, file_path, password)
-            
-            return {
-                "success": True
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        # 提取参数
+        extracted = ServiceUtils.extract_params(params, ["private_key", "file_path"], {"password": None})
+        private_key = extracted["private_key"]
+        file_path = extracted["file_path"]
+        password = extracted["password"]
+        
+        # 调用业务逻辑层
+        self.key_manager.save_private_key(private_key, file_path, password)
     
-    def save_public_key(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    @ServiceUtils.handle_service_method
+    def save_public_key(self, params: Dict[str, Any]) -> None:
         """保存公钥
         
         Args:
             params: 包含以下字段的字典：
                 - public_key: 公钥
                 - file_path: 文件路径
-        
-        Returns:
-            Dict[str, Any]: 包含以下字段的字典：
-                - success: bool，操作是否成功
-                - error: str，错误信息（如果操作失败）
         """
-        try:
-            # 提取参数
-            public_key = params.get('public_key')
-            file_path = params.get('file_path')
-            
-            # 验证参数
-            if not public_key or not file_path:
-                return {
-                    "success": False,
-                    "error": "缺少必要的公钥或文件路径参数"
-                }
-            
-            # 调用业务逻辑层
-            self.key_manager.save_public_key(public_key, file_path)
-            
-            return {
-                "success": True
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        # 提取参数
+        extracted = ServiceUtils.extract_params(params, ["public_key", "file_path"])
+        public_key = extracted["public_key"]
+        file_path = extracted["file_path"]
+        
+        # 调用业务逻辑层
+        self.key_manager.save_public_key(public_key, file_path)
     
-    def load_private_key(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    @ServiceUtils.handle_service_method
+    def load_private_key(self, params: Dict[str, Any]) -> Any:
         """加载私钥
         
         Args:
@@ -300,37 +187,18 @@ class KeyService:
                 - password: 密码（可选）
         
         Returns:
-            Dict[str, Any]: 包含以下字段的字典：
-                - success: bool，操作是否成功
-                - data: Any，私钥
-                - error: str，错误信息（如果操作失败）
+            Any: 私钥
         """
-        try:
-            # 提取参数
-            file_path = params.get('file_path')
-            password = params.get('password', None)
-            
-            # 验证参数
-            if not file_path:
-                return {
-                    "success": False,
-                    "error": "缺少必要的文件路径参数"
-                }
-            
-            # 调用业务逻辑层
-            private_key = self.key_manager.load_private_key(file_path, password)
-            
-            return {
-                "success": True,
-                "data": private_key
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        # 提取参数
+        extracted = ServiceUtils.extract_params(params, ["file_path"], {"password": None})
+        file_path = extracted["file_path"]
+        password = extracted["password"]
+        
+        # 调用业务逻辑层
+        return self.key_manager.load_private_key(file_path, password)
     
-    def load_public_key(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    @ServiceUtils.handle_service_method
+    def load_public_key(self, params: Dict[str, Any]) -> Any:
         """加载公钥
         
         Args:
@@ -338,35 +206,16 @@ class KeyService:
                 - file_path: 文件路径
         
         Returns:
-            Dict[str, Any]: 包含以下字段的字典：
-                - success: bool，操作是否成功
-                - data: Any，公钥
-                - error: str，错误信息（如果操作失败）
+            Any: 公钥
         """
-        try:
-            # 提取参数
-            file_path = params.get('file_path')
-            
-            # 验证参数
-            if not file_path:
-                return {
-                    "success": False,
-                    "error": "缺少必要的文件路径参数"
-                }
-            
-            # 调用业务逻辑层
-            public_key = self.key_manager.load_public_key(file_path)
-            
-            return {
-                "success": True,
-                "data": public_key
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        # 提取参数
+        extracted = ServiceUtils.extract_params(params, ["file_path"])
+        file_path = extracted["file_path"]
+        
+        # 调用业务逻辑层
+        return self.key_manager.load_public_key(file_path)
     
+    @ServiceUtils.handle_service_method
     def get_key_info(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """获取密钥信息
         
@@ -375,31 +224,11 @@ class KeyService:
                 - key: 密钥
         
         Returns:
-            Dict[str, Any]: 包含以下字段的字典：
-                - success: bool，操作是否成功
-                - data: Dict[str, Any]，密钥信息
-                - error: str，错误信息（如果操作失败）
+            Dict[str, Any]: 密钥信息
         """
-        try:
-            # 提取参数
-            key = params.get('key')
-            
-            # 验证参数
-            if not key:
-                return {
-                    "success": False,
-                    "error": "缺少必要的密钥参数"
-                }
-            
-            # 调用业务逻辑层
-            key_info = self.key_manager.get_key_info_from_key(key)
-            
-            return {
-                "success": True,
-                "data": key_info
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        # 提取参数
+        extracted = ServiceUtils.extract_params(params, ["key"])
+        key = extracted["key"]
+        
+        # 调用业务逻辑层
+        return self.key_manager.get_key_info_from_key(key)
