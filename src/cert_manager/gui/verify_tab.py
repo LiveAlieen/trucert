@@ -165,9 +165,34 @@ class VerifyTab(QWidget):
             self.verify_file_path_edit.setText(file_path)
     
     def browse_signature(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "选择签名文件", "", "JSON Files (*.json)")
+        file_path, _ = QFileDialog.getOpenFileName(self, "选择签名文件", "", "JSON Files (*.json);;GIQ Files (*.giq);;GIQS Files (*.giqs)")
         if file_path:
             self.sig_path_edit.setText(file_path)
+            
+            # 尝试从签名文件中提取文件信息
+            try:
+                result_load = self.file_signer_service.load_signature({"file_path": file_path})
+                if result_load.get("success"):
+                    signature_data = result_load["data"]
+                    file_info = signature_data.get("file_info", {})
+                    
+                    # 自动填充文件路径（如果签名文件包含文件名）
+                    if file_info.get("filename"):
+                        # 尝试在当前目录或签名文件所在目录查找同名文件
+                        sig_dir = os.path.dirname(file_path)
+                        potential_file_path = os.path.join(sig_dir, file_info["filename"])
+                        if os.path.exists(potential_file_path):
+                            self.verify_file_path_edit.setText(potential_file_path)
+                            QMessageBox.information(self, "信息", f"已自动填充文件路径: {potential_file_path}")
+                        else:
+                            QMessageBox.information(self, "信息", f"签名文件对应文件: {file_info['filename']}")
+                    
+                    # 处理批量签名文件
+                    if file_info.get("batch_signature"):
+                        QMessageBox.information(self, "信息", f"批量签名文件，包含 {file_info.get('total_files', 0)} 个文件的签名")
+            except Exception as e:
+                # 静默处理错误，不影响用户体验
+                pass
     
     def browse_verify_key(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "选择公钥文件", "", "PEM Files (*.pem);;DER Files (*.der)")

@@ -73,25 +73,36 @@ class FileCommands:
                 result_path = result_attach["data"]
                 print(f"文件签名成功，签名已附加到文件: {result_path}")
             else:
-                # 生成单独的签名文件
-                if args.output:
-                    # 保存签名
-                    result_save = file_signer_service.save_signature({
-                        "signature": signature,
-                        "file_path": args.output,
-                        "original_file_path": args.file_path,
-                        "hash_algorithm": args.hash
-                    })
-                    
-                    if not result_save.get("success"):
-                        print(f"保存签名失败: {result_save.get('error', '未知错误')}")
-                        return 1
-                    
-                    print(f"文件签名成功，签名保存到: {args.output}")
-                else:
-                    # 输出签名到控制台
-                    print("文件签名成功!")
-                    print(f"签名: {signature.hex()}")
+                    # 生成单独的签名文件
+                    if args.output:
+                        # 保存签名
+                        result_save = file_signer_service.save_signature({
+                            "signature": signature,
+                            "file_path": args.output,
+                            "original_file_path": args.file_path,
+                            "hash_algorithm": args.hash
+                        })
+                        
+                        if not result_save.get("success"):
+                            print(f"保存签名失败: {result_save.get('error', '未知错误')}")
+                            return 1
+                        
+                        print(f"文件签名成功，签名保存到: {args.output}")
+                    else:
+                        # 自动生成签名文件名
+                        sig_filename = args.file_path + ".giq"
+                        result_save = file_signer_service.save_signature({
+                            "signature": signature,
+                            "file_path": sig_filename,
+                            "original_file_path": args.file_path,
+                            "hash_algorithm": args.hash
+                        })
+                        
+                        if not result_save.get("success"):
+                            print(f"保存签名失败: {result_save.get('error', '未知错误')}")
+                            return 1
+                        
+                        print(f"文件签名成功，签名保存到: {sig_filename}")
             
             return 0
         except Exception as e:

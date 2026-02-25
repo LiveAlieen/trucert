@@ -248,7 +248,7 @@ class FileTab(QWidget):
         if not self.current_signature:
             return
         
-        file_path, _ = QFileDialog.getSaveFileName(self, "保存签名", "", "JSON Files (*.json)")
+        file_path, _ = QFileDialog.getSaveFileName(self, "保存签名", "", "GIQ Files (*.giq);;JSON Files (*.json)")
         if not file_path:
             return
         
