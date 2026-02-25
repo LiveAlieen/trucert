@@ -391,22 +391,8 @@ class KeyService:
                     "error": "缺少必要的密钥参数"
                 }
             
-            # 从密钥对象中提取信息
-            from cryptography.hazmat.primitives.asymmetric import rsa, ec
-            key_info = {}
-            
-            if isinstance(key, rsa.RSAPrivateKey):
-                key_info["type"] = "RSA Private Key"
-                key_info["key_size"] = key.key_size
-            elif isinstance(key, rsa.RSAPublicKey):
-                key_info["type"] = "RSA Public Key"
-                key_info["key_size"] = key.key_size
-            elif isinstance(key, ec.EllipticCurvePrivateKey):
-                key_info["type"] = "ECC Private Key"
-                key_info["curve"] = key.curve.name
-            elif isinstance(key, ec.EllipticCurvePublicKey):
-                key_info["type"] = "ECC Public Key"
-                key_info["curve"] = key.curve.name
+            # 调用业务逻辑层
+            key_info = self.key_manager.get_key_info_from_key(key)
             
             return {
                 "success": True,

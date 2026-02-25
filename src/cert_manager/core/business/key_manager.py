@@ -193,7 +193,7 @@ class KeyManager:
             # 检查是否是密钥对象
             if hasattr(key_identifier, 'key_size') or hasattr(key_identifier, 'curve'):
                 self.logger.info("Getting key info from key object")
-                return utils_get_key_info(key_identifier)
+                return self.get_key_info_from_key(key_identifier)
             
             # 否则，假设是密钥ID
             self.logger.info(f"Getting key info for ID: {key_identifier}")
@@ -208,6 +208,38 @@ class KeyManager:
             return {}
         except Exception as e:
             self.logger.error(f"Failed to get key info: {str(e)}")
+            raise
+    
+    def get_key_info_from_key(self, key) -> dict:
+        """从密钥对象获取密钥信息
+        
+        Args:
+            key: 密钥对象
+        
+        Returns:
+            密钥信息字典
+        """
+        try:
+            self.logger.info("Getting key info from key object")
+            from cryptography.hazmat.primitives.asymmetric import rsa, ec
+            key_info = {}
+            
+            if isinstance(key, rsa.RSAPrivateKey):
+                key_info["type"] = "RSA Private Key"
+                key_info["key_size"] = key.key_size
+            elif isinstance(key, rsa.RSAPublicKey):
+                key_info["type"] = "RSA Public Key"
+                key_info["key_size"] = key.key_size
+            elif isinstance(key, ec.EllipticCurvePrivateKey):
+                key_info["type"] = "ECC Private Key"
+                key_info["curve"] = key.curve.name
+            elif isinstance(key, ec.EllipticCurvePublicKey):
+                key_info["type"] = "ECC Public Key"
+                key_info["curve"] = key.curve.name
+            
+            return key_info
+        except Exception as e:
+            self.logger.error(f"Failed to get key info from key object: {str(e)}")
             raise
     
     def delete_key(self, key_id: str) -> bool:
