@@ -124,9 +124,25 @@ class FileSigner:
             self.logger.info(f"Loading signature from file: {filepath}")
             data = self.storage_manager.load(filepath, "json")
             
-            signature = bytes.fromhex(data["signature"])
-            hash_algorithm = data.get("hash_algorithm", "sha256")
-            file_info = data.get("file_info", {})
+            # Check if it's a batch signature
+            if "batch_signatures" in data:
+                # For batch signatures, return the first signature for verification
+                # This is a simplification - in a real implementation, you might want to handle each signature separately
+                if data["batch_signatures"]:
+                    batch_sig = data["batch_signatures"][0]
+                    signature = bytes.fromhex(batch_sig["signature"])
+                    hash_algorithm = batch_sig.get("hash_algorithm", data.get("hash_algorithm", "sha256"))
+                    file_info = batch_sig.get("file_info", {})
+                    # Add batch information to file_info
+                    file_info["batch_signature"] = True
+                    file_info["total_files"] = len(data["batch_signatures"])
+                else:
+                    raise ValueError("Batch signature file is empty")
+            else:
+                # Single signature
+                signature = bytes.fromhex(data["signature"])
+                hash_algorithm = data.get("hash_algorithm", "sha256")
+                file_info = data.get("file_info", {})
             
             self.logger.info(f"Signature loaded successfully from file: {filepath}")
             return signature, hash_algorithm, file_info

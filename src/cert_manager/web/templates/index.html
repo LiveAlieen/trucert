@@ -289,7 +289,7 @@
             
             <div id="sign" class="tab-pane">
                 <div class="section">
-                    <div class="section-title">签名文件</div>
+                    <div class="section-title">单文件签名</div>
                     <div class="form-group">
                         <label>选择文件</label>
                         <input type="file" id="signFile">
@@ -306,7 +306,28 @@
                             <option value="sha512">SHA512</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary" onclick="signFile()">签名文件</button>
+                    <button class="btn btn-primary" onclick="signFile()">生成签名</button>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">批量文件签名</div>
+                    <div class="form-group">
+                        <label>选择文件（可多选）</label>
+                        <input type="file" id="batchSignFiles" multiple>
+                    </div>
+                    <div class="form-group">
+                        <label>选择密钥</label>
+                        <select id="batchSignKeySelect"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>哈希算法</label>
+                        <select id="batchSignHash">
+                            <option value="sha256">SHA256</option>
+                            <option value="sha384">SHA384</option>
+                            <option value="sha512">SHA512</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="batchSignFiles()">批量生成签名</button>
                 </div>
                 
                 <div id="signMessage"></div>
@@ -321,7 +342,7 @@
                     </div>
                     <div class="form-group">
                         <label>选择签名文件</label>
-                        <input type="file" id="verifySig">
+                        <input type="file" id="verifySig" onchange="handleSignatureFileSelect()">
                     </div>
                     <div class="form-group">
                         <label>选择密钥</label>
@@ -401,7 +422,7 @@
         }
         
         function updateKeySelects(keys) {
-            const selects = ['certKeySelect', 'signKeySelect', 'verifyKeySelect'];
+            const selects = ['certKeySelect', 'signKeySelect', 'verifyKeySelect', 'batchSignKeySelect'];
             selects.forEach(id => {
                 const select = document.getElementById(id);
                 if (select) {
@@ -594,6 +615,87 @@
             } catch (e) {
                 showMessage('signMessage', '错误: ' + e.message, 'error');
             }
+        }
+        
+        async function batchSignFiles() {
+            try {
+                const fileInput = document.getElementById('batchSignFiles');
+                const keyId = document.getElementById('batchSignKeySelect').value;
+                
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    showMessage('signMessage', '请选择文件', 'error');
+                    return;
+                }
+                
+                if (!keyId) {
+                    showMessage('signMessage', '请选择密钥', 'error');
+                    return;
+                }
+                
+                setStatus('正在批量签名文件...');
+                
+                const formData = new FormData();
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('files', fileInput.files[i]);
+                }
+                formData.append('key_id', keyId);
+                formData.append('hash_algorithm', document.getElementById('batchSignHash').value);
+                
+                const response = await fetch('/api/sign/batch', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('signMessage', `批量签名成功！共处理 ${result.total_files} 个文件，成功 ${result.successful_files} 个`, 'success');
+                    
+                    const sigData = JSON.stringify(result.signature, null, 2);
+                    const blob = new Blob([sigData], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = result.filename;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                } else {
+                    showMessage('signMessage', '批量签名失败: ' + result.error, 'error');
+                }
+            } catch (e) {
+                showMessage('signMessage', '错误: ' + e.message, 'error');
+            }
+        }
+        
+        function handleSignatureFileSelect() {
+            const sigInput = document.getElementById('verifySig');
+            if (!sigInput.files[0]) return;
+            
+            const file = sigInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const sigData = JSON.parse(e.target.result);
+                    
+                    // Check if it's a batch signature
+                    if (sigData.batch_signatures) {
+                        showMessage('verifyMessage', '批量签名文件已选择，包含 ' + sigData.batch_signatures.length + ' 个文件的签名', 'info');
+                    } else if (sigData.file_info && sigData.file_info.filename) {
+                        // For single file signature, try to find the file
+                        showMessage('verifyMessage', '签名文件已选择，对应文件: ' + sigData.file_info.filename, 'info');
+                        
+                        // Try to automatically select the corresponding file
+                        // Note: This is a limitation of web browsers - we can't programmatically set file input values
+                        // due to security restrictions. We can only provide a message to the user.
+                        showMessage('verifyMessage', '请选择对应文件: ' + sigData.file_info.filename, 'info');
+                    }
+                } catch (e) {
+                    showMessage('verifyMessage', '签名文件格式错误', 'error');
+                }
+            };
+            
+            reader.readAsText(file);
         }
         
         async function verifyFile() {

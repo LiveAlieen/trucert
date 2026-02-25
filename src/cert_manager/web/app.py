@@ -145,6 +145,9 @@ def sign_file():
         file_path = os.path.join(temp_dir, file.filename)
         file.save(file_path)
         
+        # 获取文件大小
+        file_size = os.path.getsize(file_path)
+        
         # 加载密钥
         result_load = key_service.load_key_pair({"key_id": key_id})
         if not result_load.get("success"):
@@ -167,7 +170,12 @@ def sign_file():
             sig_data = {
                 "signature": signature.hex(),
                 "original_file_path": file.filename,
-                "hash_algorithm": hash_algorithm
+                "hash_algorithm": hash_algorithm,
+                "file_size": file_size,
+                "file_info": {
+                    "filename": file.filename,
+                    "file_size": file_size
+                }
             }
             
             sig_filename = file.filename + ".giq"
@@ -183,6 +191,79 @@ def sign_file():
             })
         
         return jsonify({"success": False, "error": result_sign.get("error", "签名失败")})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+@app.route('/api/sign/batch', methods=['POST'])
+def batch_sign_files():
+    """批量签名文件"""
+    try:
+        if 'files' not in request.files:
+            return jsonify({"success": False, "error": "请选择文件"})
+        
+        files = request.files.getlist('files')
+        if not files or len(files) == 0:
+            return jsonify({"success": False, "error": "请选择文件"})
+        
+        key_id = request.form.get('key_id')
+        if not key_id:
+            return jsonify({"success": False, "error": "请选择密钥"})
+        
+        hash_algorithm = request.form.get('hash_algorithm', 'sha256')
+        
+        # 保存上传的文件
+        import tempfile
+        temp_dir = tempfile.mkdtemp()
+        file_paths = []
+        
+        for file in files:
+            if file.filename:
+                file_path = os.path.join(temp_dir, file.filename)
+                file.save(file_path)
+                file_paths.append(file_path)
+        
+        # 加载密钥
+        result_load = key_service.load_key_pair({"key_id": key_id})
+        if not result_load.get("success"):
+            return jsonify({"success": False, "error": result_load.get("error", "加载密钥失败")})
+        
+        private_key = result_load["data"]["private_key"]
+        
+        # 批量签名文件
+        import uuid
+        import datetime
+        timestamp = int(datetime.datetime.now().timestamp())
+        unique_id = str(uuid.uuid4())[:8]
+        sig_filename = f"batch_sign_{timestamp}_{unique_id}.giqs"
+        
+        # 调用批量签名服务
+        result_batch = file_signer_service.batch_sign({
+            "filepaths": file_paths,
+            "private_key": private_key,
+            "output_dir": temp_dir,
+            "hash_algorithm": hash_algorithm
+        })
+        
+        if result_batch.get("success"):
+            # 读取生成的批量签名文件
+            batch_sig_path = os.path.join(temp_dir, sig_filename)
+            import json
+            with open(batch_sig_path, 'r', encoding='utf-8') as f:
+                batch_sig_data = json.load(f)
+            
+            # 清理临时文件
+            import shutil
+            shutil.rmtree(temp_dir)
+            
+            return jsonify({
+                "success": True, 
+                "signature": batch_sig_data,
+                "filename": sig_filename,
+                "total_files": len(file_paths),
+                "successful_files": len([r for r in result_batch["data"] if r["success"]])
+            })
+        
+        return jsonify({"success": False, "error": result_batch.get("error", "批量签名失败")})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
