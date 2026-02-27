@@ -4,8 +4,9 @@
 """
 
 import os
+import json
 from typing import Optional, Union, Dict, Any, List
-from ..utils import get_logger
+from ..utils import get_logger, calculate_hash
 
 
 class StorageManager:
@@ -53,8 +54,8 @@ class StorageManager:
                 os.makedirs(dir_path, exist_ok=True)
                 self.logger.debug(f"Created directory: {dir_path}")
             
+            # 保存主文件
             if format.lower() == "json":
-                import json
                 with open(filepath, "w", encoding="utf-8") as f:
                     json.dump(data, f, indent=2, ensure_ascii=False)
                 self.logger.info(f"Saved JSON data to file: {filepath}")
@@ -64,9 +65,35 @@ class StorageManager:
                 self.logger.info(f"Saved binary data to file: {filepath}")
             else:
                 raise ValueError(f"Unsupported format: {format}")
+            
+            # 生成并保存文件哈希值
+            self._save_file_hash(filepath)
         except Exception as e:
             self.logger.error(f"Failed to save data to file {filepath}: {str(e)}")
             raise
+    
+    def _save_file_hash(self, filepath: str) -> None:
+        """保存文件的哈希值
+        
+        Args:
+            filepath: 文件路径
+        """
+        try:
+            # 读取文件内容
+            with open(filepath, "rb") as f:
+                content = f.read()
+            
+            # 计算哈希值
+            file_hash = calculate_hash(content, "sha256")
+            
+            # 保存哈希值到 .hash 文件
+            hash_filepath = f"{filepath}.hash"
+            with open(hash_filepath, "w", encoding="utf-8") as f:
+                json.dump({"hash": file_hash, "algorithm": "sha256"}, f, indent=2)
+            
+            self.logger.debug(f"Saved hash for file: {filepath}")
+        except Exception as e:
+            self.logger.warning(f"Failed to save file hash: {str(e)}")
     
     def load(self, filepath: str, format: str = "json") -> Union[Dict[str, Any], bytes]:
         """从文件加载数据
@@ -83,8 +110,10 @@ class StorageManager:
                 self.logger.warning(f"File not found: {filepath}")
                 raise FileNotFoundError(f"File not found: {filepath}")
             
+            # 验证文件完整性
+            self._verify_file_integrity(filepath)
+            
             if format.lower() == "json":
-                import json
                 with open(filepath, "r", encoding="utf-8") as f:
                     data = json.load(f)
                 self.logger.info(f"Loaded JSON data from file: {filepath}")
@@ -100,6 +129,44 @@ class StorageManager:
             self.logger.error(f"Failed to load data from file {filepath}: {str(e)}")
             raise
     
+    def _verify_file_integrity(self, filepath: str) -> bool:
+        """验证文件完整性
+        
+        Args:
+            filepath: 文件路径
+        
+        Returns:
+            bool: 文件是否完整
+        """
+        try:
+            hash_filepath = f"{filepath}.hash"
+            if not os.path.exists(hash_filepath):
+                self.logger.warning(f"Hash file not found for {filepath}, skipping integrity check")
+                return True
+            
+            # 读取存储的哈希值
+            with open(hash_filepath, "r", encoding="utf-8") as f:
+                hash_data = json.load(f)
+            
+            # 读取文件内容
+            with open(filepath, "rb") as f:
+                content = f.read()
+            
+            # 计算当前哈希值
+            current_hash = calculate_hash(content, "sha256")
+            
+            # 验证哈希值
+            if current_hash != hash_data["hash"]:
+                self.logger.error(f"File integrity check failed for {filepath}")
+                raise ValueError(f"File integrity check failed for {filepath}")
+            
+            self.logger.debug(f"File integrity check passed for {filepath}")
+            return True
+        except Exception as e:
+            self.logger.warning(f"Failed to verify file integrity: {str(e)}")
+            # 允许加载文件，但记录警告
+            return True
+    
     def delete(self, filepath: str) -> bool:
         """删除文件
         
@@ -110,17 +177,27 @@ class StorageManager:
             是否删除成功
         """
         try:
+            # 删除主文件
             if os.path.exists(filepath):
                 try:
                     os.remove(filepath)
                     self.logger.info(f"Deleted file: {filepath}")
-                    return True
                 except Exception as e:
                     self.logger.error(f"Failed to delete file {filepath}: {str(e)}")
                     return False
             else:
                 self.logger.warning(f"File not found for deletion: {filepath}")
-                return False
+            
+            # 删除对应的哈希文件
+            hash_filepath = f"{filepath}.hash"
+            if os.path.exists(hash_filepath):
+                try:
+                    os.remove(hash_filepath)
+                    self.logger.info(f"Deleted hash file: {hash_filepath}")
+                except Exception as e:
+                    self.logger.warning(f"Failed to delete hash file {hash_filepath}: {str(e)}")
+            
+            return True
         except Exception as e:
             self.logger.error(f"Error during file deletion: {str(e)}")
             return False

@@ -8,6 +8,8 @@ from cryptography.hazmat.primitives.asymmetric import rsa, ec, padding
 from cryptography.hazmat.backends import default_backend
 from typing import Union, Optional
 from src.cert_manager.core.algorithms import get_algorithm
+from .root_key_manager import encrypt_with_root_key, decrypt_with_root_key
+import json
 
 
 def generate_rsa_key(key_size: int = 2048) -> tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
@@ -92,21 +94,21 @@ def save_private_key(private_key: Union[rsa.RSAPrivateKey, ec.EllipticCurvePriva
     Args:
         private_key: 私钥对象
         filepath: 文件路径
-        password: 密码，可选
+        password: 密码，可选（忽略，使用根密钥加密）
     """
-    if password:
-        encryption_algorithm = serialization.BestAvailableEncryption(password.encode())
-    else:
-        encryption_algorithm = serialization.NoEncryption()
-    
+    # 使用无加密方式获取PEM格式私钥
     pem = private_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=encryption_algorithm
+        encryption_algorithm=serialization.NoEncryption()
     )
     
-    with open(filepath, "wb") as f:
-        f.write(pem)
+    # 使用根密钥加密私钥
+    encrypted_data = encrypt_with_root_key(pem)
+    
+    # 保存加密后的私钥
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(encrypted_data, f, indent=2, ensure_ascii=False)
 
 
 def save_public_key(public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey], 
@@ -131,24 +133,24 @@ def load_private_key(filepath: str, password: Optional[str] = None) -> Union[rsa
     
     Args:
         filepath: 文件路径
-        password: 密码，可选
+        password: 密码，可选（忽略，使用根密钥解密）
     
     Returns:
         私钥对象
     """
     backend = default_backend()
     
-    with open(filepath, "rb") as f:
-        key_data = f.read()
+    # 读取加密的私钥文件
+    with open(filepath, "r", encoding="utf-8") as f:
+        encrypted_data = json.load(f)
     
-    if password:
-        password_bytes = password.encode()
-    else:
-        password_bytes = None
+    # 使用根密钥解密私钥
+    pem = decrypt_with_root_key(encrypted_data)
     
+    # 加载私钥
     return serialization.load_pem_private_key(
-        key_data,
-        password=password_bytes,
+        pem,
+        password=None,
         backend=backend
     )
 

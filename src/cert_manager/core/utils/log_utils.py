@@ -5,9 +5,32 @@
 
 import os
 import logging
-from logging.handlers import RotatingFileHandler
+import json
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union
+
+
+class JsonFormatter(logging.Formatter):
+    """JSON格式的日志格式化器"""
+    
+    def format(self, record):
+        """格式化日志记录为JSON格式"""
+        log_record = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+            "module": record.module,
+            "function": record.funcName,
+            "line": record.lineno
+        }
+        
+        # 添加异常信息
+        if record.exc_info:
+            log_record["exc_info"] = self.formatException(record.exc_info)
+        
+        return json.dumps(log_record)
 
 
 class LogManager:
@@ -23,7 +46,10 @@ class LogManager:
             "file_level": logging.DEBUG,
             "max_bytes": 10 * 1024 * 1024,  # 10MB
             "backup_count": 5,
-            "log_format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            "log_format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            "json_format": False,
+            "rotation": "size",  # size or time
+            "rotation_interval": "midnight"  # 仅在rotation为time时使用
         }
     
     def _get_default_log_dir(self) -> str:
@@ -58,6 +84,7 @@ class LogManager:
         # 创建日志记录器
         logger = logging.getLogger(name)
         logger.setLevel(merged_config["log_level"])
+        logger.propagate = False  # 防止日志传播
         
         # 避免重复添加处理器
         if not logger.handlers:
@@ -65,16 +92,27 @@ class LogManager:
             console_handler = logging.StreamHandler()
             console_handler.setLevel(merged_config["console_level"])
             
-            # 创建文件处理器，使用轮转日志
-            file_handler = RotatingFileHandler(
-                log_file,
-                maxBytes=merged_config["max_bytes"],
-                backupCount=merged_config["backup_count"]
-            )
+            # 创建文件处理器
+            if merged_config["rotation"] == "time":
+                file_handler = TimedRotatingFileHandler(
+                    log_file,
+                    when=merged_config["rotation_interval"],
+                    backupCount=merged_config["backup_count"]
+                )
+            else:
+                file_handler = RotatingFileHandler(
+                    log_file,
+                    maxBytes=merged_config["max_bytes"],
+                    backupCount=merged_config["backup_count"]
+                )
             file_handler.setLevel(merged_config["file_level"])
             
             # 创建日志格式
-            formatter = logging.Formatter(merged_config["log_format"])
+            if merged_config["json_format"]:
+                formatter = JsonFormatter()
+            else:
+                formatter = logging.Formatter(merged_config["log_format"])
+            
             console_handler.setFormatter(formatter)
             file_handler.setFormatter(formatter)
             
@@ -100,39 +138,65 @@ class LogManager:
             self.setup_logger(name)
         return self.loggers[name]
     
-    def set_log_level(self, name: str, level: int) -> None:
+    def set_log_level(self, name: str, level: Union[int, str]) -> None:
         """设置日志级别
         
         Args:
             name: 日志记录器名称
-            level: 日志级别
+            level: 日志级别（整数或字符串）
         """
+        if isinstance(level, str):
+            level = getattr(logging, level.upper())
         logger = self.get_logger(name)
         logger.setLevel(level)
     
-    def set_console_level(self, name: str, level: int) -> None:
+    def set_console_level(self, name: str, level: Union[int, str]) -> None:
         """设置控制台日志级别
         
         Args:
             name: 日志记录器名称
-            level: 日志级别
+            level: 日志级别（整数或字符串）
         """
+        if isinstance(level, str):
+            level = getattr(logging, level.upper())
         logger = self.get_logger(name)
         for handler in logger.handlers:
             if isinstance(handler, logging.StreamHandler):
                 handler.setLevel(level)
     
-    def set_file_level(self, name: str, level: int) -> None:
+    def set_file_level(self, name: str, level: Union[int, str]) -> None:
         """设置文件日志级别
         
         Args:
             name: 日志记录器名称
-            level: 日志级别
+            level: 日志级别（整数或字符串）
         """
+        if isinstance(level, str):
+            level = getattr(logging, level.upper())
         logger = self.get_logger(name)
         for handler in logger.handlers:
-            if isinstance(handler, RotatingFileHandler):
+            if isinstance(handler, (RotatingFileHandler, TimedRotatingFileHandler)):
                 handler.setLevel(level)
+    
+    def add_handler(self, name: str, handler: logging.Handler) -> None:
+        """添加日志处理器
+        
+        Args:
+            name: 日志记录器名称
+            handler: 日志处理器
+        """
+        logger = self.get_logger(name)
+        logger.addHandler(handler)
+    
+    def remove_handler(self, name: str, handler: logging.Handler) -> None:
+        """移除日志处理器
+        
+        Args:
+            name: 日志记录器名称
+            handler: 日志处理器
+        """
+        logger = self.get_logger(name)
+        logger.removeHandler(handler)
     
     def get_all_loggers(self) -> Dict[str, logging.Logger]:
         """获取所有日志记录器
@@ -141,6 +205,14 @@ class LogManager:
             日志记录器字典
         """
         return self.loggers
+    
+    def clear_all_loggers(self) -> None:
+        """清除所有日志记录器"""
+        for logger in self.loggers.values():
+            for handler in logger.handlers:
+                handler.close()
+            logger.handlers.clear()
+        self.loggers.clear()
 
 
 # 创建全局日志管理器实例
@@ -173,35 +245,70 @@ def get_logger(name: str = "cert_manager") -> logging.Logger:
     return log_manager.get_logger(name)
 
 
-def set_log_level(name: str, level: int) -> None:
+def set_log_level(name: str, level: Union[int, str]) -> None:
     """设置日志级别
     
     Args:
         name: 日志记录器名称
-        level: 日志级别
+        level: 日志级别（整数或字符串）
     """
     log_manager.set_log_level(name, level)
 
 
-def set_console_level(name: str, level: int) -> None:
+def set_console_level(name: str, level: Union[int, str]) -> None:
     """设置控制台日志级别
     
     Args:
         name: 日志记录器名称
-        level: 日志级别
+        level: 日志级别（整数或字符串）
     """
     log_manager.set_console_level(name, level)
 
 
-def set_file_level(name: str, level: int) -> None:
+def set_file_level(name: str, level: Union[int, str]) -> None:
     """设置文件日志级别
     
     Args:
         name: 日志记录器名称
-        level: 日志级别
+        level: 日志级别（整数或字符串）
     """
     log_manager.set_file_level(name, level)
 
 
+def add_handler(name: str, handler: logging.Handler) -> None:
+    """添加日志处理器
+    
+    Args:
+        name: 日志记录器名称
+        handler: 日志处理器
+    """
+    log_manager.add_handler(name, handler)
+
+
+def remove_handler(name: str, handler: logging.Handler) -> None:
+    """移除日志处理器
+    
+    Args:
+        name: 日志记录器名称
+        handler: 日志处理器
+    """
+    log_manager.remove_handler(name, handler)
+
+
+def clear_all_loggers() -> None:
+    """清除所有日志记录器"""
+    log_manager.clear_all_loggers()
+
+
 # 导出默认日志记录器
 default_logger = setup_logger()
+
+
+# 导出日志级别常量
+LOG_LEVELS = {
+    "DEBUG": logging.DEBUG,
+    "INFO": logging.INFO,
+    "WARNING": logging.WARNING,
+    "ERROR": logging.ERROR,
+    "CRITICAL": logging.CRITICAL
+}

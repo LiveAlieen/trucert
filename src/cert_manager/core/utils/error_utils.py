@@ -5,6 +5,8 @@
 
 from typing import Optional, Dict, Any
 import traceback
+import sys
+import inspect
 
 
 class CertManagerError(Exception):
@@ -21,7 +23,27 @@ class CertManagerError(Exception):
         self.message = message
         self.error_code = error_code
         self.details = details or {}
+        self.traceback = traceback.format_exc()
+        self.timestamp = None
+        # 获取调用栈信息
+        self._get_call_stack()
         super().__init__(self.message)
+    
+    def _get_call_stack(self):
+        """获取调用栈信息"""
+        try:
+            # 获取调用栈，跳过前两层（本方法和__init__）
+            frames = inspect.stack()[2:5]  # 只获取最近的几个调用
+            call_stack = []
+            for frame in frames:
+                call_stack.append({
+                    "file": frame.filename,
+                    "line": frame.lineno,
+                    "function": frame.function
+                })
+            self.details["call_stack"] = call_stack
+        except Exception:
+            pass
     
     def to_dict(self) -> Dict[str, Any]:
         """将错误转换为字典
@@ -32,8 +54,13 @@ class CertManagerError(Exception):
         return {
             "error": self.message,
             "error_code": self.error_code,
-            "details": self.details
+            "details": self.details,
+            "traceback": self.traceback
         }
+    
+    def __str__(self) -> str:
+        """返回错误的字符串表示"""
+        return f"{self.message} (Error code: {self.error_code})"
 
 
 class KeyError(CertManagerError):
@@ -78,6 +105,20 @@ class ConfigError(CertManagerError):
         super().__init__(message, error_code, details)
 
 
+class SecurityError(CertManagerError):
+    """安全相关错误"""
+    
+    def __init__(self, message: str, error_code: int = 403, details: Optional[Dict[str, Any]] = None):
+        super().__init__(message, error_code, details)
+
+
+class DependencyError(CertManagerError):
+    """依赖注入相关错误"""
+    
+    def __init__(self, message: str, error_code: int = 500, details: Optional[Dict[str, Any]] = None):
+        super().__init__(message, error_code, details)
+
+
 def handle_error(error: Exception) -> Dict[str, Any]:
     """处理错误，返回统一格式的错误信息
     
@@ -95,7 +136,8 @@ def handle_error(error: Exception) -> Dict[str, Any]:
             "error": str(error),
             "error_code": 500,
             "details": {
-                "traceback": traceback.format_exc()
+                "traceback": traceback.format_exc(),
+                "type": error.__class__.__name__
             }
         }
 
@@ -115,3 +157,30 @@ def raise_error(error_type: type, message: str, **kwargs):
         raise error_type(message, error_code, details)
     else:
         raise error_type(message, details=details)
+
+
+def handle_exception(func):
+    """异常处理装饰器
+    
+    用于捕获和处理函数执行过程中的异常
+    
+    Args:
+        func: 要装饰的函数
+    
+    Returns:
+        装饰后的函数
+    """
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            # 处理异常
+            error_info = handle_error(e)
+            # 记录错误日志
+            from .log_utils import get_logger
+            logger = get_logger("error_handler")
+            logger.error(f"Error in {func.__name__}: {error_info['error']}")
+            logger.debug(f"Error details: {error_info}")
+            # 重新抛出异常
+            raise
+    return wrapper

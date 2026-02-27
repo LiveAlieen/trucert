@@ -60,7 +60,11 @@ from .log_utils import (
     set_log_level,
     set_console_level,
     set_file_level,
-    log_manager
+    add_handler,
+    remove_handler,
+    clear_all_loggers,
+    log_manager,
+    LOG_LEVELS
 )
 
 from .error_utils import (
@@ -71,8 +75,11 @@ from .error_utils import (
     StorageError,
     ValidationError,
     ConfigError,
+    SecurityError,
+    DependencyError,
     handle_error,
-    raise_error
+    raise_error,
+    handle_exception
 )
 
 from .di import (
@@ -90,6 +97,43 @@ from .di import (
 from .di_initializer import (
     DIInitializer,
     initialize_dependencies
+)
+
+from .root_key_manager import (
+    RootKeyManager,
+    root_key_manager,
+    get_root_key_manager,
+    get_root_key,
+    encrypt_with_root_key,
+    decrypt_with_root_key
+)
+
+from .security_utils import (
+    MemoryProtector,
+    AntiDebug,
+    InputValidator,
+    SecurityManager,
+    security_manager,
+    get_security_manager,
+    secure_data,
+    clear_data,
+    check_security,
+    validate_input,
+    generate_secure_hash,
+    secure_compare
+)
+
+from .cache_utils import (
+    CacheManager,
+    cache_manager,
+    get_cache_manager,
+    get_cache,
+    set_cache,
+    delete_cache,
+    clear_cache,
+    has_cache,
+    get_or_set_cache,
+    cache
 )
 
 __all__ = [
@@ -142,7 +186,11 @@ __all__ = [
     "set_log_level",
     "set_console_level",
     "set_file_level",
+    "add_handler",
+    "remove_handler",
+    "clear_all_loggers",
     "log_manager",
+    "LOG_LEVELS",
     # error_utils
     "CertManagerError",
     "KeyError",
@@ -151,8 +199,11 @@ __all__ = [
     "StorageError",
     "ValidationError",
     "ConfigError",
+    "SecurityError",
+    "DependencyError",
     "handle_error",
     "raise_error",
+    "handle_exception",
     # di
     "DependencyInjector",
     "di_container",
@@ -165,5 +216,36 @@ __all__ = [
     "clear",
     # di_initializer
     "DIInitializer",
-    "initialize_dependencies"
+    "initialize_dependencies",
+    # root_key_manager
+    "RootKeyManager",
+    "root_key_manager",
+    "get_root_key_manager",
+    "get_root_key",
+    "encrypt_with_root_key",
+    "decrypt_with_root_key",
+    # security_utils
+    "MemoryProtector",
+    "AntiDebug",
+    "InputValidator",
+    "SecurityManager",
+    "security_manager",
+    "get_security_manager",
+    "secure_data",
+    "clear_data",
+    "check_security",
+    "validate_input",
+    "generate_secure_hash",
+    "secure_compare",
+    # cache_utils
+    "CacheManager",
+    "cache_manager",
+    "get_cache_manager",
+    "get_cache",
+    "set_cache",
+    "delete_cache",
+    "clear_cache",
+    "has_cache",
+    "get_or_set_cache",
+    "cache"
 ]

@@ -9,6 +9,28 @@ class ConfigManager:
     是整个系统中配置管理的核心组件。
     """
     
+    # 默认配置
+    DEFAULT_CONFIGS = {
+        "algorithms": {
+            "hash_algorithms": ["sha256", "sha384", "sha512"],
+            "rsa_key_sizes": [2048, 3072, 4096],
+            "ecc_curves": ["secp256r1", "secp384r1", "secp521r1"]
+        },
+        "storage": {
+            "key_dir": "key",
+            "trust_dir": "trust",
+            "config_dir": "configs"
+        },
+        "security": {
+            "enable_file_integrity": True,
+            "enable_memory_protection": True
+        },
+        "ui": {
+            "default_tab": "key",
+            "window_size": [1000, 700]
+        }
+    }
+    
     def __init__(self, config_dir: str = None):
         """初始化配置管理器
         
@@ -19,6 +41,18 @@ class ConfigManager:
         self.configs = {}
         # 使用依赖注入获取配置存储组件
         self.config_storage = get("config_storage")
+        # 加载默认配置
+        self._load_default_configs()
+    
+    def _load_default_configs(self):
+        """加载默认配置"""
+        for config_name, default_config in self.DEFAULT_CONFIGS.items():
+            try:
+                # 尝试加载配置，如果不存在则使用默认值
+                self.configs[config_name] = self.get_config(config_name, default_config)
+            except Exception as e:
+                # 如果加载失败，使用默认配置
+                self.configs[config_name] = default_config
     
     def load_config(self, config_name: str, file_format: str = "json") -> Dict[str, Any]:
         """加载配置文件
@@ -38,6 +72,9 @@ class ConfigManager:
             self.configs[config_name] = config
             return config
         except Exception as e:
+            # 如果加载失败，返回默认配置
+            if config_name in self.DEFAULT_CONFIGS:
+                return self.DEFAULT_CONFIGS[config_name]
             raise ConfigError(f"Failed to load config file: {str(e)}")
     
     def save_config(self, config_name: str, config_data: Dict[str, Any], 
@@ -67,19 +104,18 @@ class ConfigManager:
         
         Returns:
             配置数据
-        
-        Raises:
-            ConfigError: 配置不存在且没有默认值时抛出
         """
         if config_name in self.configs:
             return self.configs[config_name]
         
         try:
             return self.load_config(config_name)
-        except FileNotFoundError:
+        except (FileNotFoundError, ConfigError):
             if default is not None:
                 return default
-            raise ConfigError(f"Config file not found: {config_name}")
+            elif config_name in self.DEFAULT_CONFIGS:
+                return self.DEFAULT_CONFIGS[config_name]
+            return {}
     
     def update_config(self, config_name: str, updates: Dict[str, Any], 
                      file_format: str = "json") -> Dict[str, Any]:
@@ -92,14 +128,11 @@ class ConfigManager:
         
         Returns:
             更新后的配置数据
-        
-        Raises:
-            ConfigError: 更新配置失败时抛出
         """
         try:
             config = self.get_config(config_name)
-        except FileNotFoundError:
-            config = {}
+        except (FileNotFoundError, ConfigError):
+            config = self.DEFAULT_CONFIGS.get(config_name, {})
         
         config.update(updates)
         self.save_config(config_name, config, file_format)
@@ -111,19 +144,31 @@ class ConfigManager:
         Returns:
             算法配置
         """
-        try:
-            return self.get_config("algorithms", {
-                "hash_algorithms": ["sha256", "sha384", "sha512"],
-                "rsa_key_sizes": [2048, 3072, 4096],
-                "ecc_curves": ["secp256r1", "secp384r1", "secp521r1"]
-            })
-        except Exception as e:
-            # 如果获取失败，返回默认配置
-            return {
-                "hash_algorithms": ["sha256", "sha384", "sha512"],
-                "rsa_key_sizes": [2048, 3072, 4096],
-                "ecc_curves": ["secp256r1", "secp384r1", "secp521r1"]
-            }
+        return self.get_config("algorithms")
+    
+    def get_storage_config(self) -> Dict[str, Any]:
+        """获取存储配置
+        
+        Returns:
+            存储配置
+        """
+        return self.get_config("storage")
+    
+    def get_security_config(self) -> Dict[str, Any]:
+        """获取安全配置
+        
+        Returns:
+            安全配置
+        """
+        return self.get_config("security")
+    
+    def get_ui_config(self) -> Dict[str, Any]:
+        """获取UI配置
+        
+        Returns:
+            UI配置
+        """
+        return self.get_config("ui")
     
     def reload_all(self):
         """重新加载所有配置"""
@@ -150,6 +195,9 @@ class ConfigManager:
         try:
             if config_name in self.configs:
                 del self.configs[config_name]
+            # 如果是默认配置，恢复默认值
+            if config_name in self.DEFAULT_CONFIGS:
+                self.configs[config_name] = self.DEFAULT_CONFIGS[config_name]
             return self.config_storage.delete_config(config_name, file_format)
         except Exception as e:
             print(f"Warning: Failed to delete config {config_name}: {str(e)}")
