@@ -1,3 +1,7 @@
+# Copyright (c) 2026 昔音
+# SPDX-License-Identifier: MIT OR MulanPSL-2.0
+# 项目仓库: `https://gitee.com/liveaileen/trucert` 和 `https://github.com/LiveAlieen/trucert`
+
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox, QSpinBox, QTabWidget, QListWidget, QListWidgetItem
 from PyQt5.QtCore import Qt
 import sys

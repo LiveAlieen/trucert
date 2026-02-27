@@ -1,3 +1,7 @@
+# Copyright (c) 2026 昔音
+# SPDX-License-Identifier: MIT OR MulanPSL-2.0
+# 项目仓库: `https://gitee.com/liveaileen/trucert` 和 `https://github.com/LiveAlieen/trucert`
+
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timedelta
 from ..utils import get

@@ -1,3 +1,7 @@
+# Copyright (c) 2026 昔音
+# SPDX-License-Identifier: MIT OR MulanPSL-2.0
+# 项目仓库: `https://gitee.com/liveaileen/trucert` 和 `https://github.com/LiveAlieen/trucert`
+
 """GUI模块
 
 提供图形用户界面，包括主窗口和各个功能标签页

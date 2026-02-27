@@ -1,3 +1,7 @@
+# Copyright (c) 2026 昔音
+# SPDX-License-Identifier: MIT OR MulanPSL-2.0
+# 项目仓库: `https://gitee.com/liveaileen/trucert` 和 `https://github.com/LiveAlieen/trucert`
+
 """测试配置管理异常情况
 
 测试配置管理模块的异常处理能力

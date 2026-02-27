@@ -1,3 +1,7 @@
+# Copyright (c) 2026 昔音
+# SPDX-License-Identifier: MIT OR MulanPSL-2.0
+# 项目仓库: `https://gitee.com/liveaileen/trucert` 和 `https://github.com/LiveAlieen/trucert`
+
 """存储管理器
 
 实现统一的存储接口，管理不同类型的数据存储

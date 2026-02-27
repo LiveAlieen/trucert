@@ -137,14 +137,44 @@ pytest tests/
 
 欢迎贡献代码、提出问题和建议！
 
-## 许可证
+## 开源协议
 
-本项目采用 MIT 许可证。
+本项目采用 **双协议开源**，您可以在以下两种协议中任选其一：
+
+- **[MIT License](./LICENSE-MIT)**：最宽松的国际通用协议，适合个人、学术及一般商业集成（但请注意下方的商业授权条款）。
+- **[MulanPSL v2 (中文)](./LICENSE-MulanPSL-v2-ZH)**：OSI 认证的中文开源协议，包含明确的专利授权和法律责任条款，适合企业合规场景。
+- **[MulanPSL v2 (英文)](./LICENSE-MulanPSL-v2-EN)**：MulanPSL v2 的英文版本。
+
+### 重要补充：商业授权
+
+虽然上述协议允许您在特定条件下自由使用代码，但**将本软件用于商业用途（定义见下文）仍需获得商业授权**。商业用途包括但不限于：
+- 企业内部部署本软件用于生产业务；
+- 将本软件作为产品或服务的一部分进行销售或提供；
+- 提供基于本软件的托管服务。
+
+如果您属于上述情况，请查阅 [COMMERCIAL_LICENSE](./COMMERCIAL_LICENSE) 文件或联系作者获取商业授权。
+
+### 版权声明
+
+所有源代码文件均包含以下版权声明：
+
+```python
+# Copyright (c) 2026 昔音
+# SPDX-License-Identifier: MIT OR MulanPSL-2.0
+# 项目仓库: `https://gitee.com/liveaileen/trucert` 和 `https://github.com/LiveAlieen/trucert`
+```
+
+任何分发或修改必须保留此声明。
 
 ## 联系方式
 
-如有任何问题，请联系项目维护者。
+如有任何问题，请联系项目维护者：
+
+- 作者：昔音
+- 电子邮件：live.aileen@outlook.com
+- QQ：1250047459
+- 项目仓库：https://gitee.com/liveaileen/trucert 和 https://github.com/LiveAlieen/trucert
 
 ---
 
-*项目文档自动生成于 2026-02-13*
+*项目文档更新于 2026-02-27*

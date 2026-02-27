@@ -1,3 +1,7 @@
+# Copyright (c) 2026 昔音
+# SPDX-License-Identifier: MIT OR MulanPSL-2.0
+# 项目仓库: `https://gitee.com/liveaileen/trucert` 和 `https://github.com/LiveAlieen/trucert`
+
 """哈希工具模块
 
 提供哈希相关的工具函数，包括数据哈希计算和文件哈希计算，使用模块化算法系统
