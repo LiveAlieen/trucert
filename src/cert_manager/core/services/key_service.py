@@ -81,6 +81,49 @@ class KeyService:
         }
     
     @ServiceUtils.handle_service_method
+    def generate_key(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """生成密钥对（统一接口）
+        
+        Args:
+            params: 包含以下字段的字典：
+                - key_type: 密钥类型，"RSA"或"ECC"
+                - key_size: 密钥大小，默认2048（仅RSA）
+                - curve: 曲线类型，默认"secp256r1"（仅ECC）
+        
+        Returns:
+            Dict[str, Any]: 包含私钥信息、公钥信息和密钥ID的字典
+        """
+        # 提取参数
+        extracted = ServiceUtils.extract_params(params, ["key_type"], {"key_size": 2048, "curve": "secp256r1"})
+        key_type = extracted["key_type"].upper()
+        key_size = extracted["key_size"]
+        curve = extracted["curve"]
+        
+        # 验证参数
+        if key_type not in ["RSA", "ECC"]:
+            raise ValueError("密钥类型必须是'RSA'或'ECC'")
+        
+        if key_type == "RSA":
+            ServiceUtils.validate_positive(key_size, "密钥大小")
+            key_id, private_key, public_key = self.key_manager.generate_rsa_key(key_size)
+            key_type_name = "RSA"
+        else:  # ECC
+            ServiceUtils.validate_not_empty(curve, "曲线类型")
+            key_id, private_key, public_key = self.key_manager.generate_ecc_key(curve)
+            key_type_name = "ECC"
+        
+        private_info = self.key_manager.get_key_info(key_id)
+        private_info["type"] = f"{key_type_name} Private Key"
+        public_info = private_info.copy()
+        public_info["type"] = f"{key_type_name} Public Key"
+        
+        return {
+            "private_key_info": private_info,
+            "public_key_info": public_info,
+            "key_id": key_id
+        }
+    
+    @ServiceUtils.handle_service_method
     def list_keys(self) -> List[Dict[str, Any]]:
         """列出所有存储的密钥
         

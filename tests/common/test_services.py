@@ -73,6 +73,26 @@ class TestServices(unittest.TestCase):
         self.assertEqual(data["private_key_info"]["type"], "ECC Private Key")
         self.assertEqual(data["public_key_info"]["type"], "ECC Public Key")
         
+        # 测试统一的生成密钥对接口（RSA）
+        result = self.key_service.generate_key({"key_type": "RSA", "key_size": 2048})
+        self.assertTrue(result["success"])
+        data = result["data"]
+        self.assertIsInstance(data, dict)
+        self.assertIsInstance(data["private_key_info"], dict)
+        self.assertIsInstance(data["public_key_info"], dict)
+        self.assertEqual(data["private_key_info"]["type"], "RSA Private Key")
+        self.assertEqual(data["public_key_info"]["type"], "RSA Public Key")
+        
+        # 测试统一的生成密钥对接口（ECC）
+        result = self.key_service.generate_key({"key_type": "ECC", "curve": "secp256r1"})
+        self.assertTrue(result["success"])
+        data = result["data"]
+        self.assertIsInstance(data, dict)
+        self.assertIsInstance(data["private_key_info"], dict)
+        self.assertIsInstance(data["public_key_info"], dict)
+        self.assertEqual(data["private_key_info"]["type"], "ECC Private Key")
+        self.assertEqual(data["public_key_info"]["type"], "ECC Public Key")
+        
         # 测试列出所有密钥
         result = self.key_service.list_keys()
         self.assertTrue(result["success"])

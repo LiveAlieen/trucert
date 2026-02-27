@@ -128,6 +128,92 @@ class CertService:
                 "error": str(e)
             }
     
+    def generate_cert(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """生成证书（统一接口）
+        
+        Args:
+            params: 包含以下字段的字典：
+                - cert_type: 证书类型，"self_signed"或"secondary"
+                - public_key: 公钥
+                - private_key: 私钥（仅自签名证书）
+                - parent_private_key: 父证书私钥（仅二级证书）
+                - parent_public_key: 父证书公钥（仅二级证书）
+                - validity_days: 有效期（天），默认365
+                - forward_offset: 时间偏移量（秒），默认0
+        
+        Returns:
+            Dict[str, Any]: 包含以下字段的字典：
+                - success: bool，操作是否成功
+                - data: Dict[str, Any]，证书数据
+                - error: str，错误信息（如果操作失败）
+        """
+        try:
+            # 提取参数
+            cert_type = params.get('cert_type')
+            public_key = params.get('public_key')
+            private_key = params.get('private_key')
+            parent_private_key = params.get('parent_private_key')
+            parent_public_key = params.get('parent_public_key')
+            validity_days = params.get('validity_days', 365)
+            forward_offset = params.get('forward_offset', 0)
+            
+            # 验证参数
+            if not cert_type or cert_type not in ['self_signed', 'secondary']:
+                return {
+                    "success": False,
+                    "error": "证书类型必须是'self_signed'或'secondary'"
+                }
+            
+            if not public_key:
+                return {
+                    "success": False,
+                    "error": "缺少必要的公钥参数"
+                }
+            
+            if validity_days <= 0:
+                return {
+                    "success": False,
+                    "error": "有效期必须为正数"
+                }
+            
+            if cert_type == 'self_signed':
+                if not private_key:
+                    return {
+                        "success": False,
+                        "error": "自签名证书需要私钥参数"
+                    }
+                # 调用业务逻辑层生成自签名证书
+                cert_data = self.cert_manager.generate_self_signed_cert(
+                    public_key=public_key,
+                    private_key=private_key,
+                    validity_days=validity_days,
+                    forward_offset=forward_offset
+                )
+            else:  # secondary
+                if not parent_private_key or not parent_public_key:
+                    return {
+                        "success": False,
+                        "error": "二级证书需要父证书私钥和公钥参数"
+                    }
+                # 调用业务逻辑层生成二级证书
+                cert_data = self.cert_manager.generate_secondary_cert(
+                    public_key=public_key,
+                    parent_private_key=parent_private_key,
+                    parent_public_key=parent_public_key,
+                    validity_days=validity_days,
+                    forward_offset=forward_offset
+                )
+            
+            return {
+                "success": True,
+                "data": cert_data
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
+    
     def save_cert(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """保存证书
         
