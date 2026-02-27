@@ -2,7 +2,7 @@
 
 ## 项目简介
 
-证书管理系统是一个用于管理加密密钥和数字证书的综合工具，旨在简化证书的创建、存储、管理和验证过程。该系统支持多种加密算法，提供完整的证书生命周期管理功能，适用于需要安全通信和数据完整性验证的场景。
+TruCert是一个用于管理加密密钥和数字证书的综合工具，旨在简化证书的创建、存储、管理和验证过程。该系统支持多种加密算法，提供完整的证书生命周期管理功能，适用于需要安全通信和数据完整性验证的场景。
 
 ## 核心功能
 
@@ -16,27 +16,27 @@
 
 系统采用模块化设计，分为以下几个主要层次：
 
-1. **业务逻辑层** (`src/cert_manager/core/business/`)：包含核心业务逻辑
+1. **业务逻辑层** (`src/trucert/core/business/`)：包含核心业务逻辑
    - `cert_manager.py`：证书管理核心功能
    - `key_manager.py`：密钥管理核心功能
    - `file_signer.py`：文件签名功能
    - `verifier.py`：验证功能
    - `config.py`：配置管理功能
 
-2. **服务层** (`src/cert_manager/core/services/`)：作为业务逻辑层和外部调用之间的桥梁
+2. **服务层** (`src/trucert/core/services/`)：作为业务逻辑层和外部调用之间的桥梁
    - `cert_service.py`：证书服务
    - `key_service.py`：密钥服务
    - `file_signer_service.py`：文件签名服务
    - `verifier_service.py`：验证服务
    - `config_service.py`：配置服务
 
-3. **存储层** (`src/cert_manager/core/storage/`)：负责数据持久化
+3. **存储层** (`src/trucert/core/storage/`)：负责数据持久化
    - `storage_manager.py`：存储管理核心功能
    - `key_storage.py`：密钥存储功能
    - `cert_storage.py`：证书存储功能
    - `config_storage.py`：配置存储功能
 
-4. **工具层** (`src/cert_manager/core/utils/`)：提供通用工具函数
+4. **工具层** (`src/trucert/core/utils/`)：提供通用工具函数
 
 ## 技术栈
 
@@ -49,7 +49,7 @@
 
 ```
 src/
-└── cert_manager/
+└── trucert/
     ├── core/
     │   ├── business/       # 核心业务逻辑
     │   ├── services/       # 服务层

@@ -14,8 +14,8 @@ import tempfile
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'src'))
 
-from cert_manager.core.services import KeyService, CertService, FileSignerService, VerifierService, ConfigService
-from cert_manager.core.utils import initialize_dependencies
+from trucert.core.services import KeyService, CertService, FileSignerService, VerifierService, ConfigService
+from trucert.core.utils import initialize_dependencies
 
 class TestServices(unittest.TestCase):
     """测试服务层功能"""

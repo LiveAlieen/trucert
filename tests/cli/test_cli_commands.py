@@ -10,7 +10,10 @@ import sys
 import os
 import tempfile
 from unittest.mock import patch
-from tests.utils.test_utils import create_temp_directory, cleanup_temp_path, create_test_key_pair, create_test_cert, generate_test_file
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+from utils.test_utils import create_temp_directory, cleanup_temp_path, create_test_key_pair, create_test_cert, generate_test_file
 
 
 class TestCLICommands(unittest.TestCase):
@@ -33,7 +36,7 @@ class TestCLICommands(unittest.TestCase):
         ]
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             self.assertEqual(result, 0)
@@ -55,7 +58,7 @@ class TestCLICommands(unittest.TestCase):
         test_args = ['cert-cli', 'key', 'list']
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             self.assertEqual(result, 0)
@@ -75,7 +78,7 @@ class TestCLICommands(unittest.TestCase):
         ]
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             self.assertEqual(result, 0)
@@ -98,7 +101,7 @@ class TestCLICommands(unittest.TestCase):
         ]
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             self.assertEqual(result, 0)
@@ -121,7 +124,7 @@ class TestCLICommands(unittest.TestCase):
         ]
         
         with patch('sys.argv', sign_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             try:
                 # 尝试直接调用 run() 方法并检查返回值
@@ -139,7 +142,7 @@ class TestCLICommands(unittest.TestCase):
         ]
         
         with patch('sys.argv', verify_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             try:
                 # 尝试直接调用 run() 方法并检查返回值
@@ -163,7 +166,7 @@ class TestCLICommands(unittest.TestCase):
         ]
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             self.assertEqual(result, 0)
@@ -192,7 +195,7 @@ class TestCLICommands(unittest.TestCase):
         ]
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             # 直接调用 run() 方法并检查返回值
             result = cli.run()

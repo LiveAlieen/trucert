@@ -1,27 +1,34 @@
-# 证书管理工具包
-
-from .core import (
-    # Business
+from .business import (
     CertManager,
     FileSigner,
     KeyManager,
     Verifier,
-    ConfigManager,
-    
-    # Services
+    ConfigManager
+)
+
+# 为了兼容测试文件的导入路径
+from .business.cert_manager import CertManager as cert_manager
+from .business.file_signer import FileSigner as file_signer
+from .business.key_manager import KeyManager as key_manager
+from .business.verifier import Verifier as verifier
+from .business.config import ConfigManager as config
+
+from .services import (
     KeyService,
     CertService,
     FileSignerService,
     VerifierService,
-    ConfigService,
-    
-    # Storage
+    ConfigService
+)
+
+from .storage import (
     KeyStorage,
     CertStorage,
     ConfigStorage,
-    StorageManager,
-    
-    # Utils (crypto_utils)
+    StorageManager
+)
+
+from .utils import (
     generate_rsa_key,
     generate_ecc_key,
     load_private_key,
@@ -31,8 +38,6 @@ from .core import (
     get_key_info,
     sign_data,
     verify_signature,
-    
-    # Utils (file_utils)
     read_binary_file,
     write_binary_file,
     read_file,
@@ -49,14 +54,10 @@ from .core import (
     delete_file,
     copy_file,
     move_file,
-    
-    # Utils (hash_utils)
     calculate_hash,
     calculate_file_hash,
     verify_hash,
     verify_file_hash,
-    
-    # Utils (verify_utils)
     parse_certificate,
     load_certificate,
     get_certificate_info,
@@ -66,8 +67,6 @@ from .core import (
     get_certificate_issuer,
     extract_public_key_from_certificate,
     save_certificate,
-    
-    # Utils (log_utils)
     setup_logger,
     get_logger,
     default_logger,
@@ -75,9 +74,7 @@ from .core import (
     set_console_level,
     set_file_level,
     log_manager,
-    
-    # Utils (error_utils)
-    CertManagerError,
+    TruCertError,
     KeyError,
     CertError,
     FileError,
@@ -86,8 +83,6 @@ from .core import (
     ConfigError,
     handle_error,
     raise_error,
-    
-    # Utils (di)
     DependencyInjector,
     di_container,
     register,
@@ -97,8 +92,6 @@ from .core import (
     has,
     inject,
     clear,
-    
-    # Utils (di_initializer)
     DIInitializer,
     initialize_dependencies
 )
@@ -110,6 +103,11 @@ __all__ = [
     "KeyManager",
     "Verifier",
     "ConfigManager",
+    "cert_manager",
+    "file_signer",
+    "key_manager",
+    "verifier",
+    "config",
     
     # Services
     "KeyService",
@@ -180,7 +178,7 @@ __all__ = [
     "log_manager",
     
     # Utils (error_utils)
-    "CertManagerError",
+    "TruCertError",
     "KeyError",
     "CertError",
     "FileError",

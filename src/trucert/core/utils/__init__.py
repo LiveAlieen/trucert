@@ -1,34 +1,9 @@
-from .business import (
-    CertManager,
-    FileSigner,
-    KeyManager,
-    Verifier,
-    ConfigManager
-)
+"""工具模块
 
-# 为了兼容测试文件的导入路径
-from .business.cert_manager import CertManager as cert_manager
-from .business.file_signer import FileSigner as file_signer
-from .business.key_manager import KeyManager as key_manager
-from .business.verifier import Verifier as verifier
-from .business.config import ConfigManager as config
+提供加密、文件操作、哈希计算、验证和日志等工具函数
+"""
 
-from .services import (
-    KeyService,
-    CertService,
-    FileSignerService,
-    VerifierService,
-    ConfigService
-)
-
-from .storage import (
-    KeyStorage,
-    CertStorage,
-    ConfigStorage,
-    StorageManager
-)
-
-from .utils import (
+from .crypto_utils import (
     generate_rsa_key,
     generate_ecc_key,
     load_private_key,
@@ -37,7 +12,10 @@ from .utils import (
     save_public_key,
     get_key_info,
     sign_data,
-    verify_signature,
+    verify_signature
+)
+
+from .file_utils import (
     read_binary_file,
     write_binary_file,
     read_file,
@@ -53,11 +31,17 @@ from .utils import (
     directory_exists,
     delete_file,
     copy_file,
-    move_file,
+    move_file
+)
+
+from .hash_utils import (
     calculate_hash,
     calculate_file_hash,
     verify_hash,
-    verify_file_hash,
+    verify_file_hash
+)
+
+from .verify_utils import (
     parse_certificate,
     load_certificate,
     get_certificate_info,
@@ -66,23 +50,39 @@ from .utils import (
     get_certificate_subject,
     get_certificate_issuer,
     extract_public_key_from_certificate,
-    save_certificate,
+    save_certificate
+)
+
+from .log_utils import (
     setup_logger,
     get_logger,
     default_logger,
     set_log_level,
     set_console_level,
     set_file_level,
+    add_handler,
+    remove_handler,
+    clear_all_loggers,
     log_manager,
-    CertManagerError,
+    LOG_LEVELS
+)
+
+from .error_utils import (
+    TruCertError,
     KeyError,
     CertError,
     FileError,
     StorageError,
     ValidationError,
     ConfigError,
+    SecurityError,
+    DependencyError,
     handle_error,
     raise_error,
+    handle_exception
+)
+
+from .di import (
     DependencyInjector,
     di_container,
     register,
@@ -91,38 +91,53 @@ from .utils import (
     get,
     has,
     inject,
-    clear,
+    clear
+)
+
+from .di_initializer import (
     DIInitializer,
     initialize_dependencies
 )
 
+from .root_key_manager import (
+    RootKeyManager,
+    root_key_manager,
+    get_root_key_manager,
+    get_root_key,
+    encrypt_with_root_key,
+    decrypt_with_root_key
+)
+
+from .security_utils import (
+    MemoryProtector,
+    AntiDebug,
+    InputValidator,
+    SecurityManager,
+    security_manager,
+    get_security_manager,
+    secure_data,
+    clear_data,
+    check_security,
+    validate_input,
+    generate_secure_hash,
+    secure_compare
+)
+
+from .cache_utils import (
+    CacheManager,
+    cache_manager,
+    get_cache_manager,
+    get_cache,
+    set_cache,
+    delete_cache,
+    clear_cache,
+    has_cache,
+    get_or_set_cache,
+    cache
+)
+
 __all__ = [
-    # Business
-    "CertManager",
-    "FileSigner",
-    "KeyManager",
-    "Verifier",
-    "ConfigManager",
-    "cert_manager",
-    "file_signer",
-    "key_manager",
-    "verifier",
-    "config",
-    
-    # Services
-    "KeyService",
-    "CertService",
-    "FileSignerService",
-    "VerifierService",
-    "ConfigService",
-    
-    # Storage
-    "KeyStorage",
-    "CertStorage",
-    "ConfigStorage",
-    "StorageManager",
-    
-    # Utils (crypto_utils)
+    # crypto_utils
     "generate_rsa_key",
     "generate_ecc_key",
     "load_private_key",
@@ -132,8 +147,7 @@ __all__ = [
     "get_key_info",
     "sign_data",
     "verify_signature",
-    
-    # Utils (file_utils)
+    # file_utils
     "read_binary_file",
     "write_binary_file",
     "read_file",
@@ -150,14 +164,12 @@ __all__ = [
     "delete_file",
     "copy_file",
     "move_file",
-    
-    # Utils (hash_utils)
+    # hash_utils
     "calculate_hash",
     "calculate_file_hash",
     "verify_hash",
     "verify_file_hash",
-    
-    # Utils (verify_utils)
+    # verify_utils
     "parse_certificate",
     "load_certificate",
     "get_certificate_info",
@@ -167,28 +179,32 @@ __all__ = [
     "get_certificate_issuer",
     "extract_public_key_from_certificate",
     "save_certificate",
-    
-    # Utils (log_utils)
+    # log_utils
     "setup_logger",
     "get_logger",
     "default_logger",
     "set_log_level",
     "set_console_level",
     "set_file_level",
+    "add_handler",
+    "remove_handler",
+    "clear_all_loggers",
     "log_manager",
-    
-    # Utils (error_utils)
-    "CertManagerError",
+    "LOG_LEVELS",
+    # error_utils
+    "TruCertError",
     "KeyError",
     "CertError",
     "FileError",
     "StorageError",
     "ValidationError",
     "ConfigError",
+    "SecurityError",
+    "DependencyError",
     "handle_error",
     "raise_error",
-    
-    # Utils (di)
+    "handle_exception",
+    # di
     "DependencyInjector",
     "di_container",
     "register",
@@ -198,8 +214,38 @@ __all__ = [
     "has",
     "inject",
     "clear",
-    
-    # Utils (di_initializer)
+    # di_initializer
     "DIInitializer",
-    "initialize_dependencies"
+    "initialize_dependencies",
+    # root_key_manager
+    "RootKeyManager",
+    "root_key_manager",
+    "get_root_key_manager",
+    "get_root_key",
+    "encrypt_with_root_key",
+    "decrypt_with_root_key",
+    # security_utils
+    "MemoryProtector",
+    "AntiDebug",
+    "InputValidator",
+    "SecurityManager",
+    "security_manager",
+    "get_security_manager",
+    "secure_data",
+    "clear_data",
+    "check_security",
+    "validate_input",
+    "generate_secure_hash",
+    "secure_compare",
+    # cache_utils
+    "CacheManager",
+    "cache_manager",
+    "get_cache_manager",
+    "get_cache",
+    "set_cache",
+    "delete_cache",
+    "clear_cache",
+    "has_cache",
+    "get_or_set_cache",
+    "cache"
 ]

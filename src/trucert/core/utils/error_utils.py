@@ -9,8 +9,8 @@ import sys
 import inspect
 
 
-class CertManagerError(Exception):
-    """证书管理器基础错误类"""
+class TruCertError(Exception):
+    """TruCert基础错误类"""
     
     def __init__(self, message: str, error_code: int = 500, details: Optional[Dict[str, Any]] = None):
         """初始化错误
@@ -63,56 +63,56 @@ class CertManagerError(Exception):
         return f"{self.message} (Error code: {self.error_code})"
 
 
-class KeyError(CertManagerError):
+class KeyError(TruCertError):
     """密钥相关错误"""
     
     def __init__(self, message: str, error_code: int = 400, details: Optional[Dict[str, Any]] = None):
         super().__init__(message, error_code, details)
 
 
-class CertError(CertManagerError):
+class CertError(TruCertError):
     """证书相关错误"""
     
     def __init__(self, message: str, error_code: int = 400, details: Optional[Dict[str, Any]] = None):
         super().__init__(message, error_code, details)
 
 
-class FileError(CertManagerError):
+class FileError(TruCertError):
     """文件相关错误"""
     
     def __init__(self, message: str, error_code: int = 400, details: Optional[Dict[str, Any]] = None):
         super().__init__(message, error_code, details)
 
 
-class StorageError(CertManagerError):
+class StorageError(TruCertError):
     """存储相关错误"""
     
     def __init__(self, message: str, error_code: int = 500, details: Optional[Dict[str, Any]] = None):
         super().__init__(message, error_code, details)
 
 
-class ValidationError(CertManagerError):
+class ValidationError(TruCertError):
     """验证相关错误"""
     
     def __init__(self, message: str, error_code: int = 400, details: Optional[Dict[str, Any]] = None):
         super().__init__(message, error_code, details)
 
 
-class ConfigError(CertManagerError):
+class ConfigError(TruCertError):
     """配置相关错误"""
     
     def __init__(self, message: str, error_code: int = 400, details: Optional[Dict[str, Any]] = None):
         super().__init__(message, error_code, details)
 
 
-class SecurityError(CertManagerError):
+class SecurityError(TruCertError):
     """安全相关错误"""
     
     def __init__(self, message: str, error_code: int = 403, details: Optional[Dict[str, Any]] = None):
         super().__init__(message, error_code, details)
 
 
-class DependencyError(CertManagerError):
+class DependencyError(TruCertError):
     """依赖注入相关错误"""
     
     def __init__(self, message: str, error_code: int = 500, details: Optional[Dict[str, Any]] = None):
@@ -128,7 +128,7 @@ def handle_error(error: Exception) -> Dict[str, Any]:
     Returns:
         错误信息字典
     """
-    if isinstance(error, CertManagerError):
+    if isinstance(error, TruCertError):
         return error.to_dict()
     else:
         # 处理未捕获的异常

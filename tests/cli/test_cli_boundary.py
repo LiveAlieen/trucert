@@ -9,7 +9,10 @@ import unittest
 import sys
 import os
 from unittest.mock import patch
-from tests.utils.test_utils import create_temp_directory, cleanup_temp_path, create_test_key_pair, generate_test_file
+
+# 添加项目根目录到Python路径
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+from utils.test_utils import create_temp_directory, cleanup_temp_path, create_test_key_pair, generate_test_file
 
 
 class TestCLIBoundary(unittest.TestCase):
@@ -28,7 +31,7 @@ class TestCLIBoundary(unittest.TestCase):
         test_args = ['cert-cli', 'key', 'generate', 'invalid-type']
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             # 这里应该抛出参数错误
             with self.assertRaises(SystemExit) as cm:
@@ -40,7 +43,7 @@ class TestCLIBoundary(unittest.TestCase):
         test_args = ['cert-cli', 'key', 'generate', 'rsa', '--size', '1024']
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             # 即使密钥大小较小，也应该执行但可能有警告
@@ -52,7 +55,7 @@ class TestCLIBoundary(unittest.TestCase):
         test_args = ['cert-cli', 'key', 'generate', 'ecc', '--curve', 'invalid-curve']
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             # 无效的曲线应该导致命令执行失败
@@ -70,7 +73,7 @@ class TestCLIBoundary(unittest.TestCase):
         ]
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             # 不存在的文件应该导致命令执行失败
@@ -90,7 +93,7 @@ class TestCLIBoundary(unittest.TestCase):
         ]
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             # 不存在的文件应该导致命令执行失败
@@ -111,7 +114,7 @@ class TestCLIBoundary(unittest.TestCase):
         ]
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             # 这里应该抛出系统退出异常
             with self.assertRaises(SystemExit) as cm:
@@ -132,7 +135,7 @@ class TestCLIBoundary(unittest.TestCase):
         ]
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             # 不存在的文件应该导致命令执行失败
@@ -153,7 +156,7 @@ class TestCLIBoundary(unittest.TestCase):
         ]
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             # 空目录应该执行成功，但没有文件被签名
@@ -172,7 +175,7 @@ class TestCLIBoundary(unittest.TestCase):
         ]
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             result = cli.run()
             # 无效的有效期应该导致命令执行失败
@@ -184,7 +187,7 @@ class TestCLIBoundary(unittest.TestCase):
         test_args = ['cert-cli', 'key', 'generate']
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             # 这里应该抛出参数错误
             with self.assertRaises(SystemExit) as cm:
@@ -196,7 +199,7 @@ class TestCLIBoundary(unittest.TestCase):
         test_args = ['cert-cli', 'key', 'invalid-subcommand']
         
         with patch('sys.argv', test_args):
-            from cert_manager.cli.main import CLI
+            from trucert.cli.main import CLI
             cli = CLI()
             # 这里应该抛出参数错误
             with self.assertRaises(SystemExit) as cm:

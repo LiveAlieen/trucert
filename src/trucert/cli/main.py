@@ -18,9 +18,9 @@ src_dir = os.path.join(os.path.dirname(grandparent_dir), 'src')
 sys.path.insert(0, src_dir)
 
 try:
-    from cert_manager.core.services import KeyService, CertService, FileSignerService, VerifierService, ConfigService
-    from cert_manager.cli.commands import key_commands, cert_commands, file_commands, verify_commands
-    from cert_manager.core.utils import initialize_dependencies
+    from trucert.core.services import KeyService, CertService, FileSignerService, VerifierService, ConfigService
+    from trucert.cli.commands import key_commands, cert_commands, file_commands, verify_commands
+    from trucert.core.utils import initialize_dependencies
 except ImportError as e:
     print(f"Import error: {str(e)}")
     import traceback

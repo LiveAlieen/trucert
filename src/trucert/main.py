@@ -13,8 +13,8 @@ print(f"Added src directory to Python path: {src_dir}")
 
 # 现在使用绝对导入
 try:
-    from cert_manager.gui.main_window import MainWindow
-    from cert_manager.core.utils import initialize_dependencies
+    from trucert.gui.main_window import MainWindow
+    from trucert.core.utils import initialize_dependencies
     print("Import successful!")
 except ImportError as e:
     print(f"导入失败: {str(e)}")

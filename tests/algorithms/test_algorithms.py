@@ -1,7 +1,7 @@
 """算法模块测试"""
 
 import unittest
-from src.cert_manager.core.algorithms import (
+from trucert.core.algorithms import (
     get_algorithm, list_algorithms, list_algorithm_versions, set_default_version
 )
 

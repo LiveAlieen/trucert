@@ -13,8 +13,8 @@ try:
     print("正在验证核心模块导入...")
     
     # 导入核心模块
-    from cert_manager.core.storage.key_storage import KeyStorage
-    from cert_manager.core.storage.storage_manager import StorageManager
+    from trucert.core.storage.key_storage import KeyStorage
+    from trucert.core.storage.storage_manager import StorageManager
     
     print("✓ 核心模块导入成功")
     
@@ -39,7 +39,7 @@ try:
     print("\n🎉 核心存储模块验证通过，删除根密钥相关代码后系统功能正常！")
     
     # 检查根密钥目录是否存在
-    root_key_dir = os.path.join(os.path.dirname(__file__), 'src', 'cert_manager', 'root_key')
+    root_key_dir = os.path.join(os.path.dirname(__file__), 'src', 'trucert', 'root_key')
     if os.path.exists(root_key_dir):
         print(f"\n⚠️  注意：根密钥目录仍然存在: {root_key_dir}")
         files = os.listdir(root_key_dir)

@@ -11,10 +11,10 @@ import tempfile
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 try:
-    from cert_manager.core.utils import initialize_dependencies
-    from cert_manager.core.business.key_manager import KeyManager
-    from cert_manager.core.business.cert_manager import CertManager
-    from cert_manager.core.business.file_signer import FileSigner
+    from trucert.core.utils import initialize_dependencies
+    from trucert.core.business.key_manager import KeyManager
+    from trucert.core.business.cert_manager import CertManager
+    from trucert.core.business.file_signer import FileSigner
     
     print("正在初始化依赖...")
     initialize_dependencies()

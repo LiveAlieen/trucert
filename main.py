@@ -5,8 +5,8 @@
 
 import sys
 from PyQt5.QtWidgets import QApplication
-from src.cert_manager.gui import MainWindow
-from src.cert_manager.core.utils import initialize_dependencies
+from src.trucert.gui import MainWindow
+from src.trucert.core.utils import initialize_dependencies
 
 
 def main():

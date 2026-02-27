@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-02-27T09:30:04.577456",
+  "forward_offset": 0,
+  "cert_info": {
+    "algorithm": "RSA",
+    "signature_algorithm": "RSA-PSS-SHA256",
+    "storage_formats": {
+      "public_key": "DER_HEX",
+      "signature": "HEX",
+      "parent_public_key": "DER_HEX"
+    },
+    "parent_public_key": ""
+  },
+  "public_key": "30819f300d06092a864886f70d010101050003818d0030818902818100c6357ca456b06472bf98d1c1a238dcaed5589873a84b29a105761d241345e9b03d57c0879c8225ab82e53ae72bc1adc90de93b527ae984972538da409cd95337fbad0e5e32ead2730d3572321138e2d5082167a59c080af0398b62ee7185a02fc06c72f2e18700d0f3340eb09c1b2eeb2dd5fca273c88394bcab5231adc1db950203010001",
+  "signature": "ad1700217acda4569e5ee756bc26e48c338e4f2b143bfbd7b2b0de92ef63d880706e1206f63e91f6ba999f5b9a12d8737e27c0a86ad21009f47ed29b041c93bbf786514375d9e384cc73de3bd631ead75317d5f4573eca078cd6c4a797827b78c91f11b10f46a4bcc559ce0e92b1196617e9af9edb1ad537b3d123c9e64bfbe7"
+}

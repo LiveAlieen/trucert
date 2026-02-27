@@ -13,11 +13,11 @@ parent_dir = os.path.dirname(current_dir)
 project_root = os.path.dirname(parent_dir)
 sys.path.insert(0, project_root)
 
-from cert_manager.core.services import (
+from trucert.core.services import (
     KeyService, CertService, FileSignerService, 
     VerifierService, ConfigService
 )
-from cert_manager.core.utils import initialize_dependencies
+from trucert.core.utils import initialize_dependencies
 
 # 初始化依赖注入容器
 initialize_dependencies()

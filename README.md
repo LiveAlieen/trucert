@@ -1,8 +1,8 @@
-# 证书管理系统
+# TruCert
 
 ## 项目简介
 
-证书管理系统是一个用于管理加密密钥和数字证书的综合工具，旨在简化证书的创建、存储、管理和验证过程。该系统支持多种加密算法，提供完整的证书生命周期管理功能，适用于需要安全通信和数据完整性验证的场景。
+TruCert是一个用于管理加密密钥和数字证书的综合工具，旨在简化证书的创建、存储、管理和验证过程。该系统支持多种加密算法，提供完整的证书生命周期管理功能，适用于需要安全通信和数据完整性验证的场景。
 
 ## 核心功能
 
@@ -23,7 +23,7 @@
 
 ```
 ├── src/                # 源代码目录
-│   └── cert_manager/   # 证书管理系统核心代码
+│   └── trucert/        # TruCert核心代码
 │       ├── core/       # 核心模块
 │       ├── configs/    # 配置和存储目录
 │       └── root_key/   # 根密钥存储目录
@@ -90,14 +90,14 @@ pip install -r requirements.txt
 
 1. **生成密钥对**
    ```python
-   from cert_manager.core.services.key_service import KeyService
+   from trucert.core.services.key_service import KeyService
    key_service = KeyService()
    key_pair = key_service.generate_key_pair(key_type="RSA", key_size=2048)
    ```
 
 2. **生成自签名证书**
    ```python
-   from cert_manager.core.services.cert_service import CertService
+   from trucert.core.services.cert_service import CertService
    cert_service = CertService()
    cert_info = {
        "subject": {
@@ -112,14 +112,14 @@ pip install -r requirements.txt
 
 3. **签名文件**
    ```python
-   from cert_manager.core.services.file_signer_service import FileSignerService
+   from trucert.core.services.file_signer_service import FileSignerService
    file_signer_service = FileSignerService()
    signature_path = file_signer_service.sign_file("path/to/file.txt", key_id)
    ```
 
 4. **验证文件**
    ```python
-   from cert_manager.core.services.verifier_service import VerifierService
+   from trucert.core.services.verifier_service import VerifierService
    verifier_service = VerifierService()
    result = verifier_service.verify_file("path/to/file.txt", signature_path, cert_path=cert_path)
    print(f"验证结果: {'成功' if result else '失败'}")
