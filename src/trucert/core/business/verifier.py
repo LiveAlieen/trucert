@@ -104,10 +104,25 @@ class Verifier:
             self.logger.info("Verifying certificate validity")
             
             if "cert_info" in cert_data:
-                # 当前格式的证书，暂时跳过有效期验证
-                # 因为当前格式的证书没有明确的有效期字段
-                self.logger.info("Skipping validity check for current certificate format")
-                return True
+                # 当前格式的证书，使用timestamp和forward_offset计算时间值
+                timestamp_str = cert_data.get("timestamp", "")
+                forward_offset = cert_data.get("forward_offset", 0)
+                
+                if not timestamp_str:
+                    self.logger.error("Missing timestamp in certificate data")
+                    return False
+                
+                # 解析时间戳
+                cert_timestamp = datetime.datetime.fromisoformat(timestamp_str)
+                # 计算参考时间：timestamp + forward_offset秒
+                reference_time = cert_timestamp + datetime.timedelta(seconds=forward_offset)
+                # 获取当前时间
+                current_time = datetime.datetime.now(datetime.timezone.utc)
+                
+                # 验证当前时间是否大于等于参考时间
+                if current_time < reference_time:
+                    self.logger.warning("Certificate is not yet valid")
+                    return False
             else:
                 # 旧格式的证书
                 # 检查证书是否过期

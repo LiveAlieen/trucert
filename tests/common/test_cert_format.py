@@ -13,13 +13,19 @@ import sys
 # 添加项目根目录到Python路径
 sys.path.insert(0, os.path.abspath('.'))
 
-from cert_manager.core.key_manager import KeyManager
-from cert_manager.core.cert_manager import CertManager
+from src.trucert.core.utils import initialize_dependencies
+from src.trucert.core.business.key_manager import KeyManager
+from src.trucert.core.business.cert_manager import CertManager
 
 
 def test_certificate_format():
     """测试证书格式功能"""
     print("=== 测试证书格式功能 ===")
+    
+    # 初始化依赖注入容器
+    print("0. 初始化依赖注入容器...")
+    initialize_dependencies()
+    print("✓ 依赖注入容器初始化成功")
     
     # 初始化密钥管理器
     print("1. 初始化密钥管理器...")
@@ -28,7 +34,7 @@ def test_certificate_format():
     
     # 生成RSA密钥对
     print("2. 生成RSA密钥对...")
-    private_key, public_key = key_manager.generate_rsa_key(key_size=2048, auto_save=True)
+    key_id, private_key, public_key = key_manager.generate_rsa_key(key_size=2048, auto_save=True)
     print("✓ RSA密钥对生成成功")
     
     # 初始化证书管理器
