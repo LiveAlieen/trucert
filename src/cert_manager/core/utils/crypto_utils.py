@@ -1,12 +1,13 @@
 """加密工具模块
 
-提供加密和签名相关的工具函数
+提供加密和签名相关的工具函数，使用模块化算法系统
 """
 
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa, ec, padding
 from cryptography.hazmat.backends import default_backend
 from typing import Union, Optional
+from src.cert_manager.core.algorithms import get_algorithm
 
 
 def generate_rsa_key(key_size: int = 2048) -> tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
@@ -18,14 +19,9 @@ def generate_rsa_key(key_size: int = 2048) -> tuple[rsa.RSAPrivateKey, rsa.RSAPu
     Returns:
         (私钥对象, 公钥对象)
     """
-    backend = default_backend()
-    private_key = rsa.generate_private_key(
-        public_exponent=65537,
-        key_size=key_size,
-        backend=backend
-    )
-    public_key = private_key.public_key()
-    return private_key, public_key
+    rsa_algorithm = get_algorithm('encryption', 'RSA')
+    rsa_instance = rsa_algorithm()
+    return rsa_instance.generate_key(key_size=key_size)
 
 
 def generate_ecc_key(curve: str = "SECP256R1") -> tuple[ec.EllipticCurvePrivateKey, ec.EllipticCurvePublicKey]:
@@ -37,15 +33,9 @@ def generate_ecc_key(curve: str = "SECP256R1") -> tuple[ec.EllipticCurvePrivateK
     Returns:
         (私钥对象, 公钥对象)
     """
-    backend = default_backend()
-    curve_upper = curve.upper()
-    curve_obj = getattr(ec, curve_upper)()
-    private_key = ec.generate_private_key(
-        curve=curve_obj,
-        backend=backend
-    )
-    public_key = private_key.public_key()
-    return private_key, public_key
+    ecc_algorithm = get_algorithm('encryption', 'ECC')
+    ecc_instance = ecc_algorithm()
+    return ecc_instance.generate_key(curve=curve)
 
 
 def sign_data(private_key: Union[rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey], 
@@ -60,24 +50,15 @@ def sign_data(private_key: Union[rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey],
     Returns:
         签名数据
     """
-    hash_obj = getattr(hashes, algorithm.upper())()
-    
     if isinstance(private_key, rsa.RSAPrivateKey):
-        return private_key.sign(
-            data,
-            padding.PSS(
-                mgf=padding.MGF1(hash_obj),
-                salt_length=padding.PSS.MAX_LENGTH
-            ),
-            hash_obj
-        )
+        sign_algorithm = get_algorithm('signature', 'RSA-SIGN')
     elif isinstance(private_key, ec.EllipticCurvePrivateKey):
-        return private_key.sign(
-            data,
-            ec.ECDSA(hash_obj)
-        )
+        sign_algorithm = get_algorithm('signature', 'ECC-SIGN')
     else:
         raise TypeError("Unsupported private key type")
+    
+    sign_instance = sign_algorithm()
+    return sign_instance.sign(private_key, data, algorithm=algorithm)
 
 
 def verify_signature(public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey], 
@@ -93,30 +74,15 @@ def verify_signature(public_key: Union[rsa.RSAPublicKey, ec.EllipticCurvePublicK
     Returns:
         签名是否有效
     """
-    hash_obj = getattr(hashes, algorithm.upper())()
+    if isinstance(public_key, rsa.RSAPublicKey):
+        sign_algorithm = get_algorithm('signature', 'RSA-SIGN')
+    elif isinstance(public_key, ec.EllipticCurvePublicKey):
+        sign_algorithm = get_algorithm('signature', 'ECC-SIGN')
+    else:
+        raise TypeError("Unsupported public key type")
     
-    try:
-        if isinstance(public_key, rsa.RSAPublicKey):
-            public_key.verify(
-                signature,
-                data,
-                padding.PSS(
-                    mgf=padding.MGF1(hash_obj),
-                    salt_length=padding.PSS.MAX_LENGTH
-                ),
-                hash_obj
-            )
-        elif isinstance(public_key, ec.EllipticCurvePublicKey):
-            public_key.verify(
-                signature,
-                data,
-                ec.ECDSA(hash_obj)
-            )
-        else:
-            raise TypeError("Unsupported public key type")
-        return True
-    except Exception:
-        return False
+    sign_instance = sign_algorithm()
+    return sign_instance.verify(public_key, signature, data, algorithm=algorithm)
 
 
 def save_private_key(private_key: Union[rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey], 
