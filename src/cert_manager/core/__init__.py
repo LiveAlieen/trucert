@@ -6,6 +6,13 @@ from .business import (
     ConfigManager
 )
 
+# 为了兼容测试文件的导入路径
+from .business.cert_manager import CertManager as cert_manager
+from .business.file_signer import FileSigner as file_signer
+from .business.key_manager import KeyManager as key_manager
+from .business.verifier import Verifier as verifier
+from .business.config import ConfigManager as config
+
 from .services import (
     KeyService,
     CertService,
@@ -96,6 +103,11 @@ __all__ = [
     "KeyManager",
     "Verifier",
     "ConfigManager",
+    "cert_manager",
+    "file_signer",
+    "key_manager",
+    "verifier",
+    "config",
     
     # Services
     "KeyService",

@@ -6,7 +6,7 @@
 import hashlib
 import os
 from typing import Union, Optional
-from src.cert_manager.core.algorithms import get_algorithm
+from ..algorithms import get_algorithm
 
 
 # 文件哈希缓存，避免重复计算

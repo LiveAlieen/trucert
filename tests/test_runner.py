@@ -113,6 +113,11 @@ class TestRunner:
             print(f"错误: 测试套件目录 '{suite_path}' 不存在")
             return None
         
+        # 确保src目录在Python路径中
+        src_path = os.path.join(os.path.dirname(__file__), '..', 'src')
+        if src_path not in sys.path:
+            sys.path.insert(0, src_path)
+        
         loader = TestLoader()
         suite = loader.discover(suite_path, pattern='test_*.py')
         return suite

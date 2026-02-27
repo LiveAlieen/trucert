@@ -244,7 +244,16 @@ class StorageManager:
         self.logger.debug(f"Getting trust directory: {self.trust_dir}")
         return self.trust_dir
     
-
+    def get_root_key_dir(self) -> str:
+        """获取根密钥存储目录
+        
+        Returns:
+            根密钥存储目录路径
+        """
+        # 根密钥存储在base_dir下
+        root_key_dir = self.base_dir
+        self.logger.debug(f"Getting root key directory: {root_key_dir}")
+        return root_key_dir
     
     def get_file_info(self, filepath: str) -> Dict[str, Any]:
         """获取文件信息

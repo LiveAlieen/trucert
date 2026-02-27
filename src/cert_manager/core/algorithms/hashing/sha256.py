@@ -1,7 +1,7 @@
 """SHA256哈希算法模块"""
 
 import hashlib
-from src.cert_manager.core.algorithms import HashingAlgorithm
+from .. import HashingAlgorithm
 
 
 class SHA256Algorithm(HashingAlgorithm):

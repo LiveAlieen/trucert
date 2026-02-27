@@ -5,7 +5,7 @@
 
 import unittest
 import os
-from cert_manager.core.key_manager import KeyManager
+from cert_manager.core import KeyManager
 from tests.utils.test_utils import create_temp_directory, cleanup_temp_path
 
 

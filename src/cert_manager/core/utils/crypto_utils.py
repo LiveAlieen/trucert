@@ -7,7 +7,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa, ec, padding
 from cryptography.hazmat.backends import default_backend
 from typing import Union, Optional
-from src.cert_manager.core.algorithms import get_algorithm
+from ..algorithms import get_algorithm
 from .root_key_manager import encrypt_with_root_key, decrypt_with_root_key
 import json
 

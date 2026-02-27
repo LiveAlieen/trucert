@@ -3,7 +3,7 @@
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.backends import default_backend
-from src.cert_manager.core.algorithms import EncryptionAlgorithm
+from .. import EncryptionAlgorithm
 
 
 class RSAAlgorithm(EncryptionAlgorithm):

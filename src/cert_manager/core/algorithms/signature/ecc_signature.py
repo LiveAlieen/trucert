@@ -3,7 +3,7 @@
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec, padding
 from cryptography.hazmat.backends import default_backend
-from src.cert_manager.core.algorithms import SignatureAlgorithm
+from .. import SignatureAlgorithm
 
 
 class ECCSignatureAlgorithm(SignatureAlgorithm):

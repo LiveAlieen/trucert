@@ -49,7 +49,9 @@ class TestServices(unittest.TestCase):
         if os.path.exists(self.temp_file):
             os.remove(self.temp_file)
         if os.path.exists(self.temp_dir):
-            os.rmdir(self.temp_dir)
+            # 递归删除目录及其内容
+            import shutil
+            shutil.rmtree(self.temp_dir, ignore_errors=True)
     
     def test_key_service(self):
         """测试KeyService功能"""

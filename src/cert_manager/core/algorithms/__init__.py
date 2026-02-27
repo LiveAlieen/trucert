@@ -199,7 +199,7 @@ def discover_algorithms() -> None:
                     continue
                 
                 # 构建模块路径
-                module_name = f"src.cert_manager.core.algorithms.{directory}.{file_path.stem}"
+                module_name = f"cert_manager.core.algorithms.{directory}.{file_path.stem}"
                 
                 try:
                     # 导入模块

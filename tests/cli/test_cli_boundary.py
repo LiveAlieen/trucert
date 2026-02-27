@@ -113,9 +113,10 @@ class TestCLIBoundary(unittest.TestCase):
         with patch('sys.argv', test_args):
             from cert_manager.cli.main import CLI
             cli = CLI()
-            result = cli.run()
-            # 不存在的文件应该导致命令执行失败
-            self.assertEqual(result, 1)
+            # 这里应该抛出系统退出异常
+            with self.assertRaises(SystemExit) as cm:
+                cli.run()
+            self.assertNotEqual(cm.exception.code, 0)
     
     def test_verify_cert_nonexistent_files(self):
         """测试验证不存在的证书文件"""
